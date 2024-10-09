@@ -1,0 +1,23 @@
+#
+# Commands to clone the repositories needed at install time
+#
+# Derive this file as a install.priv in the install subdirectory of your private repo 
+# in order to overload these variables with those of your choice using
+# the folliwng rules:
+#
+# You can point to a local branch instead of master/main one 
+# to test a feature branch during deployment
+#
+# You can add the name of the directory at the end 
+# if the repo name is different from the upstream setup
+# example in the last line
+#
+# In case you use a local token, uncomment this one and use with MGAINSREPO
+#token=`cat $EXEPATH/token`
+#
+MGAINSBRANCH="main"
+MGAINSREPO="https://github.com/bcornec/autoinstall-mageia"
+#
+# Uncomment to use your private repo
+# with token
+#MGAINSREPO="https://account:$token@github.com:/Account/Private-Repo.git autoinstall-mageia"

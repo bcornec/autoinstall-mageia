@@ -1,0 +1,14 @@
+# bash completion local configuration
+
+# enable bash completion
+#ENABLE_BASH_COMPLETION=1
+# enable remote cvs completion
+#COMP_CVS_REMOTE=
+# enable configure arguments completion
+#COMP_CONFIGURE_HINTS=
+# enable tar archive internal path completion
+#COMP_TAR_INTERNAL_PATHS=
+# enable wireless uid completion
+#COMP_IWCONFIG_SCAN=
+# enable zeroconf hostnames completion
+#COMP_AVAHI_BROWSE=
