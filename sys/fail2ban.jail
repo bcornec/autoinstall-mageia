@@ -1,0 +1,22 @@
+# /etc/fail2ban/jail.local
+[DEFAULT]
+ignoreip = 127.0.0.1 124.32.5.48
+findtime = 10m
+bantime = 24h
+maxretry = 3
+
+[httpd]
+enabled = true
+port = 443
+filter = httpd
+backend = systemd
+maxretry = 3
+banaction = httpd
+#bantime = 10d
+#destemail = root@localhost
+#
+[sshd]
+port = ssh
+backend = systemd
+maxretry = 2
+banaction = sshd
