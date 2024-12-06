@@ -39,9 +39,6 @@
         - /usr/local/sbin
         - /usr/local/share
 
-    - name: Ensure that this a compliant Mageia system
-      ansible.builtin.include_tasks: "{{ ANSIBLEDIR }}/check_buildnode.yml"
-
     - name: Ensure a iurt account exists
       become: true
       become_user: root
