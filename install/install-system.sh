@@ -86,6 +86,8 @@ fi
 ansible-galaxy collection install community.general
 ansible-galaxy collection install ansible.posix
 
+ANSPLAYOPT="$ANSPLAYOPT -e LDAPSETUP=0"
+
 # Automatic Installation script for the system 
 ansible-playbook -i inventory --limit $PBKDIR $ANSPLAYOPT install_$MGATYPE.yml
 if [ $? -ne 0 ]; then
