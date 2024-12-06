@@ -204,10 +204,28 @@ export MGAGENKEYS
 echo "Installing $MGADISTRIB specificities for $MGATYPE"
 $EXEPATH/install-system-$MGADISTRIB.sh
 
+# In order to be able to access install script we need correct rights on the home dir of the uid launching the script
+MGAHDIR=`grep -E "^$MGAUSER" /etc/passwd | cut -d: -f6`
+BKPSTAT=`stat --printf '%a' $MGAHDIR`
+echo "Found $MGAUSER home directory $MGAHDIR with rights $BKPSTAT"
+echo "Forcing temporarily open rights to access install scripts"
+chmod o+x $MGAHDIR
+
+HDIRSTAT=`stat --printf '%a' $HDIR`
+echo "Found $SUDO_USER home directory $HDIR with rights $HDIRSTAT"
+echo "Forcing temporarily open rights to access install scripts"
+chmod o+x $HDIR
+
 # Now drop priviledges
 # Call the common install script to finish install
 echo "Installing common remaining stuff as $MGAUSER"
 su - $MGAUSER -w MGAGROUP,MGAINSFQDN,MGATYPE,MGAINSIP,MGADISTRIB,MGAUSER,MGAINSREPO,MGAINSBRANCH,MGAGENKEYS,MGATMPDIR -c "$EXEPATH/install-system-common.sh"
+
+echo "Setting up original rights for $MGAHDIR with $BKPSTAT"
+chmod $BKPSTAT $MGAHDIR
+
+echo "Setting up original rights for $HDIR with $HDIRSTAT"
+chmod $HDIRSTAT $HDIR
 
 # In any case remove the temp dir
 rm -rf $MGATMPDIR
