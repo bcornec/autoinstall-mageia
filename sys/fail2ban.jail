@@ -11,12 +11,13 @@ port = 443
 filter = httpd
 backend = systemd
 maxretry = 3
-banaction = httpd
+#banaction = httpd
 #bantime = 10d
 #destemail = root@localhost
 #
 [sshd]
 port = ssh
 backend = systemd
+filter = sshd
 maxretry = 2
-banaction = sshd
+#banaction = sshd
