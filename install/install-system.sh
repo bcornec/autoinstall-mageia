@@ -6,7 +6,7 @@ date
 
 export MGATYPE=$1
 if [ -z "$MGATYPE" ]; then
-	echo "Syntax: install-system.sh sucuk|ecosse|rabbit|duvel|fiona"
+	echo "Syntax: install-system.sh buildnode|webserver|reposerver"
 	exit -1
 fi
 

@@ -22,8 +22,8 @@ my %machines = (
 	'sucuk' => "sucuk9",
 	'ecosse' => "ecosse9",
 	'rabbit' => "rabbit9",
-	'fiona' => "fiona9",
 	'duvel' => "duvel9",
+	'fiona' => "fiona9",
 );
 my $machines = \%machines;
 

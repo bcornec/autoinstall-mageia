@@ -9,8 +9,8 @@ usage() {
     echo " "
     echo "where:"
     echo "type      is the installation type"
-    echo "          valid values: sucuk|ecosse|rabbit|duvel|fiona"
-    echo "          if empty using 'fiona'                "
+    echo "          valid values: buildnode|reposerver|webserver"
+    echo "          if empty using 'buildnode'                "
     echo "groupname is the ansible group_vars name to be used"
     echo "          example: production, staging, test, ...  "
     echo "          if empty using 'production'                "
@@ -18,7 +18,7 @@ usage() {
     echo "          if empty, try to be autodetected from FQDN"
     echo "          Used in particuler when the IP can't be guessed such as with Vagrant"
     echo "fqdn      FQDN name of the server being deployed"
-    echo "          Using fiona.mganet"
+    echo "          Using buildnode.mganet"
     echo "user      is the name of the admin user for autoinstall"
     echo "          example: mymgaadmin "
     echo "          if empty using mgaadmin               "
@@ -42,7 +42,7 @@ while getopts "t:f:i:u:hk" option; do
     case "${option}" in
         t)
             t=${OPTARG}
-            if [ ${t} !=  "sucuk" ] && [ ${t} != "duvel" ] && [ ${t} != "ecosse" ] && [ ${t} != "rabbit" ] && [ ${t} != "fiona" ]; then
+            if [ ${t} !=  "buildnode" ] && [ ${t} != "reposerver" ] && [ ${t} != "webserver" ]; then
                 echo "wrong type: ${t}"
                 usage
                 exit -1
@@ -75,7 +75,7 @@ shift $((OPTIND-1))
 if [ ! -z "${t}" ]; then
     MGATYPE="${t}"
 else
-    MGATYPE="fiona"
+    MGATYPE="buildnode"
 fi
 
 if [ ! -z "${f}" ]; then
@@ -104,8 +104,6 @@ fi
 export MGAGROUP MGAINSFQDN MGATYPE MGAINSIP
 
 export MGADISTRIB=`grep -E '^ID=' /etc/os-release | cut -d= -f2 | sed 's/"//g'`-`grep -E '^VERSION_ID=' /etc/os-release | cut -d= -f2 | sed 's/"//g'`
-
-echo "MGAUSER: $MGAUSER" > /etc/mga.yml
 
 echo "Installing a Mageia Infra $MGATYPE environment"
 echo "Using groupname $MGAGROUP"
@@ -183,6 +181,10 @@ else
 fi
 useradd -U -m -s /bin/bash $MGAUSER
 
+# Keep conf
+echo "MGAUSER: $MGAUSER" > /etc/mga.yml
+chown $MGAUSER /etc/mga.yml
+
 # Manage passwd
 export MGAPWD=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1`
 echo "$MGAUSER:$MGAPWD" | chpasswd
@@ -195,7 +197,6 @@ Defaults:$MGAUSER !requiretty
 $MGAUSER ALL=(ALL) NOPASSWD: ALL
 EOF
 chmod 440 /etc/sudoers.d/$MGAUSER
-chown $MGAUSER /etc/mga.yml
 
 export MGAGENKEYS
 

@@ -17,25 +17,49 @@
     become_user: root
     ansible.builtin.package:
       name:
+      # This list should have been auto_installed, but check for usre
       - ansible
-      - bzip2
-      - fail2ban
-      - fail2ban-all
-      - firewalld
       - git
+      - kernel-server-latest
+      - openssh-server
+      - openssh-clients
+      - python3
+      - shorewall
+      - sudo
+      - urpmi
+      - vim-minimal
+      - wget
+      - xz
+      # This list is complementary
+      - bash-completion
+      - bind-utils
+      - bzip2
+      - curl
+      - drakxtools-curses
+      - fail2ban
+      #- firewalld
+      - inxi
+      - lm_sensors
+      - lsof
+      - locales-fr
       - man
+      - msec
+      - mutt
       - netcat-traditional
-      - nfs-utils
+      - numlock
       - ntpsec
       - openldap-clients
       - perl-Data-Dumper
       - perl-Proc-ProcessTable
+      - plocate
       - postfix
       - procmail
-      - python3-virtualenv
+      - puppet
       - rsync
       - sos
-      - vim
+      - strace
+      - vim-enhanced
+      - vlock
       - wget
       - xymon-client
       update_cache: true
@@ -152,7 +176,7 @@
     become_user: root
     ansible.builtin.copy:
       src: "{{ SYSDIR }}/fail2ban.conf"
-      dest: /etc/fail2ban/filter.d/jupyterhub.conf
+      dest: /etc/fail2ban/filter.d/mga.conf
       owner: root
       group: root
       mode: "0644"
@@ -172,7 +196,7 @@
     become_user: root
     ansible.builtin.copy:
       src: "{{ SYSDIR }}/fail2ban.action"
-      dest: /etc/fail2ban/action.d/jupyterhub.conf
+      dest: /etc/fail2ban/action.d/mga.conf
       owner: root
       group: root
       mode: "0755"
