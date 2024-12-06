@@ -175,11 +175,12 @@
     become: true
     become_user: root
     ansible.builtin.copy:
-      src: "{{ SYSDIR }}/fail2ban.conf"
-      dest: /etc/fail2ban/filter.d/mga.conf
+      src: "{{ item }}"
+      dest: "/etc/fail2ban/filter.d/{{ item }}"
       owner: root
       group: root
       mode: "0644"
+      with_items: "{{ SYSDIR }}/*.conf"
 
   - name: Configure fail2ban jail
     become: true
