@@ -174,13 +174,8 @@
 - name: Configure fail2ban filter
   become: true
   become_user: root
-  ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: "/etc/fail2ban/filter.d/{{ item }}"
-    owner: root
-    group: root
-    mode: "0644"
-    with_fileglob: ['{{ SYSDIR }}/*.conf']
+  ansible.builtin.copy: src={{ item }} dest=/etc/fail2ban/filter.d/{{ item }} owner=root group=root mode=0644 backup=yes
+  with_fileglob: ['{{ SYSDIR }}/*.conf']
 
 - name: Configure fail2ban jail
   become: true
