@@ -1,12 +1,12 @@
 #!/bin/bash
 
-set -x 
+#set -x
 
 date
 
 export MGATYPE=$1
 if [ -z "$MGATYPE" ]; then
-	echo "Syntax: install-system.sh sucuk|ecosse|rabbit|duvel|fiona"
+	echo "Syntax: install-system.sh buildnode|webserver|reposerver"
 	exit -1
 fi
 
@@ -20,61 +20,68 @@ email = $MGAUSER@mageia.org
 EOF
 fi
 
-SCRIPT=`realpath $0`
-# This is the installation directory where install scripts are located.
-INSTALLDIR=`dirname $SCRIPT`
-
-# This main dir is computed and is the backend main dir
-export MGAINSDIR=`dirname $INSTALLDIR`
-
 # This is where mga.sh will be stored
-SCRIPTDIR="$MGAINSDIR/scripts"
+MGASCRIPTDIR="$MGAREPODIR/scripts"
 
-cat > $SCRIPTDIR/mga.sh << EOF
+cat > $MGASCRIPTDIR/mga.sh << EOF
 # This is the mga.sh script, generated at install
 #
 # Name of the admin user
 export MGAUSER=$MGAUSER
 
-# Name of the mga machine type (sucuk|ecosse|rabbit|duvel|fiona)
+# Name of the mga machine type (buildnode, webserver, ...)
 export MGATYPE=$MGATYPE
 
 # Location of the autoinstall directory
 export MGAINSDIR=$MGAINSDIR
 
 EOF
-cat >> $SCRIPTDIR/mga.sh << 'EOF'
+cat >> $MGASCRIPTDIR/mga.sh << 'EOF'
+# Shell variables for Mageia
+#
 # AUTOINSTALL PART
-# The auntosinstall dir has some fixed subdirs 
-# autoinstall-mageia (MGAINSDIR)
-#    |---------- ansible (ANSIBLEDIR)
-#    |---------- scripts (SCRIPTDIR defined in all.yml not here to allow overloading)
-#    |---------- sys (SYSDIR)
-#    |---------- install
+# The autosinstall dir has some fixed subdirs 
+# autoinstall-mageia (MGAREPODIR)
+#    |---------- ansible (MGAANSIBLEDIR)
+#    |---------- scripts (MGASCRIPTDIR defined in all.yml not here to allow overloading)
+#    |---------- sys (MGASYSDIR)
+#    |---------- install (MGAINSDIR)
 #    |---------- conf
 #    |---------- skel
 #
-export ANSIBLEDIR=$MGAINSDIR/ansible
-export SYSDIR=$MGAINSDIR/sys
+export MGAANSIBLEDIR=$MGAREPODIR/ansible
+export MGASYSDIR=$MGAREPODIR/sys
 
 EOF
 
-chmod 755 $SCRIPTDIR/mga.sh
-source $SCRIPTDIR/mga.sh
+chmod 755 $MGASCRIPTDIR/mga.sh
+source $MGASCRIPTDIR/mga.sh
 
-cd $SCRIPTDIR/../ansible
-PBKDIR=$MGAGROUP
+cd $MGAANSIBLEDIR
+# Prepare variables for ansible
+cat > $MGAANSIBLEDIR/mga.yml << EOF
+MGAUSER: $MGAUSER
+MGAANSIBLEDIR: $MGAANSIBLEDIR
+MGAREPODIR: $MGAREPODIR
+MGASYSDIR: $MGASYSDIR
+MGATYPE: $MGATYPE
+MGAPBKDIR: $MGAPBKDIR
+MGAINSDIR: $MGAINSDIR
+MGASCRIPTDIR: $MGASCRIPTDIR
+EOF
+
+MGAPBKDIR=$MGAGROUP
 
 # Declares shell variables as ansible variables as well
 # then they can be used in playbooks
-ANSPLAYOPT="-e PBKDIR=$PBKDIR -e MGAUSER=$MGAUSER -e MGAINSDIR=$MGAINSDIR -e ANSIBLEDIR=$ANSIBLEDIR -e SCRIPTDIR=$SCRIPTDIR -e SYSDIR=$SYSDIR"
+MGAANSPLAYOPT="-e MGAANSIBLEDIR=$MGAANSIBLEDIR"
 
 # For future mga.sh usage by other scripts
-cat >> $SCRIPTDIR/mga.sh << EOF
-export ANSPLAYOPT="$ANSPLAYOPT"
-export PBKDIR=$PBKDIR
+cat >> $MGASCRIPTDIR/mga.sh << EOF
+export MGAANSPLAYOPT="$MGAANSPLAYOPT"
+export MGAPBKDIR=$MGAPBKDIR
 EOF
-export ANSPLAYOPT
+export MGAANSPLAYOPT
 
 if ! command -v ansible-galaxy &> /dev/null
 then
@@ -86,13 +93,15 @@ fi
 ansible-galaxy collection install community.general
 ansible-galaxy collection install ansible.posix
 
+MGAANSPLAYOPT="$MGAANSPLAYOPT -e LDAPSETUP=0"
+
 # Automatic Installation script for the system 
-ansible-playbook -i inventory --limit $PBKDIR $ANSPLAYOPT install_$MGATYPE.yml
+ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT install_$MGATYPE.yml
 if [ $? -ne 0 ]; then
 	echo "Install had errors exiting before launching startup"
 	exit -1
 fi
 
-cd $ANSIBLEDIR
-ansible-playbook -i inventory --limit $PBKDIR $ANSPLAYOPT check_$MGATYPE.yml
+cd $MGAANSIBLEDIR
+ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT check_$MGATYPE.yml
 date

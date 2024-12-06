@@ -1,0 +1,79 @@
+---
+- name: Playbook for Mageia Infra server installation
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Include variables for the underlying distribution
+      ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/group_vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+
+    - name: Base setup for a Mageia Infra server
+      ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_base_system.yml"
+
+    - name: Ensure all required packages are installed for {{ MGATYPE }}
+      become: true
+      become_user: root
+      ansible.builtin.package:
+        name:
+          - iurt
+          # - moreutils
+          # - net-tools
+          # - netkit-telnet
+          # - unzip
+          # - patch
+          # - expect
+        state: present
+        update_cache: true
+
+    - name: Ensure required directories under /usr/local are owned by "{{ MGAUSER }}"
+      become: true
+      become_user: root
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: "0755"
+      with_items:
+        - /usr/local/bin
+        - /usr/local/sbin
+        - /usr/local/share
+
+    - name: Ensure a iurt account exists
+      become: true
+      become_user: root
+      ansible.builtin.user:
+        name: iurt
+        state: present
+
+   #  - name: Ensure a schedbot@duvel can ssh to iurt on this node
+
+# # Pour les build nodes il y a très peu a faire si on l'ajoute a puppet a
+# part tester la connection ssh en temps que schedbot@duvel vers iurt@la
+# nouvelle machine et accepter le fingerprint, et lancer iurt pour
+# vérifier qu'il arrive a builder un package
+#
+# Puppet devrait automatiquement pour toutes les machine qui incluent
+# mga_buildsystem::buildnode:
+# - Ajouter les media infra
+# - Installer iurt et le configurer
+# - Créer le user iurt et lui mettre la clé ssh de schedbot et lui
+# donner le sudo nécessaire
+#
+# Les changements a faire dans la conf puppet pour ajouter une machine
+# de build (la plupart pourraient etre faites en un seul commit a part
+# le dernier):
+# - ajouter un fichier pour la machine
+# https://gitweb.mageia.org/infrastructure/puppet/commit/?id=3182414eac98cfed3d863decc4fd4d46892dfd52
+# - ajouter ses IPs et les mettre dans le DNS
+# https://gitweb.mageia.org/infrastructure/puppet/commit/?id=44222e4c2bc7028d63fdf5e5d59059d5ee27241e
+# (la ca fait aussi la derniere etapr de l'ajouter dans
+# deployment/mga_buildsystem/manifests/config.pp mais vaut mieux le
+# faire separement a la fin)
+# - ajouter la machine à xymon
+# https://gitweb.mageia.org/infrastructure/puppet/commit/?id=6d110f1592ffd74848bebaa1c973a75d901f46fc
+# - donner accès à l'IP de la machine pour le miroir interne
+# https://gitweb.mageia.org/infrastructure/puppet/commit/?id=1ef87173139760a23563e139243529a15d1e9144
+# - après avoir testé que ca marche l'ajouter à la liste utilisée pour
+# builder (la partie deployment/mga_buildsystem/manifests/config.pp de
+# https://gitweb.mageia.org/infrastructure/puppet/commit/?id=44222e4c2bc7028d63fdf5e5d59059d5ee27241e)

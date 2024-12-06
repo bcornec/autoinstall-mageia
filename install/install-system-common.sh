@@ -17,9 +17,9 @@ res=`echo $REPODIR | { grep "://" || true; }`
 if [ _"$res" != _"" ]; then
 	# REPODIR points to URL not dir
 	# dir is then computed automatically
-	MGAREPODIR=`echo "$REPODIR" | tr '/' '\n' | tail -1 | sed 's/\.git$//'`
+	MGAREPODIR="$MGAHDIR/`echo "$REPODIR" | tr '/' '\n' | tail -1 | sed 's/\.git$//'`"
 else
-	MGAREPODIR="$REPODIR"
+	MGAREPODIR="$MGAHDIR/$REPODIR"
 fi
 export MGAREPODIR
 
@@ -46,6 +46,9 @@ git clone $MGAINSREPO
 # And store commit Ids for these repos
 (cd $MGAREPODIR ; git checkout $BRANCH ; echo "$MGAREPODIR: `git show --oneline | head -1 | awk '{print $1}'`")
 
+# This is the installation directory where install scripts are located.
+export MGAINSDIR="$MGAREPODIR/install"
+
 if [ $MGAGENKEYS -eq 0 ] && [ -f "$MGATMPDIR/id_rsa" ]; then
 	# We do not have to regenerate keys and reuse existing one preserved
 	echo "Keep existing ssh keys for $MGAUSER"
@@ -68,7 +71,7 @@ fi
 # temp dir remove in caller by root to avoid issues
 
 # Setup this using the group for Mageia
-cat > $HOME/$MGAREPODIR/ansible/group_vars/$MGAGROUP << EOF
+cat > $MGAREPODIR/ansible/group_vars/$MGAGROUP << EOF
 PBKDIR: $MGAGROUP
 # 
 # Installation specific values
@@ -77,15 +80,17 @@ PBKDIR: $MGAGROUP
 MGAINSFQDN: $MGAINSFQDN
 MGAINSIP: $MGAINSIP
 MGADISTRIB: $MGADISTRIB
+MGAINSDIR: $MGAINSDIR
+MGAREPODIR: $MGAREPODIR
 EOF
-cat $HOME/$MGAREPODIR/ansible/group_vars/mga-system >> $HOME/$MGAREPODIR/ansible/group_vars/$MGAGROUP
+cat $MGAREPODIR/ansible/group_vars/mga-system >> $MGAREPODIR/ansible/group_vars/$MGAGROUP
 
-if [ -f $HOME/$MGAREPODIR/ansible/group_vars/mga-$MGATYPE ]; then
-	cat $HOME/$MGAREPODIR/ansible/group_vars/mga-$MGATYPE >> $HOME/$MGAREPODIR/ansible/group_vars/$MGAGROUP
+if [ -f $MGAREPODIR/ansible/group_vars/mga-$MGATYPE ]; then
+	cat $MGAREPODIR/ansible/group_vars/mga-$MGATYPE >> $MGAREPODIR/ansible/group_vars/$MGAGROUP
 fi
 
 # Inventory based on the installed system
-cat > $HOME/$MGAREPODIR/ansible/inventory << EOF
+cat > $MGAREPODIR/ansible/inventory << EOF
 [$MGAGROUP]
 $MGAINSFQDN ansible_connection=local
 EOF
@@ -93,4 +98,4 @@ EOF
 # Change default passwd for vagrant and root
 
 # Install Mageia infra server
-$HOME/$MGAREPODIR/install/install-system.sh $MGATYPE
+$MGAINSDIR/install-system.sh $MGATYPE

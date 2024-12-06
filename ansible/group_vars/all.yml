@@ -1,8 +1,4 @@
 ---
-# This variable is defined for ansible playbooks, do not change without knowing what you do
-# This is the only one remaining, so we can easily overload it with -e for private script compilation e.g.
-#
-SCRIPTDIR: "{{ MGAINSDIR }}/scripts"
 #
 # In case we have a LDAP server to use, use the following values:
 #

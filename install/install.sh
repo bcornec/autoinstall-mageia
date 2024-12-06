@@ -9,8 +9,8 @@ usage() {
     echo " "
     echo "where:"
     echo "type      is the installation type"
-    echo "          valid values: sucuk|ecosse|rabbit|duvel|fiona"
-    echo "          if empty using 'fiona'                "
+    echo "          valid values: buildnode|reposerver|webserver"
+    echo "          if empty using 'buildnode'                "
     echo "groupname is the ansible group_vars name to be used"
     echo "          example: production, staging, test, ...  "
     echo "          if empty using 'production'                "
@@ -18,7 +18,7 @@ usage() {
     echo "          if empty, try to be autodetected from FQDN"
     echo "          Used in particuler when the IP can't be guessed such as with Vagrant"
     echo "fqdn      FQDN name of the server being deployed"
-    echo "          Using fiona.mganet"
+    echo "          Using buildnode.mganet"
     echo "user      is the name of the admin user for autoinstall"
     echo "          example: mymgaadmin "
     echo "          if empty using mgaadmin               "
@@ -38,11 +38,11 @@ i=""
 MGAGENKEYS=0
 MGANET="mga.local"
 
-while getopts "t:f:i:u:hk" option; do
+while getopts "t:f:i:u:g:hk" option; do
     case "${option}" in
         t)
             t=${OPTARG}
-            if [ ${t} !=  "sucuk" ] && [ ${t} != "duvel" ] && [ ${t} != "ecosse" ] && [ ${t} != "rabbit" ] && [ ${t} != "fiona" ]; then
+            if [ ${t} !=  "buildnode" ] && [ ${t} != "reposerver" ] && [ ${t} != "webserver" ]; then
                 echo "wrong type: ${t}"
                 usage
                 exit -1
@@ -53,6 +53,9 @@ while getopts "t:f:i:u:hk" option; do
             ;;
         i)
             i=${OPTARG}
+            ;;
+        g)
+            g=${OPTARG}
             ;;
         u)
             u=${OPTARG}
@@ -75,7 +78,7 @@ shift $((OPTIND-1))
 if [ ! -z "${t}" ]; then
     MGATYPE="${t}"
 else
-    MGATYPE="fiona"
+    MGATYPE="buildnode"
 fi
 
 if [ ! -z "${f}" ]; then
@@ -87,7 +90,13 @@ fi
 if [ ! -z "${i}" ]; then
     MGAINSIP="${i}"
 else
-    MGAINSIP=`ping -c 1 $MGAINSFQDN 2>/dev/null | grep PING | grep $MGABEFQDN | cut -d'(' -f2 | cut -d')' -f1`
+    set +e
+    MGAINSIP=`ping -c 1 $MGAINSFQDN 2>/dev/null | grep PING | grep $MGAINSFQDN | cut -d'(' -f2 | cut -d')' -f1`
+    set -e
+    if [ _"$MGAINSIP" = _"" ]; then
+        echo "Unable to find IP address for server $MGAINSFQDN"
+        exit -1
+    fi
 fi
 
 if [ ! -z "${u}" ]; then
@@ -105,14 +114,13 @@ export MGAGROUP MGAINSFQDN MGATYPE MGAINSIP
 
 export MGADISTRIB=`grep -E '^ID=' /etc/os-release | cut -d= -f2 | sed 's/"//g'`-`grep -E '^VERSION_ID=' /etc/os-release | cut -d= -f2 | sed 's/"//g'`
 
-echo "MGAUSER: $MGAUSER" > /etc/mga.yml
-
 echo "Installing a Mageia Infra $MGATYPE environment"
 echo "Using groupname $MGAGROUP"
 echo "Using admin user $MGAUSER"
 
+SUDOUSR=${SUDO_USER:-}
 # Needs to be root
-if [ _"$SUDO_USER" = _"" ]; then
+if [ _"$SUDOUSR" = _"" ]; then
     echo "You need to use sudo to launch this script"
     exit -1
 fi
@@ -147,10 +155,14 @@ export MGATMPDIR=/tmp/mga.$$
 
 # Create the MGAUSER user
 if grep -qE "^$MGAUSER:" /etc/passwd; then
+    MGAHDIR=`grep -E "^$MGAUSER" /etc/passwd | cut -d: -f6`
     if ps auxww | grep -qE "^$MGAUSER:"; then
         pkill -u $MGAUSER
+       sleep 1
+       set +e
+       pkill -9 -u $MGAUSER
+       set -e
     fi
-    MGAHDIR=`grep -E "^$MGAUSER" /etc/passwd | cut -d: -f6`
     echo "$MGAUSER home directory: $MGAHDIR"
     if [ -d "$MGAHDIR/.ssh" ]; then
         echo "Original SSH keys"
@@ -195,7 +207,6 @@ Defaults:$MGAUSER !requiretty
 $MGAUSER ALL=(ALL) NOPASSWD: ALL
 EOF
 chmod 440 /etc/sudoers.d/$MGAUSER
-chown $MGAUSER /etc/mga.yml
 
 export MGAGENKEYS
 
@@ -203,10 +214,28 @@ export MGAGENKEYS
 echo "Installing $MGADISTRIB specificities for $MGATYPE"
 $EXEPATH/install-system-$MGADISTRIB.sh
 
+# In order to be able to access install script we need correct rights on the home dir of the uid launching the script
+export MGAHDIR=`grep -E "^$MGAUSER" /etc/passwd | cut -d: -f6`
+BKPSTAT=`stat --printf '%a' $MGAHDIR`
+echo "Found $MGAUSER home directory $MGAHDIR with rights $BKPSTAT"
+echo "Forcing temporarily open rights to access install scripts"
+chmod o+x $MGAHDIR
+
+HDIRSTAT=`stat --printf '%a' $HDIR`
+echo "Found $SUDO_USER home directory $HDIR with rights $HDIRSTAT"
+echo "Forcing temporarily open rights to access install scripts"
+chmod o+x $HDIR
+
 # Now drop priviledges
 # Call the common install script to finish install
 echo "Installing common remaining stuff as $MGAUSER"
-su - $MGAUSER -w MGAGROUP,MGAINSFQDN,MGATYPE,MGAINSIP,MGADISTRIB,MGAUSER,MGAINSREPO,MGAINSBRANCH,MGAGENKEYS,MGATMPDIR -c "$EXEPATH/install-system-common.sh"
+su - $MGAUSER -w MGAGROUP,MGAINSFQDN,MGATYPE,MGAINSIP,MGADISTRIB,MGAUSER,MGAINSREPO,MGAINSBRANCH,MGAGENKEYS,MGATMPDIR,MGAHDIR -c "$EXEPATH/install-system-common.sh"
+
+echo "Setting up original rights for $MGAHDIR with $BKPSTAT"
+chmod $BKPSTAT $MGAHDIR
+
+echo "Setting up original rights for $HDIR with $HDIRSTAT"
+chmod $HDIRSTAT $HDIR
 
 # In any case remove the temp dir
 rm -rf $MGATMPDIR

@@ -1,193 +1,216 @@
 ---
-  - name: Load variables generated at install time
-    ansible.builtin.include_vars: /etc/mga.yml
+- name: Load variables generated at install time
+  ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/mga.yml"
 
-  - name: Ensure that common packages are installed for repo setup
-    become: true
-    become_user: root
-    ansible.builtin.package:
-      name:
+- name: Ensure that common packages are installed for repo setup
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    name:
       - curl
       - gnupg2
-      state: present
-      update_cache: true
+    state: present
+    update_cache: true
 
-  - name: Ensure all required packages are installed and urpmi db updated
-    become: true
-    become_user: root
-    ansible.builtin.package:
-      name:
+- name: Ensure all required packages are installed and urpmi db updated
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    name:
+    # This list should have been auto_installed, but check for sure
       - ansible
-      - bzip2
-      - fail2ban
-      - fail2ban-all
-      - firewalld
       - git
+      - kernel-server-latest
+      - openssh-server
+      - openssh-clients
+      - python3
+      - shorewall
+      - sudo
+      - urpmi
+      - vim-minimal
+      - wget
+      - xz
+    # This list is complementary
+      - bash-completion
+      - bind-utils
+      - bzip2
+      - curl
+      - diffutils
+      - drakxtools-curses
+      - fail2ban
+    # - firewalld
+      - inxi
+      - ldetect
+      - lm_sensors
+      - lsof
+      - locales-fr
       - man
+      - msec
+      - mutt
       - netcat-traditional
-      - nfs-utils
+      - numlock
       - ntpsec
       - openldap-clients
       - perl-Data-Dumper
       - perl-Proc-ProcessTable
+      - plocate
       - postfix
       - procmail
-      - python3-virtualenv
+      - puppet
       - rsync
       - sos
-      - vim
+      - strace
+      - usbutils
+      - vim-enhanced
+      - vlock
       - wget
       - xymon-client
-      update_cache: true
-      state: present
+    update_cache: true
+    state: present
 
-      # TODO conf NTP
+    # TODO conf NTP
 
-  - name: Configure LDAP client 1/3
-    become: true
-    become_user: root
-    ansible.builtin.template:
-      src: "{{ SYSDIR }}/ldap.conf.j2"
-      dest: /etc/ldap.conf
-      owner: root
-      group: root
-      mode: '0644'
-    when: LDAPSETUP == "1"
+- name: Configure LDAP client 1/3
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGASYSDIR }}/ldap.conf.j2"
+    dest: /etc/ldap.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: LDAPSETUP == "1"
 
-  - name: Configure LDAP client 2/3
-    become: true
-    become_user: root
-    lineinfile:
-      path: /etc/openldap/ldap.conf
-      line: 'URI ldap://{{ LDAPSRVNAME }}'
-      state: present
-    when: LDAPSETUP == "1"
+- name: Configure LDAP client 2/3
+  become: true
+  become_user: root
+  lineinfile:
+    path: /etc/openldap/ldap.conf
+    line: 'URI ldap://{{ LDAPSRVNAME }}'
+    state: present
+  when: LDAPSETUP == "1"
 
-  - name: Configure LDAP client 3/3
-    become: true
-    become_user: root
-    lineinfile:
-      path: /etc/openldap/ldap.conf
-      line: 'BASE {{ LDAPDMN }}'
-      state: present
-    when: LDAPSETUP == "1"
+- name: Configure LDAP client 3/3
+  become: true
+  become_user: root
+  lineinfile:
+    path: /etc/openldap/ldap.conf
+    line: 'BASE {{ LDAPDMN }}'
+    state: present
+  when: LDAPSETUP == "1"
 
-  - name: Configure nsswitch.conf for LDAP client 1/2
-    become: true
-    become_user: root
-    replace:
-      path: /etc/nsswitch.conf
-      # find ldap if any and remove it
-      regexp: '\bldap\b'
-      replace: ''
-    with_items:
-      - passwd
-      - shadow
-      - group
-      - netgroup
-      - automount
-    when: LDAPSETUP == "1"
+- name: Configure nsswitch.conf for LDAP client 1/2
+  become: true
+  become_user: root
+  replace:
+    path: /etc/nsswitch.conf
+    # find ldap if any and remove it
+    regexp: '\bldap\b'
+    replace: ''
+  with_items:
+    - passwd
+    - shadow
+    - group
+    - netgroup
+    - automount
+  when: LDAPSETUP == "1"
 
-  - name: Configure nsswitch.conf for LDAP client 2/2
-    become: true
-    become_user: root
-    lineinfile:
-      path: /etc/nsswitch.conf
-      # force ldap on that line
-      regexp: '^({{ item }}):(\s+)(.+)$'
-      backrefs: true
-      line: '\1:\2ldap \3'
-      state: present
-    with_items:
-      - passwd
-      - shadow
-      - group
-      - netgroup
-      - automount
-    when: LDAPSETUP == "1"
+- name: Configure nsswitch.conf for LDAP client 2/2
+  become: true
+  become_user: root
+  lineinfile:
+    path: /etc/nsswitch.conf
+    # force ldap on that line
+    regexp: '^({{ item }}):(\s+)(.+)$'
+    backrefs: true
+    line: '\1:\2ldap \3'
+    state: present
+  with_items:
+    - passwd
+    - shadow
+    - group
+    - netgroup
+    - automount
+  when: LDAPSETUP == "1"
 
-  - name: Ensure LDAP required packages are installed
-    become: true
-    become_user: root
-    ansible.builtin.package:
-      name:
+- name: Ensure LDAP required packages are installed
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    name:
       - nss-pam-ldapd
       - ldapvi
-      state: present
-    when: LDAPSETUP == "1"
+    state: present
+  when: LDAPSETUP == "1"
 
-  - name: Setup authconfig for LDAP
-    become: true
-    become_user: root
-    ansible.builtin.command:
-      # Needs adaptation for Mageia
-      cmd: /bin/true
-      #cmd: authconfig-tui --enableldap --enableldapauth --ldapserver="{{ LDAPSRVNAME }}" --ldapbasedn="{{ LDAPDMN }}" --disableldaptls --kickstart --update
-    register: cmd_res
-    # Do not fail when returning 7
-    failed_when: cmd_res.rc < 7
-    when: LDAPSETUP == "1"
+- name: Setup authconfig for LDAP
+  become: true
+  become_user: root
+  ansible.builtin.command:
+    # Needs adaptation for Mageia
+    cmd: /bin/true
+    # cmd: authconfig-tui --enableldap --enableldapauth --ldapserver="{{ LDAPSRVNAME }}" --ldapbasedn="{{ LDAPDMN }}" --disableldaptls --kickstart --update
+  register: cmd_res
+  # Do not fail when returning 7
+  failed_when: cmd_res.rc < 7
+  when: LDAPSETUP == "1"
 
-  - name: Enable nslcd service
-    become: true
-    become_user: root
-    ansible.builtin.systemd:
-      state: started
-      daemon_reload: true
-      enabled: true
-      name: nslcd
-    when: LDAPSETUP == "1"
+- name: Enable nslcd service
+  become: true
+  become_user: root
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: true
+    enabled: true
+    name: nslcd
+  when: LDAPSETUP == "1"
 
-  - name: Enable postfix service
-    become: true
-    become_user: root
-    ansible.builtin.systemd:
-      state: started
-      daemon_reload: true
-      enabled: true
-      name: postfix
+- name: Enable postfix service
+  become: true
+  become_user: root
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: true
+    enabled: true
+    name: postfix
 
-  - name: Configure fail2ban filter
-    become: true
-    become_user: root
-    ansible.builtin.copy:
-      src: "{{ SYSDIR }}/fail2ban.conf"
-      dest: /etc/fail2ban/filter.d/jupyterhub.conf
-      owner: root
-      group: root
-      mode: "0644"
+- name: Configure fail2ban filter
+  become: true
+  become_user: root
+  ansible.builtin.copy: src={{ item }} dest=/etc/fail2ban/filter.d/{{ item | basename }} owner=root group=root mode=0644 backup=yes
+  with_fileglob: ['{{ MGASYSDIR }}/*.conf']
 
-  - name: Configure fail2ban jail
-    become: true
-    become_user: root
-    ansible.builtin.copy:
-      src: "{{ SYSDIR }}/fail2ban.jail"
-      dest: /etc/fail2ban/jail.local
-      owner: root
-      group: root
-      mode: "0644"
+- name: Configure fail2ban jail
+  become: true
+  become_user: root
+  ansible.builtin.copy:
+    src: "{{ MGASYSDIR }}/fail2ban.jail"
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: "0644"
 
-  - name: Configure fail2ban action
-    become: true
-    become_user: root
-    ansible.builtin.copy:
-      src: "{{ SYSDIR }}/fail2ban.action"
-      dest: /etc/fail2ban/action.d/jupyterhub.conf
-      owner: root
-      group: root
-      mode: "0755"
+- name: Configure fail2ban action
+  become: true
+  become_user: root
+  ansible.builtin.copy:
+    src: "{{ MGASYSDIR }}/fail2ban.action"
+    dest: /etc/fail2ban/action.d/fail2ban.action
+    owner: root
+    group: root
+    mode: "0755"
 
-  - name: Enable fail2ban
-    become: true
-    become_user: root
-    ansible.builtin.systemd:
-      state: started
-      daemon_reload: true
-      enabled: true
-      name: fail2ban
+- name: Enable fail2ban
+  become: true
+  become_user: root
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: true
+    enabled: true
+    name: fail2ban
 
-  - name: Setup ansible configuration
-    ansible.builtin.copy:
-      src: "{{ MGAINSDIR }}/.ansible.cfg"
-      dest: "{{ ansible_env.HOME }}/.ansible.cfg"
-      mode: "0644"
+- name: Setup ansible configuration
+  ansible.builtin.copy:
+    src: "{{ MGAREPODIR }}/.ansible.cfg"
+    dest: "{{ ansible_env.HOME }}/.ansible.cfg"
+    mode: "0644"
