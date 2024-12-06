@@ -180,7 +180,7 @@
       owner: root
       group: root
       mode: "0644"
-      with_items: "{{ SYSDIR }}/*.conf"
+      with_fileglob: [ "{{ SYSDIR }}/*.conf" ]
 
   - name: Configure fail2ban jail
     become: true
