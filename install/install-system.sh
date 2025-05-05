@@ -6,7 +6,7 @@ date
 
 export MGATYPE=$1
 if [ -z "$MGATYPE" ]; then
-	echo "Syntax: install-system.sh buildnode|webserver|reposerver"
+	echo "Syntax: install-system.sh build|web|repo|dploy"
 	exit -1
 fi
 
@@ -29,7 +29,7 @@ cat > $MGASCRIPTDIR/mga.sh << EOF
 # Name of the admin user
 export MGAUSER=$MGAUSER
 
-# Name of the mga machine type (buildnode, webserver, ...)
+# Name of the mga machine type (build, web, dploy, repo, ...)
 export MGATYPE=$MGATYPE
 
 # Location of the autoinstall directory

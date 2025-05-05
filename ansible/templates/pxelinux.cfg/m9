@@ -1,0 +1,7 @@
+label m{{ MGAVER }}
+  kernel k{{ MGAVER }}-{{ MGAARCH }}
+{% for key,value in ifcfg.items() %}
+{% if key == MGATYPE %}
+  append initrd=i{{ MGAVER }}-{{ MGAARCH }}.img automatic=method:http,interface:{{ value }},server:{{ MGADPLOYIP }},directory:/distrib/{{ MGAVER }}/{{ MGAARCH }},network:dhcp kickstart=http://{{ MGADPLOYIP }}/ks/{{ MGATYPE }}.cfg.pl useless_thing_accepted
+{% endif %}
+{% endfor %}

@@ -1,23 +1,23 @@
 #!/bin/bash
 
 usage() {
-    echo "dploy.sh [-h][-t type][-f fqdn]"
+    echo "dploy.sh [-h][-n node][-f fqdn]"
     echo " "
     echo "where:"
-    echo "type      is the installation type"
-    echo "          valid values: buildnode|reposerver|webserver"
-    echo "          if empty using 'buildnode'                "
+    echo "node      is the type of node to deploy"
+    echo "          valid values: build|repo|web|dploy"
+    echo "          if empty using 'build'                "
     echo "fqdn      FQDN name of the server being deployed"
 }
 
 f=""
-t=""
-while getopts "t:f:h" option; do
+n=""
+while getopts "n:f:h" option; do
     case "${option}" in
-        t)
-            t=${OPTARG}
-            if [ ${t} !=  "buildnode" ] && [ ${t} != "reposerver" ] && [ ${t} != "webserver" ]; then
-                echo "wrong type: ${t}"
+        n)
+            n=${OPTARG}
+            if [ ${n} !=  "build" ] && [ ${n} != "repo" ] && [ ${n} != "dploy" ] && [ ${n} != "web" ]; then
+                echo "wrong type: ${n}"
                 usage
                 exit -1
             fi
@@ -37,10 +37,10 @@ while getopts "t:f:h" option; do
 done
 shift $((OPTIND-1))
 
-if [ ! -z "${t}" ]; then
-    MGATYPE="${t}"
+if [ ! -z "${n}" ]; then
+    MGATYPE="${n}"
 else
-    MGATYPE="buildnode"
+    MGATYPE="build"
 fi
 if [ ! -z "${f}" ]; then
 	MGAINSFQDN="${f}"
@@ -48,5 +48,4 @@ else
 	usage
 	exit -2
 fi
-ssh fwadmin@$MGAINSFQDN "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -t $MGATYPE -g production -f ${f}"
-
+ssh fwadmin@$MGAINSFQDN "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n $MGATYPE -g production -f ${f}"

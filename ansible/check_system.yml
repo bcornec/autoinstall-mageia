@@ -52,15 +52,6 @@
     - { key: "kernel.pid_max", value: "200000" }
     - { key: "vm.max_map_count", value: "600000" }
 
-- name: Enable NTP service
-  become: true
-  become_user: root
-  ansible.builtin.systemd:
-    state: started
-    daemon_reload: true
-    enabled: true
-    name: ntpd
-
 - name: Ensure limits are correct for "{{ MGAUSER }}" account
   lineinfile:
     path: "{{ ansible_env.HOME }}/.bashrc"
@@ -101,3 +92,13 @@
     path: /etc/systemd/logind.conf
     line: UserTasksMax=100000
     state: present
+
+- name: Enable base services
+  become: true
+  become_user: root
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: true
+    enabled: true
+    name: "{{ item }}"
+  with_items: "{{ base_svcs }}"

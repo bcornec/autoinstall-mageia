@@ -5,12 +5,12 @@ set -u
 set -o pipefail
 
 usage() {
-    echo "install.sh [-h][-t type][-i ip][-f fqdn][-g groupname][-u user][-k]"
+    echo "install.sh [-h][-n node][-i ip][-f fqdn][-g groupname][-u user][-k]"
     echo " "
     echo "where:"
-    echo "type      is the installation type"
-    echo "          valid values: buildnode|reposerver|webserver"
-    echo "          if empty using 'buildnode'                "
+    echo "node      is the type of node to deploy"
+    echo "          valid values: build|repo|web|dploy"
+    echo "          if empty using 'build'                "
     echo "groupname is the ansible group_vars name to be used"
     echo "          example: production, staging, test, ...  "
     echo "          if empty using 'production'                "
@@ -18,7 +18,7 @@ usage() {
     echo "          if empty, try to be autodetected from FQDN"
     echo "          Used in particuler when the IP can't be guessed such as with Vagrant"
     echo "fqdn      FQDN name of the server being deployed"
-    echo "          Using buildnode.mganet"
+    echo "          example: build.mganet"
     echo "user      is the name of the admin user for autoinstall"
     echo "          example: mymgaadmin "
     echo "          if empty using mgaadmin               "
@@ -29,7 +29,7 @@ usage() {
 
 echo "install.sh called with $*"
 # Run as root
-t=""
+n=""
 f=""
 g=""
 u=""
@@ -38,12 +38,12 @@ i=""
 MGAGENKEYS=0
 MGANET="mga.local"
 
-while getopts "t:f:i:u:g:hk" option; do
+while getopts "n:f:i:u:g:hk" option; do
     case "${option}" in
-        t)
-            t=${OPTARG}
-            if [ ${t} !=  "buildnode" ] && [ ${t} != "reposerver" ] && [ ${t} != "webserver" ]; then
-                echo "wrong type: ${t}"
+        n)
+            n=${OPTARG}
+            if [ ${n} !=  "build" ] && [ ${n} != "repo" ] && [ ${n} != "dploy" ] && [ ${n} != "web" ]; then
+                echo "wrong type: ${n}"
                 usage
                 exit -1
             fi
@@ -75,10 +75,10 @@ while getopts "t:f:i:u:g:hk" option; do
 done
 shift $((OPTIND-1))
 
-if [ ! -z "${t}" ]; then
-    MGATYPE="${t}"
+if [ ! -z "${n}" ]; then
+    MGATYPE="${n}"
 else
-    MGATYPE="buildnode"
+    MGATYPE="build"
 fi
 
 if [ ! -z "${f}" ]; then

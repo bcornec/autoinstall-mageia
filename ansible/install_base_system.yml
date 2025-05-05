@@ -34,6 +34,7 @@
       - bash-completion
       - bind-utils
       - bzip2
+      - cronie
       - curl
       - diffutils
       - drakxtools-curses
@@ -51,6 +52,7 @@
       - numlock
       - ntpsec
       - openldap-clients
+      - pciutils
       - perl-Data-Dumper
       - perl-Proc-ProcessTable
       - plocate

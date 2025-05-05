@@ -1,0 +1,115 @@
+---
+- name: Playbook for Mageia Infra dployment server installation
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Include variables for the underlying distribution
+      ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/group_vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+
+    - name: Base setup for a Mageia Infra server
+      ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/check_system.yml"
+
+    - name: "Create local dploy directories for current Mageia version {{MGAVER}}"
+      become: true
+      become_user: root
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: "0755"
+      with_items:
+        - "{{ MGAKSDIR }}"
+        - "{{ MGALDIR }}"
+        - "{{ MGATFTPDIR }}"
+        - "{{ MGATFTPDIR }}/pxelinux.cfg"
+        - "{{ MGALDIR }}/{{ MGAVER }}"
+        - "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}"
+
+    - name: "Modify local files owner for current Mageia version {{MGAVER}}"
+      become: true
+      become_user: root
+      ansible.builtin.file:
+        path: "{{ item }}"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: "0644"
+      with_items:
+        - "{{ MGATFTPDIR }}/help.txt"
+        - "{{ MGATFTPDIR }}/pxelinux.cfg/default"
+
+    - name: "Setup cron based mirror of Mageia {{MGAVER }}"
+      become: true
+      become_user: root
+      ansible.builtin.cron: 
+        name: mga-mirror 
+        minute: 43 
+        hour: 23 
+        user: "{{ MGAUSER }}" 
+        job: 'rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/ {{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}/' 
+        cron_file: mga-mirror 
+        state: present 
+        backup: yes
+
+    - name: "Copy Mageia kernel for tftp boot"
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}/isolinux/{{ MGAARCH }}/vmlinuz"
+        dest: "{{ MGATFTPDIR }}/k{{ MGAVER }}-{{ MGAARCH }}"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0644
+        backup: yes
+
+    - name: "Copy Mageia initrd for tftp boot"
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}/isolinux/{{ MGAARCH }}/all-nonfree.rdz"
+        dest: "{{ MGATFTPDIR }}/i{{ MGAVER }}-{{ MGAARCH }}.img"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0644
+        backup: yes
+
+    - name: "Copy Mageia conf files for tftp boot"
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "{{ MGATFTPDIR }}/{{ item | basename }}"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0644
+        backup: yes
+      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/tftp/*' ]
+
+    - name: "Copy Mageia conf files for pxelinux booted servers"
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "{{ MGATFTPDIR }}/pxelinux.cfg/{{ item | basename }}"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0644
+        backup: yes
+      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/pxelinux.cfg/*' ]
+
+    - name: "Generate auto_inst perl conf files"
+      ansible.builtin.template:
+        src: "{{ MGAANSIBLEDIR }}/templates/ks/auto_inst.cfg.pl.j2"
+        dest: "{{ MGAKSDIR }}/{{ item }}_auto_inst.cfg.pl"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0644
+        backup: yes
+      with_items: "{{ ifcfg.keys() | list }}"
+
+    - name: Enable dploy services
+      become: true
+      become_user: root
+      ansible.builtin.systemd:
+        state: started
+        daemon_reload: true
+        enabled: true
+        name: "{{ item }}"
+      with_items: "{{ dploy_svcs }}"
+
+

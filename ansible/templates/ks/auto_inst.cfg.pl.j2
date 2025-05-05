@@ -1,0 +1,170 @@
+#!/usr/bin/perl -cw
+#
+# $Id$
+#
+# 
+# You should check the syntax of this file before using it in an auto-install.
+# You can do this with 'perl -cw auto_inst.cfg.pl' or by executing this file
+# (note the '#!/usr/bin/perl -cw' on the first line).
+#
+# !!!! AT INSTALL THIS IS ON INTERNAL LAN 192.168 !!!!
+#
+$o = {
+        'timezone' => {
+                'ntp' => 'fr.pool.ntp.org',
+                'timezone' => 'Europe/Paris',
+                'UTC' => 1
+        },
+        'services' => [
+                'network',
+                'network-up',
+                'numlock',
+                'sshd',
+        ],
+        'security_user' => 'sysadmin-discuss@ml.mageia.org',
+        'default_packages' => [
+                'urpmi',
+                'kernel-server-latest',
+                'openssh-server',
+                'openssh-clients',
+                'python3',
+                'shorewall',
+                'sudo',
+                'vim-minimal',
+                'wget',
+                'xz',
+        ],
+        'users' => [
+                {
+                        'icon' => 'default',
+                        'realname' => '{{ MGAUSER }}',
+                        'uid' => undef,
+                        'groups' => [],
+                        'name' => '{{ MGAUSER }}',
+                        'shell' => '/bin/bash',
+                        'gid' => undef,
+                        # linux1
+                        'pw' => 'MGAADMINPWD',
+                }
+        ],
+        'locale' => {
+                'country' => 'FR',
+                'IM' => undef,
+                'lang' => 'fr',
+                'langs' => {
+                        'fr' => 1
+                },
+                'utf8' => 1
+        },
+        'net' => {
+                'zeroconf' => {},
+                'network' => {
+                        'NETWORKING' => 'yes',
+                        'GATEWAY' => '{{ MGAGW }}',
+                        'CRDA_DOMAIN' => 'FR',
+                        'FORWARD_IPV4' => 'false'
+                },
+                'autodetect' => {},
+                'network::connection::ethernet' => {},
+                'resolv' => {
+                        'DOMAINNAME' => 'nameserver',
+                        'dnsServer' => '{{ MGADNS1 }}',
+                        'DOMAINNAME2' => 'search',
+                        'dnsServer2' => '{{ MGADNS2 }}',
+                },
+                'wireless' => {},
+                'ifcfg' => {
+                        '{{ item }}' => {
+                                'BROADCAST' => '',
+                                'isUp' => 1,
+                                'BOOTPROTO' => 'dhcp',
+                                'isPtp' => '',
+                                'NETWORK' => '',
+                                'HWADDR' => undef,
+                                'DEVICE' => '{{ item }}',
+                                'METRIC' => 10
+                        }
+                },
+                'net_interface' => '{{ item }}',
+                'type' => 'network::connection::ethernet',
+                'PROFILE' => 'default'
+        },
+        'authentication' => {
+                'shadow' => 1,
+                'blowfish' => 1
+        },
+        'partitions' => [
+# By default look under MGAANSIBLEDIR/templates
+{% include "ks/part_" + item + ".pl" %}
+        ],
+        'partitioning' => {
+                        'auto_allocate' => 1,
+                        'clearall' => 1,
+                        'clear' => [ 'sda', 'sdb' ],
+        },
+        'superuser' => {
+                'pw' => '{{ MGAADMINPWD }}',
+                'realname' => 'root',
+                'uid' => '0',
+                'shell' => '/bin/bash',
+                'home' => '/root',
+                'gid' => '0'
+         },
+        'security' => 'secure',
+        'mouse' => {
+                'EmulateWheel' => undef,
+                'synaptics' => undef,
+                'name' => 'Any PS/2 & USB mice',
+                'device' => 'input/mice',
+                'evdev_mice' => [
+                                 {
+                                'device' => '/dev/input/by-id/usb--event-mouse',
+                                'HWheelRelativeAxisButtons' => '7 6'
+                                 }
+                                ],
+                'evdev_mice_all' => [
+                                  {
+                                'device' => '/dev/input/by-id/usb--event-mouse',
+                                'HWheelRelativeAxisButtons' => '7 6'
+                                  }
+                                ],
+                'type' => 'Universal',
+                'nbuttons' => 7,
+                'Protocol' => 'ExplorerPS/2',
+                'wacom' => [],
+                'MOUSETYPE' => 'ps/2'
+        },
+        'interactiveSteps' => [
+                #'doPartitionDisks',
+        ],
+        'autoExitInstall' => '1',
+        'no_recommends' => 1,
+        'mkbootdisk' => 0,
+        'isUpgrade' => 0,
+        'excludedocs' => 0,
+        'miscellaneous' => {
+                'numlock' => 1,
+        },
+        'keyboard' => {
+                'GRP_TOGGLE' => '',
+                'KEYBOARD' => 'us'
+        },
+        'enabled_media' => [
+           'Core Release',
+           'Core Updates',
+        ],
+        # does not work if you want to not install X
+        'X' => {
+                'disabled' => 1 
+        },
+        # Works could be used for X11 removal but ...
+        'skipped_packages' => [
+                '/^kernel-desktop-/',
+        ],
+        'rpmsrate_flags_chosen' => {
+                CAT_X => 0,
+        },
+        'postInstall' => '
+        su - {{ MGAUSER }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item }} -g production -f {{ inventory_hostname }}"
+        ',
+        };

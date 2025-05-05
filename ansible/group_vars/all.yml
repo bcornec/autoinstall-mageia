@@ -1,4 +1,17 @@
 ---
+# Stable Mageia version to use for deployment
+MGAVER: 9
+MGAARCH: x86_64
+MGAMIRROR: rsync://fr2.rpmfind.net/linux/mageia/distrib/{{ MGAVER }}/{{ MGAARCH }}
+MGAKSDIR: /var/www/html/ks
+MGALDIR: /var/www/html/distrib
+MGATFTPDIR: /var/lib/tftpboot/X86PC/linux
+MGADPLOYIP: 192.168.8.71
+MGAGW: 192.168.8.254
+MGADNS1: 192.168.8.2
+MGADNS2: 172.16.8.120
+# linux1 - temporary
+MGAADMINPWD: $2a$08$37k9US2q3ST4eLFeR/.ype6SaYD3KgRL5ODOPjH9yStTKVW1zTDm.
 #
 # In case we have a LDAP server to use, use the following values:
 #
@@ -6,3 +19,30 @@ LDAPSRVNAME: ldap.mageia.org
 LDAPDMN: mageia.org
 LDAPPWD: MotDePasseLDAPCompliquéAussi123!!!##
 LDAPPORT: "389"
+
+#
+# MGA services per node type
+#
+ifcfg:
+  dploy: eno1
+  build: eno5 
+  repo: TBD
+  web: TBD
+
+base_svcs:
+  - crond
+  - fail2ban
+  - ntpd
+  - postfix
+  - shorewall
+  - sshd
+dploy_svcs:
+  - httpd
+  - dhcpd
+  - tftp
+web_svcs:
+  - httpd
+repo_svcs:
+  - TBD
+build_svcs:
+  - TBD
