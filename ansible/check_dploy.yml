@@ -95,6 +95,8 @@
       with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/tftp/*' ]
 
     - name: "Copy Mageia conf file for dhcpd service"
+      become: true
+      become_user: root
       ansible.builtin.template:
         src: "{{ MGAANSIBLEDIR }}/templates/dhcpd.conf"
         dest: /etc
