@@ -10,6 +10,18 @@
     - name: Base setup for a Mageia Infra server
       ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/check_system.yml"
 
+    - name: Setup sysctl params
+      become: true
+      become_user: root
+      ansible.posix.sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        state: present
+        reload: true
+        sysctl_set: true
+      with_items:
+        - { key: "net.ipv4.ip_forward", value: "1" }
+
     - name: "Create local dploy directories for current Mageia version {{MGAVER}}"
       become: true
       become_user: root
@@ -81,6 +93,17 @@
         mode: 0644
         backup: yes
       with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/tftp/*' ]
+
+    - name: "Copy Mageia conf file for dhcpd service"
+      become: true
+      become_user: root
+      ansible.builtin.template:
+        src: "{{ MGAANSIBLEDIR }}/templates/dhcpd.conf"
+        dest: /etc
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0644
+        backup: yes
 
     - name: "Copy Mageia conf files for pxelinux booted servers"
       ansible.builtin.template:
