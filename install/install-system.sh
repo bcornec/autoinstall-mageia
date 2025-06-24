@@ -26,8 +26,6 @@ MGAPBKDIR=$MGAGROUP
 
 # Declares shell variables as ansible variables as well
 # then they can be used in playbooks
-export MGAANSPLAYOPT="-e MGAANSIBLEDIR=$MGAANSIBLEDIR -e LDAPSETUP=0"
-
 cat > $MGASCRIPTDIR/mga.sh << EOF
 # This is the mga.sh script, generated at install
 #
@@ -54,13 +52,17 @@ export MGAINSDIR=$MGAINSDIR
 #
 export MGAANSIBLEDIR=$MGAREPODIR/ansible
 export MGASYSDIR=$MGAREPODIR/sys
-export MGAANSPLAYOPT="$MGAANSPLAYOPT"
 export MGAPBKDIR=$MGAPBKDIR
 
 EOF
 
 chmod 755 $MGASCRIPTDIR/mga.sh
 source $MGASCRIPTDIR/mga.sh
+
+export MGAANSPLAYOPT="-e MGAANSIBLEDIR=$MGAANSIBLEDIR -e LDAPSETUP=0"
+cat >> $MGASCRIPTDIR/mga.sh << EOF
+export MGAANSPLAYOPT="$MGAANSPLAYOPT"
+EOF
 
 cd $MGAANSIBLEDIR
 # Prepare variables for ansible
