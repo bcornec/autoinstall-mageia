@@ -22,7 +22,7 @@
       with_items:
         - { key: "net.ipv4.ip_forward", value: "1" }
 
-    - name: "Create local dploy directories for current Mageia version {{MGAVER}}"
+    - name: "Create local dploy directories for current Mageia version {{ MGAVER }}"
       become: true
       become_user: root
       ansible.builtin.file:
@@ -39,7 +39,7 @@
         - "{{ MGALDIR }}/{{ MGAVER }}"
         - "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}"
 
-    - name: "Modify local files owner for current Mageia version {{MGAVER}}"
+    - name: "Modify local files owner for current Mageia version {{ MGAVER }}"
       become: true
       become_user: root
       ansible.builtin.file:
@@ -51,7 +51,7 @@
         - "{{ MGATFTPDIR }}/help.txt"
         - "{{ MGATFTPDIR }}/pxelinux.cfg/default"
 
-    - name: "Setup cron based mirror of Mageia {{MGAVER }}"
+    - name: "Setup cron based mirror of Mageia {{ MGAVER }}"
       become: true
       become_user: root
       ansible.builtin.cron: 
@@ -59,7 +59,7 @@
         minute: 43 
         hour: 23 
         user: "{{ MGAUSER }}" 
-        job: 'rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/ {{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}/' 
+        job: 'rsync -aHz --delete --delete-after --partial --stats --log-format "\\%f \\%l" {{ MGAMIRROR }}/ {{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}/' 
         cron_file: mga-mirror 
         state: present 
         backup: yes
