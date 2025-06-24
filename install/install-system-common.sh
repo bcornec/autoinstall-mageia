@@ -35,6 +35,7 @@ if [ _"$MGAREPODIR" = _"$HOME" ]; then
 	echo "Directory into which to clone is $HOME"
 	exit -1
 fi
+echo "Using repo directory $MGAREPODIR"
 
 # Remove directory first
 rm -rf $MGAREPODIR
