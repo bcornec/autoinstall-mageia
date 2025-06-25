@@ -24,7 +24,7 @@ LDAPPORT: "389"
 # MGA services per node type
 #
 ifcfg:
-  dploy: eno1
+  dploy: eno1:0
   build: eno1 
   repo: TBD
   web: TBD
