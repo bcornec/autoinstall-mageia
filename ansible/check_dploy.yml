@@ -43,8 +43,8 @@
       become: true
       become_user: root
       ansible.builtin.synchronize:
-        src: "{{ MGATFTPDIR }}/X86PC/linux"
-        dest: "{{ MGATFTPDIR }}"
+        src: "{{ MGATFTPDIR }}/X86PC/linux/"
+        dest: "{{ MGATFTPDIR }}/"
 
     - name: "Assess local dploy directories rights and owner"
       become: true
