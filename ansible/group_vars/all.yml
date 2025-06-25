@@ -38,8 +38,8 @@ base_svcs:
   - sshd
 ports:
   base:
-    - tcp 22,123
-    - udp 123
+    - tcp 22,53,123
+    - udp 53,123
   dploy:
     - tcp 80
     - udp 68,69
