@@ -45,8 +45,19 @@
       ansible.builtin.synchronize:
         src: "{{ MGATFTPDIR }}/X86PC/linux"
         dest: "{{ MGATFTPDIR }}"
+
+    - name: "Assess local dploy directories rights and owner"
+      become: true
+      become_user: root
+      ansible.builtin.file:
+        path: "{{ item }}"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
+        mode: "0644"
+      with_fileglob:
+        - "{{ MGATFTPDIR }}/*"
+        - "{{ MGATFTPDIR }}/pxelinux.cfg/*"
+
 
     - name: "Modify local files owner for current Mageia version {{ MGAVER }}"
       become: true
