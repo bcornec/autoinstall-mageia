@@ -39,10 +39,10 @@
         - "{{ MGALDIR }}/{{ MGAVER }}"
         - "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}"
 
-    - name: "Install PXE original files for tftp" 
+    - name: "Install PXE original files for tftp"
       become: true
       become_user: root
-      ansible.builtin.sync:
+      ansible.builtin.synchronize:
         src: "{{ MGATFTPDIR }}/X86PC/linux"
         dest: "{{ MGATFTPDIR }}"
         owner: "{{ MGAUSER }}"
