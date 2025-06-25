@@ -5,7 +5,7 @@ MGAARCH: x86_64
 MGAMIRROR: rsync://fr2.rpmfind.net/linux/mageia/distrib/{{ MGAVER }}/{{ MGAARCH }}
 MGAKSDIR: /var/www/html/ks
 MGALDIR: /var/www/html/distrib
-MGATFTPDIR: /var/lib/tftpboot/X86PC/linux
+MGATFTPDIR: /var/lib/tftpboot
 MGADPLOYIP: 192.168.8.71
 MGAGW: 192.168.8.254
 MGADNS1: 192.168.8.2

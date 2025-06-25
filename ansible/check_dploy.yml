@@ -39,6 +39,15 @@
         - "{{ MGALDIR }}/{{ MGAVER }}"
         - "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}"
 
+    - name: "Install PXE original files for tftp" 
+      become: true
+      become_user: root
+      ansible.builtin.sync:
+        src: "{{ MGATFTPDIR }}/X86PC/linux"
+        dest: "{{ MGATFTPDIR }}"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+
     - name: "Modify local files owner for current Mageia version {{ MGAVER }}"
       become: true
       become_user: root
