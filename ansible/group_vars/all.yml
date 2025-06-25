@@ -25,7 +25,7 @@ LDAPPORT: "389"
 #
 ifcfg:
   dploy: eno1
-  build: eno5 
+  build: eno1 
   repo: TBD
   web: TBD
 
@@ -36,6 +36,15 @@ base_svcs:
   - postfix
   - shorewall
   - sshd
+ports:
+  base:
+    - tcp 22,123
+    - udp 123
+  dploy:
+    - tcp 80
+    - udp 68,69
+  web:
+    - tcp 80
 dploy_svcs:
   - httpd
   - dhcpd

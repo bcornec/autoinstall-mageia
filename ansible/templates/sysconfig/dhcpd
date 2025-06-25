@@ -1,0 +1,20 @@
+# You can set here various option for dhcpd
+
+# Which configuration file to use.
+# CONFIGFILE="/etc/dhcpd.conf"
+
+# Where to store the lease state information.
+# LEASEFILE="/var/lib/dhcpd/dhcpd.leases"
+
+# Define INTERFACES to limit which network interfaces dhcpd listens on.
+# The default null value causes dhcpd to listen on all interfaces.
+{% for key,value in ifcfg.items() %}
+{% if key == MGATYPE %}
+INTERFACES="{{ value }}"
+{% endif %}
+{% endfor %}
+
+# Define OPTIONS with any other options to pass to the dhcpd server.
+# See dhcpd(8) for available options and syntax.
+OPTIONS="-q"
+

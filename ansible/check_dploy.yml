@@ -105,6 +105,17 @@
         mode: 0644
         backup: yes
 
+    - name: "Copy Mageia conf file for dhcpd sysconfig"
+      become: true
+      become_user: root
+      ansible.builtin.template:
+        src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/dhcpd"
+        dest: /etc/sysconfig
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0644
+        backup: yes
+
     - name: "Copy Mageia conf files for pxelinux booted servers"
       ansible.builtin.template:
         src: "{{ item }}"
@@ -124,6 +135,18 @@
         mode: 0644
         backup: yes
       with_items: "{{ ifcfg.keys() | list }}"
+
+    - name: "Generate shorewall rules"
+      become: true
+      become_user: root
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "/etc/shorewall/{{ item | basename }}"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0640
+        backup: yes
+      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/*' ]
 
     - name: Enable dploy services
       become: true
