@@ -93,6 +93,18 @@
     line: UserTasksMax=100000
     state: present
 
+- name: "Generate shorewall rules"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/shorewall/{{ item | basename }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0640
+    backup: yes
+  with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/*' ]
+
 - name: Enable base services
   become: true
   become_user: root
@@ -102,3 +114,6 @@
     enabled: true
     name: "{{ item }}"
   with_items: "{{ base_svcs }}"
+
+- name: restart Shorewall
+  service: name=shorewall state=restarted
