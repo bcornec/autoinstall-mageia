@@ -104,6 +104,8 @@
         group: "{{ MGAUSER }}"
         mode: 0644
         backup: yes
+      notify:
+        - restart dhcpd
 
     - name: "Copy Mageia conf file for dhcpd sysconfig"
       become: true
@@ -115,6 +117,8 @@
         group: "{{ MGAUSER }}"
         mode: 0644
         backup: yes
+      notify:
+        - restart dhcpd
 
     - name: "Copy Mageia conf files for pxelinux booted servers"
       ansible.builtin.template:
@@ -145,5 +149,3 @@
         enabled: true
         name: "{{ item }}"
       with_items: "{{ dploy_svcs }}"
-
-

@@ -17,3 +17,8 @@
   become: true
   become_user: root
   service: name=sshd state=restarted
+
+- name: restart dhcpd
+  become: true
+  become_user: root
+  service: name=dhcpd state=restarted

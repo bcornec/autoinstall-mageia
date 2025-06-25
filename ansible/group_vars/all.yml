@@ -40,6 +40,7 @@ ports:
   base:
     - tcp 22,53,123
     - udp 53,123
+    - icmp 8
   dploy:
     - tcp 80
     - udp 68,69
