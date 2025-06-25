@@ -88,12 +88,16 @@ ansible-galaxy collection install community.general
 ansible-galaxy collection install ansible.posix
 
 # Automatic Installation script for the system 
-ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT install_$MGATYPE.yml
+CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT install_$MGATYPE.yml"
+echo "Executing $CMD"
+$CMD
 if [ $? -ne 0 ]; then
 	echo "Install had errors exiting before launching startup"
 	exit -1
 fi
 
 cd $MGAANSIBLEDIR
-ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT check_$MGATYPE.yml
+CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT check_$MGATYPE.yml"
+echo "Executing $CMD"
+$CMD
 date
