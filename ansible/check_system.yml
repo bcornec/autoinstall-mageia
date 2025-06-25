@@ -104,6 +104,8 @@
     mode: 0640
     backup: yes
   with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/*' ]
+  notify:
+    - restart shorewall
 
 - name: Enable base services
   become: true
@@ -114,6 +116,3 @@
     enabled: true
     name: "{{ item }}"
   with_items: "{{ base_svcs }}"
-
-- name: restart Shorewall
-  service: name=shorewall state=restarted

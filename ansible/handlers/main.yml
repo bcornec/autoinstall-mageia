@@ -1,11 +1,19 @@
 - name: reload httpd
+  become: true
+  become_user: root
   service: name=httpd state=reloaded
 
 - name: restart httpd
+  become: true
+  become_user: root
   service: name=httpd state=restarted
 
 - name: restart shorewall
+  become: true
+  become_user: root
   service: name=shorewall state=restarted
 
 - name: restart sshd
+  become: true
+  become_user: root
   service: name=sshd state=restarted
