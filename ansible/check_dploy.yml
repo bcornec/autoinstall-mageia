@@ -104,6 +104,16 @@
         mode: 0644
         backup: yes
 
+    - name: "Copy Mageia ldlinux for tftp boot"
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}/isolinux/ldlinux.c32"
+        dest: "{{ MGATFTPDIR }}/ldlinux.c32"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0644
+        backup: yes
+
     - name: "Copy Mageia conf files for tftp boot"
       ansible.builtin.template:
         src: "{{ item }}"
