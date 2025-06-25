@@ -1,5 +1,7 @@
 {% for key,value in ports.items() %}
 {% if key == MGATYPE or key == "base" %}
-ACCEPT net fw {{ value | join(' ' ) }} -
+{% for p in value %}
+ACCEPT net fw {{ value }} -
+{% endfor %}
 {% endif %}
 {% endfor %}
