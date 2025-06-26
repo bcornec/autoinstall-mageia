@@ -120,6 +120,7 @@ nodes:
     mgaver: 9
     mgaarch: x86_64
     pkgs:
+      - rpmtools
   - name: web
     ifcfg: TBD
     mgaver: 9
