@@ -118,5 +118,5 @@
   with_subelements: 
   - "{{ nodes }}"
   - svcs
-  when: {{ item.0.name == "system" }}
+  when: "{{ item.0.name == 'system' }}"
 
