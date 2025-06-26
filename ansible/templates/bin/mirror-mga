@@ -8,7 +8,8 @@
 		{{ va.append(ver+'-'+item.mgaarch) }}
 	{% endif %}
 {% endfor %}
-{% for mgaver,mgaarch in va | split('-') %}
+{% for item in va %}
+{% set mgaver,mgaarch = item.split('-') %}
 rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/{{ mgaver }}/{{ mgaarch }} {{ MGALDIR }}/{{ mgaver }}/{{ mgaarch }}/
 {% endfor %}
 
