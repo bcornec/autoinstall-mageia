@@ -41,13 +41,12 @@
       become: true
       become_user: root
       ansible.builtin.file:
-        path: "{{ MGALDIR }}/{{ item.0.mgaver }}/{{ item.0.mgaarch }}"
+        path: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}"
         state: directory
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: "0755"
-      with_subelements: 
-        - "{{ nodes }}"
+      loop: "{{ nodes | dict2items }}"
 
     - name: "Install PXE original files for tftp"
       become: true
