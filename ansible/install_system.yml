@@ -170,3 +170,17 @@
     src: "{{ MGAREPODIR }}/.ansible.cfg"
     dest: "{{ ansible_env.HOME }}/.ansible.cfg"
     mode: "0644"
+
+- name: Ensure required directories under /usr/local are owned by "{{ MGAUSER }}"
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: "0755"
+  with_items:
+    - /usr/local/bin
+    - /usr/local/sbin
+    - /usr/local/share

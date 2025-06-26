@@ -91,6 +91,14 @@ nodes:
     ifcfg: eno1
     mgaver: 9
     mgaarch: x86_64
+    pkgs:
+      - iurt
+      # - moreutils
+          # - net-tools
+          # - netkit-telnet
+          # - unzip
+          # - patch
+          # - expect
   - name: dploy
     ifcfg: eno1:0
     mgaver: 9

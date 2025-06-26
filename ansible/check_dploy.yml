@@ -82,8 +82,6 @@
         - "{{ MGATFTPDIR }}/pxelinux.cfg/default"
 
     - name: "Copy mirror script to /usr/local/bin"
-      become: true
-      become_user: root
       ansible.builtin.template:
         src: "{{ item }}"
         dest: "/usr/local/bin/{{ item | basename }}"
