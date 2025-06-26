@@ -21,4 +21,4 @@
       with_subelements: 
         - "{{ nodes }}"
         - svcs
-      when: {{ item.0.name == MGATYPE }}
+      when: item.0.name == MGATYPE

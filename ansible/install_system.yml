@@ -22,7 +22,7 @@
   with_subelements: 
       - "{{ nodes }}"
       - pkgs
-  when: "{{ item.0.name == 'system' || item.0.name == MGATYPE }}"
+  when: item.0.name == "system" || item.0.name == MGATYPE
 
     # TODO conf NTP
 

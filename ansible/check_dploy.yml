@@ -203,7 +203,7 @@
       with_subelements: 
         - "{{ nodes }}"
         - svcs
-      when: "{{ item.0.name == 'dploy' }}"
+      when: item.0.name == "dploy"
 
   handlers:
     - name: "Set of handlers"
