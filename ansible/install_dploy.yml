@@ -8,17 +8,4 @@
       ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/group_vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
 
     - name: Base setup for a Mageia Infra server
-      ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_base_system.yml"
-
-    - name: Ensure all required packages are installed for {{ MGATYPE }}
-      become: true
-      become_user: root
-      ansible.builtin.package:
-        name:
-          - apache
-          - dhcp-server
-          - pxelinux
-          - tftp-server
-        state: present
-        update_cache: true
-
+      ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_system.yml"

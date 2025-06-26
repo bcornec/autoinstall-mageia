@@ -1,8 +1,6 @@
 ---
 # Stable Mageia version to use for deployment
-MGAVER: 9
-MGAARCH: x86_64
-MGAMIRROR: rsync://fr2.rpmfind.net/linux/mageia/distrib/{{ MGAVER }}/{{ MGAARCH }}
+MGAMIRROR: rsync://fr2.rpmfind.net/linux/mageia/distrib/
 MGAKSDIR: /var/www/html/ks
 MGALDIR: /var/www/html/distrib
 MGATFTPDIR: /var/lib/tftpboot
@@ -23,36 +21,101 @@ LDAPPORT: "389"
 #
 # MGA services per node type
 #
-ifcfg:
-  dploy: eno1:0
-  build: eno1 
-  repo: TBD
-  web: TBD
-
-base_svcs:
-  - crond
-  - fail2ban
-  - ntpd
-  - postfix
-  - shorewall
-  - sshd
-ports:
-  base:
-    - tcp 22,53,123
-    - udp 53,123
-    - icmp 8
-  dploy:
-    - tcp 80
-    - udp 68,69
-  web:
-    - tcp 80
-dploy_svcs:
-  - httpd
-  - dhcpd
-  - tftp
-web_svcs:
-  - httpd
-repo_svcs:
-  - TBD
-build_svcs:
-  - TBD
+nodes:
+  - name: system
+    mgaver: 9
+    mgaarch: x86_64
+    ports:
+      - tcp 22,53,123
+      - udp 53,123
+      - icmp 8
+    svcs:
+      - crond
+      - fail2ban
+      - ntpd
+      - postfix
+      - shorewall
+      - sshd
+    pkgs:
+      # This list should have been auto_installed, but check for sure
+      - ansible
+      - git
+      - kernel-server-latest
+      - openssh-server
+      - openssh-clients
+      - python3
+      - shorewall
+      - sudo
+      - urpmi
+      - vim-minimal
+      - wget
+      - xz
+      # This list is complementary
+      - bash-completion
+      - bind-utils
+      - bzip2
+      - cronie
+      - curl
+      - diffutils
+      - drakxtools-curses
+      - fail2ban
+    # - firewalld
+      - inxi
+      - ldetect
+      - lm_sensors
+      - lsof
+      - locales-fr
+      - man
+      - msec
+      - mutt
+      - netcat-traditional
+      - numlock
+      - ntpsec
+      - openldap-clients
+      - pciutils
+      - perl-Data-Dumper
+      - perl-Proc-ProcessTable
+      - plocate
+      - postfix
+      - procmail
+      - puppet
+      - rsync
+      - sos
+      - strace
+      - usbutils
+      - vim-enhanced
+      - vlock
+      - wget
+      - xymon-client
+  - name: build
+    ifcfg: eno1
+    mgaver: 9
+    mgaarch: x86_64
+  - name: dploy
+    ifcfg: eno1:0
+    mgaver: 9
+    mgaarch: x86_64
+    ports:
+      - tcp 80
+      - udp 68,69
+    svcs:
+      - httpd
+      - dhcpd
+      - tftp
+    pkgs:
+      - apache
+      - dhcp-server
+      - pxelinux
+      - tftp-server
+  - name: repo
+    ifcfg: TBD
+    mgaver: 9
+    mgaarch: x86_64
+  - name: web
+    ifcfg: TBD
+    mgaver: 9
+    mgaarch: x86_64
+    ports:
+      - tcp 80
+    svcs:
+      - httpd

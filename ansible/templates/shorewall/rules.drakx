@@ -1,6 +1,6 @@
-{% for key,value in ports.items() %}
-{% if key == MGATYPE or key == "base" %}
-{% for p in value %}
+{% for item in nodes %}
+{% if item.name == MGATYPE or item.name == "system" %}
+{% for p in item.ports %}
 ACCEPT net fw {{ p }} -
 {% endfor %}
 {% endif %}

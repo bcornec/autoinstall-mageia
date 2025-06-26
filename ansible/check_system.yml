@@ -114,6 +114,9 @@
     state: started
     daemon_reload: true
     enabled: true
-    name: "{{ item }}"
-  with_items: "{{ base_svcs }}"
+    name: "{{ item.1 }}"
+  with_subelements: 
+  - "{{ nodes }}"
+  - svcs
+  when: {{ item.0.name == "system" }}
 

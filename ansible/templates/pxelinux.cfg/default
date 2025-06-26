@@ -1,4 +1,4 @@
-PROMPT 1
+PROMPT 10
 DEFAULT local
 DISPLAY messages
 TIMEOUT 50
@@ -7,8 +7,10 @@ F1 help.txt
 label local
         LOCALBOOT 0
 
-include m9
-#include cauldron
+{% for item in nodes %}
+label {{ item.name }}
+  kernel k{{ item.mgaver }}-{{ item.mgaarch }}
+  append initrd=i{{ item.mgaver }}-{{ item.mgaarch }}.img automatic=method:http,interface:{{ item.ifcfg }},server:{{ MGADPLOYIP }},directory:/distrib/{{ item.mgaver }}/{{ item.mgaarch }},network:dhcp kickstart=http://{{ MGADPLOYIP }}/ks/{{ item.name }}.cfg.pl useless_thing_accepted
+{% endfor %}
 
-#label linux1
 #  APPEND initrd=network.rdz ramdisk_size=32000 vga=788 kickstart=Mageia/base/auto_inst.cfg.pl useless_thing_accepted automatic=method:nfs,network:dhcp,interface:eth0,dns:192.168.100.11,server:192.168.200.1,directory:/install root=/dev/ram3

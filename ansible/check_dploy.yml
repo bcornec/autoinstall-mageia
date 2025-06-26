@@ -22,7 +22,7 @@
       with_items:
         - { key: "net.ipv4.ip_forward", value: "1" }
 
-    - name: "Create local dploy directories for current Mageia version {{ MGAVER }}"
+    - name: "Create local dploy directories"
       become: true
       become_user: root
       ansible.builtin.file:
@@ -36,8 +36,19 @@
         - "{{ MGALDIR }}"
         - "{{ MGATFTPDIR }}"
         - "{{ MGATFTPDIR }}/pxelinux.cfg"
-        - "{{ MGALDIR }}/{{ MGAVER }}"
-        - "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}"
+
+    - name: "Create local mirror directories"
+      become: true
+      become_user: root
+      ansible.builtin.file:
+        path: "{{ MGALDIR }}/{{ item.0.mgaver }}/{{ item.0.mgaarch }}"
+        state: directory
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: "0755"
+      with_subelements: 
+        - "{{ nodes }}"
+        - mgaver
 
     - name: "Install PXE original files for tftp"
       become: true
@@ -58,8 +69,7 @@
         - "{{ MGATFTPDIR }}/*"
         - "{{ MGATFTPDIR }}/pxelinux.cfg/*"
 
-
-    - name: "Modify local files owner for current Mageia version {{ MGAVER }}"
+    - name: "Modify local files owner for current Mageia version"
       become: true
       become_user: root
       ansible.builtin.file:
@@ -71,7 +81,19 @@
         - "{{ MGATFTPDIR }}/help.txt"
         - "{{ MGATFTPDIR }}/pxelinux.cfg/default"
 
-    - name: "Setup cron based mirror of Mageia {{ MGAVER }}"
+    - name: "Copy mirror script to /usr/local/bin"
+      become: true
+      become_user: root
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "/usr/local/bin/{{ item | basename }}"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0755
+        backup: yes
+      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/bin/*' ]
+
+    - name: "Setup cron based mirror of Mageia"
       become: true
       become_user: root
       ansible.builtin.cron: 
@@ -79,8 +101,8 @@
         minute: 43 
         hour: 23 
         user: "{{ MGAUSER }}" 
-        job: 'rsync -aHz --delete --delete-after --partial --stats --log-format "\\%f \\%l" {{ MGAMIRROR }}/ {{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}/' 
-        cron_file: mga-mirror 
+        job: /usr/local/bin/mirror-mga
+        cron_file: mirror-mga
         state: present 
         backup: yes
 
@@ -128,7 +150,7 @@
       become: true
       become_user: root
       ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/dhcpd.conf"
+        src: "{{ MGAANSIBLEDIR }}/templates/etc/dhcpd.conf"
         dest: /etc
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
@@ -163,12 +185,14 @@
     - name: "Generate auto_inst perl conf files"
       ansible.builtin.template:
         src: "{{ MGAANSIBLEDIR }}/templates/ks/auto_inst.cfg.pl.j2"
-        dest: "{{ MGAKSDIR }}/{{ item }}_auto_inst.cfg.pl"
+        dest: "{{ MGAKSDIR }}/{{ item.0.name }}_auto_inst.cfg.pl"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
         backup: yes
-      with_items: "{{ ifcfg.keys() | list }}"
+      with_subelements: 
+        - "{{ nodes }}"
+        - ifcfg
 
     - name: Enable dploy services
       become: true
@@ -177,8 +201,11 @@
         state: started
         daemon_reload: true
         enabled: true
-        name: "{{ item }}"
-      with_items: "{{ dploy_svcs }}"
+        name: "{{ item.1 }}"
+      with_subelements: 
+        - "{{ nodes }}"
+        - svcs
+      when: {{ item.0.name == "dploy" }}
 
   handlers:
     - name: "Set of handlers"

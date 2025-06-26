@@ -74,18 +74,18 @@ $o = {
                 },
                 'wireless' => {},
                 'ifcfg' => {
-                        '{{ item }}' => {
+                        '{{ item.1 }}' => {
                                 'BROADCAST' => '',
                                 'isUp' => 1,
                                 'BOOTPROTO' => 'dhcp',
                                 'isPtp' => '',
                                 'NETWORK' => '',
                                 'HWADDR' => undef,
-                                'DEVICE' => '{{ item }}',
+                                'DEVICE' => '{{ item.1 }}',
                                 'METRIC' => 10
                         }
                 },
-                'net_interface' => '{{ item }}',
+                'net_interface' => '{{ item.1 }}',
                 'type' => 'network::connection::ethernet',
                 'PROFILE' => 'default'
         },
@@ -95,7 +95,7 @@ $o = {
         },
         'partitions' => [
 # By default look under MGAANSIBLEDIR/templates
-{% include "ks/part_" + item + ".pl" %}
+{% include "ks/part_" + item.0.name + ".pl" %}
         ],
         'partitioning' => {
                         'auto_allocate' => 1,
@@ -165,6 +165,6 @@ $o = {
                 CAT_X => 0,
         },
         'postInstall' => '
-        su - {{ MGAUSER }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item }} -g production -f {{ inventory_hostname }}"
+        su - {{ MGAUSER }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item.0.name }} -g production -f {{ inventory_hostname }}"
         ',
         };

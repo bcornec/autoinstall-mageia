@@ -16,59 +16,13 @@
   become: true
   become_user: root
   ansible.builtin.package:
-    name:
-    # This list should have been auto_installed, but check for sure
-      - ansible
-      - git
-      - kernel-server-latest
-      - openssh-server
-      - openssh-clients
-      - python3
-      - shorewall
-      - sudo
-      - urpmi
-      - vim-minimal
-      - wget
-      - xz
-    # This list is complementary
-      - bash-completion
-      - bind-utils
-      - bzip2
-      - cronie
-      - curl
-      - diffutils
-      - drakxtools-curses
-      - fail2ban
-    # - firewalld
-      - inxi
-      - ldetect
-      - lm_sensors
-      - lsof
-      - locales-fr
-      - man
-      - msec
-      - mutt
-      - netcat-traditional
-      - numlock
-      - ntpsec
-      - openldap-clients
-      - pciutils
-      - perl-Data-Dumper
-      - perl-Proc-ProcessTable
-      - plocate
-      - postfix
-      - procmail
-      - puppet
-      - rsync
-      - sos
-      - strace
-      - usbutils
-      - vim-enhanced
-      - vlock
-      - wget
-      - xymon-client
+    name: "{{ item.1.pkgs }}"
     update_cache: true
     state: present
+    with_subelements: 
+      - "{{ nodes }}"
+      - pkgs
+    when: {{ item.0.name == "system" || item.0.name == MGATYPE }}
 
     # TODO conf NTP
 

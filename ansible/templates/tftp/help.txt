@@ -2,6 +2,8 @@
 | Images      | Action                                                       |
 | ----------- | ------------------------------------------------------------ |
 | local       | Boot on local disk (default mode)                            |
-| m{{ MGAARCH }}          | Installation of Mageia {{ MGAARCH }} {{ MGAARCH }}                              |
+{% for item in nodes %}
+| {{ item.name }}          | Installation of Mageia {{ item.name }} node ({{ item.mgaver }} {{ item.mgaarch }}                              |
+{% endfor %}
  ----------------------------------------------------------------------------
 
