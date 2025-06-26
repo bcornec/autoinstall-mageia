@@ -16,7 +16,7 @@
   become: true
   become_user: root
   ansible.builtin.package:
-    name: "{{ item.1.pkgs }}"
+    name: "{{ item.1 }}"
     update_cache: true
     state: present
   with_subelements: 
