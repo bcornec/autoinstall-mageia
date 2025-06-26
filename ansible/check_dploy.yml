@@ -46,7 +46,7 @@
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: "0755"
-      loop: "{{ nodes | dict2items }}"
+      loop: "{{ nodes }}"
 
     - name: "Install PXE original files for tftp"
       become: true
