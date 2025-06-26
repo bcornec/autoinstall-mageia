@@ -119,6 +119,7 @@ nodes:
     ifcfg: TBD
     mgaver: 9
     mgaarch: x86_64
+    pkgs:
   - name: web
     ifcfg: TBD
     mgaver: 9
@@ -127,3 +128,5 @@ nodes:
       - tcp 80
     svcs:
       - httpd
+    pkgs:
+      - apache
