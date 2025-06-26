@@ -99,6 +99,8 @@ nodes:
           # - unzip
           # - patch
           # - expect
+    svcs:
+      - none
   - name: dploy
     ifcfg: eno1:0
     mgaver: 9
@@ -119,6 +121,8 @@ nodes:
     ifcfg: TBD
     mgaver: 9
     mgaarch: x86_64
+    svcs:
+      - rsynd
     pkgs:
       - rpmtools
   - name: web
