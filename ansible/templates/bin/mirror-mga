@@ -1,11 +1,13 @@
 #!/bin/bash
 #
 # Mirror locally Mageia distribution versions
-
-{% for item in nodes | json_query('*.{v:mgaver, a:mgaarch}') %}
-{% set lva.v = a %}
+{% set va = [] %}
+{% for item in nodes %}
+	{% if item.mgaver+'-'+item.mgaarch not in va %}
+		{% va.append(item.mgaver+'-'+item.mgaarch) %}
+	{% endif %}
 {% endfor %}
-{% for key,value in lva %}
-rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/{{ key }}/{{ value }} {{ MGALDIR }}/{{ key }}/{{ value }}/
+{% for mgaver,mgaarch in va | split('-') %}
+rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/{{ mgaver }}/{{ mgaarch }} {{ MGALDIR }}/{{ mgaver }}/{{ mgaarch }}/
 {% endfor %}
 
