@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Mirror locally Mageia distribution versions
+
+{% for item in nodes | json_query('*.{v:mgaver, a:mgaarch}') %}
+{% set lva.v = a %}
+{% endfor %}
+{% for key,value in lva %}
+rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/{{ key }}/{{ value }} {{ MGALDIR }}/{{ key }}/{{ value }}/
+{% endfor %}
+
