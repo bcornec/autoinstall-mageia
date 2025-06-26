@@ -105,32 +105,35 @@
     - name: "Copy Mageia kernel for tftp boot"
       ansible.builtin.copy:
         remote_src: true
-        src: "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}/isolinux/{{ MGAARCH }}/vmlinuz"
-        dest: "{{ MGATFTPDIR }}/k{{ MGAVER }}-{{ MGAARCH }}"
+        src: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}/isolinux/{{ item.mgaarch }}/vmlinuz"
+        dest: "{{ MGATFTPDIR }}/k{{ item.mgaver }}-{{ item.mgaarch }}"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
         backup: yes
+      loop: "{{ nodes }}"
 
     - name: "Copy Mageia initrd for tftp boot"
       ansible.builtin.copy:
         remote_src: true
-        src: "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}/isolinux/{{ MGAARCH }}/all-nonfree.rdz"
-        dest: "{{ MGATFTPDIR }}/i{{ MGAVER }}-{{ MGAARCH }}.img"
+        src: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}/isolinux/{{ item.mgaarch }}/all-nonfree.rdz"
+        dest: "{{ MGATFTPDIR }}/i{{ item.mgaver }}-{{ item.mgaarch }}.img"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
         backup: yes
+      loop: "{{ nodes }}"
 
     - name: "Copy Mageia ldlinux for tftp boot"
       ansible.builtin.copy:
         remote_src: true
-        src: "{{ MGALDIR }}/{{ MGAVER }}/{{ MGAARCH }}/isolinux/ldlinux.c32"
+        src: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}/isolinux/ldlinux.c32"
         dest: "{{ MGATFTPDIR }}/ldlinux.c32"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
         backup: yes
+      loop: "{{ nodes }}"
 
     - name: "Copy Mageia conf files for tftp boot"
       ansible.builtin.template:
@@ -206,5 +209,4 @@
   handlers:
     - name: "Set of handlers"
       ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/handlers.yml"
-
 
