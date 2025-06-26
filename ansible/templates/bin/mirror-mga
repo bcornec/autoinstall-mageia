@@ -3,7 +3,7 @@
 # Mirror locally Mageia distribution versions
 {% set va = [] %}
 {% for item in nodes %}
-	{% set ver = item.mgaver | str %}
+	{% set ver = item.mgaver | string %}
 	{% if ver+'-'+item.mgaarch not in va %}
 		{{ va.append(ver+'-'+item.mgaarch) }}
 	{% endif %}
