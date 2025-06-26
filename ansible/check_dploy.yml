@@ -48,7 +48,6 @@
         mode: "0755"
       with_subelements: 
         - "{{ nodes }}"
-        - mgaver
 
     - name: "Install PXE original files for tftp"
       become: true
