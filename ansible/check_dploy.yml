@@ -184,15 +184,13 @@
     - name: "Generate auto_inst perl conf files"
       ansible.builtin.template:
         src: "{{ MGAANSIBLEDIR }}/templates/ks/auto_inst.cfg.pl.j2"
-        dest: "{{ MGAKSDIR }}/{{ item.0.name }}_auto_inst.cfg.pl"
+        dest: "{{ MGAKSDIR }}/{{ item.name }}_auto_inst.cfg.pl"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
         backup: yes
-      with_subelements: 
-        - "{{ nodes }}"
-        - ifcfg
-      when: item.0.name != "system"
+      loop: "{{ nodes }}"
+      when: item.name != "system"
 
     - name: Enable dploy services
       become: true
