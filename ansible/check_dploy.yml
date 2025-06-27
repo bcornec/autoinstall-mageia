@@ -192,7 +192,7 @@
       with_subelements: 
         - "{{ nodes }}"
         - ifcfg
-      when: nodes.name != "system"
+      when: item.0.name != "system"
 
     - name: Enable dploy services
       become: true
