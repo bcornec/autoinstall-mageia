@@ -11,7 +11,8 @@ label local
 {% if item.name != 'system' -%}
 label {{ item.name }}
   kernel k{{ item.mgaver }}-{{ item.mgaarch }}
-  append initrd=i{{ item.mgaver }}-{{ item.mgaarch }}.img automatic=method:http,interface:{{ item.ifcfg }},server:{{ MGADPLOYIP }},directory:/distrib/{{ item.mgaver }}/{{ item.mgaarch }},network:dhcp kickstart=http://{{ MGADPLOYIP }}/ks/{{ item.name }}.cfg.pl useless_thing_accepted
+  append initrd=i{{ item.mgaver }}-{{ item.mgaarch }}.img automatic=method:http,interface:{{ item.ifcfg }},server:{{ MGADPLOYIP }},directory:/distrib/{{ item.mgaver }}/{{ item.mgaarch }},network:dhcp kickstart=http://{{ MGADPLOYIP }}/ks/{{ item.name }}_auto_inst.cfg.pl useless_thing_accepted
+
 {% endif -%}
 {% endfor -%}
 
