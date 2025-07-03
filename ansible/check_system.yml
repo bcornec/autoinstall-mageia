@@ -107,19 +107,6 @@
   notify:
     - restart shorewall
 
-- name: Enable base services
-  become: true
-  become_user: root
-  ansible.builtin.systemd:
-    state: enabled
-    daemon_reload: true
-    enabled: true
-    name: "{{ item.1 }}"
-  with_subelements: 
-  - "{{ nodes }}"
-  - svcs
-  when: item.0.name == "system"
-
 - name: Start base services
   become: true
   become_user: root
