@@ -196,6 +196,19 @@
       become: true
       become_user: root
       ansible.builtin.systemd:
+        state: enabled
+        daemon_reload: true
+        enabled: true
+        name: "{{ item.1 }}"
+      with_subelements: 
+        - "{{ nodes }}"
+        - svcs
+      when: item.0.name == "dploy"
+
+    - name: Start dploy services
+      become: true
+      become_user: root
+      ansible.builtin.systemd:
         state: started
         daemon_reload: true
         enabled: true
