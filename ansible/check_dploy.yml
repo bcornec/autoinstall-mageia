@@ -22,6 +22,17 @@
       with_items:
         - { key: "net.ipv4.ip_forward", value: "1" }
 
+    - name: "Create sysctl file link for systemd"
+      become: true
+      become_user: root
+      ansible.builtin.file:
+        src: /etc/sysctl.conf
+        dest: /etc/sysctl.d/99-mga.conf
+        state: link
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: "0644"
+
     - name: "Create local dploy directories"
       become: true
       become_user: root
