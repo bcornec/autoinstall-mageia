@@ -102,12 +102,15 @@ cat > $MGASCRIPTDIR/mga-srv-check << EOF
 
 # Get needed variables build at install
 source $MGASCRIPTDIR/mga.sh
+EOF
 
+cat > $MGASCRIPTDIR/mga-srv-check << 'EOF'
 cd $MGAANSIBLEDIR
 CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT check_$MGATYPE.yml"
 echo "Executing $CMD"
 $CMD
 EOF
+
 chmod 755 $MGASCRIPTDIR/mga-srv-check
 $MGASCRIPTDIR/mga-srv-check
 
