@@ -1,0 +1,13 @@
+#
+# Shorewall -- /etc/shorewall/interfaces
+#
+# For information about entries in this file, type "man shorewall-interfaces"
+#
+# The manpage is also online at
+# https://shorewall.org/manpages/shorewall-interfaces.html
+#
+###############################################################################
+?FORMAT 2
+#ZONE           INTERFACE               OPTIONS
+net eno1 routeback,tcpflags,nosmurfs,routefilter,logmartians
+net eno2 routeback,tcpflags,nosmurfs,routefilter,logmartians
