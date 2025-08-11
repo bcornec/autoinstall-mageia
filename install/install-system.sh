@@ -104,7 +104,7 @@ cat > $MGASCRIPTDIR/mga-srv-check << EOF
 source $MGASCRIPTDIR/mga.sh
 EOF
 
-cat > $MGASCRIPTDIR/mga-srv-check << 'EOF'
+cat >> $MGASCRIPTDIR/mga-srv-check << 'EOF'
 cd $MGAANSIBLEDIR
 CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT check_$MGATYPE.yml"
 echo "Executing $CMD"
