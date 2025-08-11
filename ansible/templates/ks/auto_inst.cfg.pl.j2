@@ -38,10 +38,10 @@ $o = {
         'users' => [
                 {
                         'icon' => 'default',
-                        'realname' => '{{ MGAUSER }}',
+                        'realname' => '{{ MGADMININS }}',
                         'uid' => undef,
                         'groups' => [],
-                        'name' => '{{ MGAUSER }}',
+                        'name' => '{{ MGADMININS }}',
                         'shell' => '/bin/bash',
                         'gid' => undef,
                         # linux1
@@ -167,11 +167,11 @@ $o = {
         },
         # TODO: replace inventory_hostname wrong by name of the deployed machine
         'postInstall' => '
-        # Setup sudo for {{ MGAUSER }}
-        echo "Defaults:{{ MGAUSER }} !fqdn" > /etc/sudoers.d/{{ MGAUSER }}
-        echo "Defaults:{{ MGAUSER }} !requiretty" >> /etc/sudoers.d/{{ MGAUSER }}
-        echo "{{ MGAUSER }} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/{{ MGAUSER }}
+        # Setup sudo for {{ MGADMININS }}
+        echo "Defaults:{{ MGADMININS }} !fqdn" > /etc/sudoers.d/{{ MGADMININS }}
+        echo "Defaults:{{ MGADMININS }} !requiretty" >> /etc/sudoers.d/{{ MGADMININS }}
+        echo "{{ MGADMININS }} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/{{ MGADMININS }}
         # Launch install phase for this node
-        su - {{ MGAUSER }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item.name }} -g production -f {{ inventory_hostname }}" 2>&1 | tee /dev/tty7 | tee /var/log/post-install.log
+        su - {{ MGADMININS }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item.name }} -g production -f {{ inventory_hostname }}" 2>&1 | tee /dev/tty7 | tee /var/log/post-install.log
         ',
         };

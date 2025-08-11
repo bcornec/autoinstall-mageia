@@ -10,6 +10,8 @@ MGADNS1: 192.168.8.2
 MGADNS2: 172.16.8.120
 # linux1 - temporary
 MGAADMINPWD: $2a$08$37k9US2q3ST4eLFeR/.ype6SaYD3KgRL5ODOPjH9yStTKVW1zTDm.
+# Name of the user during auto_inst install
+MGAADMININS: fwadmin
 #
 # In case we have a LDAP server to use, use the following values:
 #

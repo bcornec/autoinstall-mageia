@@ -157,7 +157,7 @@ export MGATMPDIR=/tmp/mga.$$
 if grep -qE "^$MGAUSER:" /etc/passwd; then
     MGAHDIR=`grep -E "^$MGAUSER" /etc/passwd | cut -d: -f6`
     if ps auxww | grep -qE "^$MGAUSER:"; then
-        pkill -u $MGAUSER
+       pkill -u $MGAUSER
        sleep 1
        set +e
        pkill -9 -u $MGAUSER
