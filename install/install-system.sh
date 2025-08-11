@@ -92,12 +92,12 @@ CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT install_$MG
 echo "Executing $CMD"
 $CMD
 if [ $? -ne 0 ]; then
-	echo "Install had errors exiting before launching startup"
+	echo "Install had errors exiting before launching check"
 	exit -1
 fi
 
 # Create a conformity check script and runs it
-echo > $MGASCRIPTDIR/mga-srv-check << EOF
+cat > $MGASCRIPTDIR/mga-srv-check << EOF
 #!/bin/bash
 
 # Get needed variables build at install
