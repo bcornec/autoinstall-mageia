@@ -61,7 +61,7 @@ nodes:
       - diffutils
       - drakxtools-curses
       - fail2ban
-    # - firewalld
+      # - firewalld
       - inxi
       - ldetect
       - lm_sensors
@@ -89,20 +89,29 @@ nodes:
       - vlock
       - wget
       - xymon-client
+
   - name: build
     ifcfg: eno1
+    nodenames:
+      - name: mganode1
+        mac: 80:30:e0:24:fb:c4
+        ip: 192.168.16.72
+      - name: mganode2
+        mac: 14:02:ec:96:9b:b0
+        ip: 192.168.16.73
     mgaver: 9
     mgaarch: x86_64
     pkgs:
       - iurt
       # - moreutils
-          # - net-tools
-          # - netkit-telnet
-          # - unzip
-          # - patch
-          # - expect
+      # - net-tools
+      # - netkit-telnet
+      # - unzip
+      # - patch
+      # - expect
     svcs:
       - none
+
   - name: dploy
     ifcfg: eno1:0
     mgaver: 9
@@ -119,16 +128,26 @@ nodes:
       - dhcp-server
       - pxelinux
       - tftp-server
+
   - name: repo
     ifcfg: TBD
+    nodenames:
+      - name: mgarepo
+        mac: 80:30:e0:xx:yy:zz
+        ip: 192.168.16.73
     mgaver: 9
     mgaarch: x86_64
     svcs:
       - rsynd
     pkgs:
       - rpmtools
+
   - name: web
     ifcfg: TBD
+    nodenames:
+      - name: www
+        mac: 80:30:e0:xx:yy:zz
+        ip: 192.168.16.73
     mgaver: 9
     mgaarch: x86_64
     ports:

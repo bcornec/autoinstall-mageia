@@ -8,7 +8,7 @@ label local
         LOCALBOOT 0
 
 {% for item in nodes -%}
-{% if item.name != 'system' -%}
+{% if item.name != 'system' and item.name != 'dploy' -%}
 label {{ item.name }}
   kernel k{{ item.mgaver }}-{{ item.mgaarch }}
   append initrd=i{{ item.mgaver }}-{{ item.mgaarch }}.img automatic=method:http,interface:{{ item.ifcfg }},server:{{ MGADPLOYIP }},directory:/distrib/{{ item.mgaver }}/{{ item.mgaarch }},network:dhcp kickstart=http://{{ MGADPLOYIP }}/ks/{{ item.name }}_auto_inst.cfg.pl useless_thing_accepted
