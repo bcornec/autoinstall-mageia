@@ -8,11 +8,11 @@
 
 # Define INTERFACES to limit which network interfaces dhcpd listens on.
 # The default null value causes dhcpd to listen on all interfaces.
-{% for item in nodes %}
-{% if item.name == MGATYPE %}
+{% for item in nodes -%}
+{% if item.name == MGATYPE -%}
 INTERFACES="{{ item.ifcfg }}"
-{% endif %}
-{% endfor %}
+{% endif -%}
+{% endfor -%}
 
 # Define OPTIONS with any other options to pass to the dhcpd server.
 # See dhcpd(8) for available options and syntax.
