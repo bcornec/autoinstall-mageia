@@ -171,6 +171,8 @@ $o = {
         echo "Defaults:{{ MGAADMININS }} !fqdn" > /etc/sudoers.d/{{ MGAADMININS }}
         echo "Defaults:{{ MGAADMININS }} !requiretty" >> /etc/sudoers.d/{{ MGAADMININS }}
         echo "{{ MGAADMININS }} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/{{ MGAADMININS }}
+        # Ansible needs a mounted /dev/shm
+        mount -t tmpfs shmfs /dev/shm
         # Launch install phase for this node
         su - {{ MGAADMININS }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item.name }} -g production -f {{ inventory_hostname }}" 2>&1 | tee /dev/tty7 | tee /var/log/post-install.log
         ',
