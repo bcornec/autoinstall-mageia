@@ -179,10 +179,11 @@ $o = {
 {% for n in nodes -%}
 {% if n.name == MGATYPE -%}
 {% for machine in n.nodenames -%}
-{% if machine.mac == $MAC -%}
+{% if machine.mac == env['MAC'] -%}
         MACHINENAME={{ machine.name }}
 {% endif -%}
 {% endfor -%}
+{% endif -%}
 {% endfor -%}
         # Launch install phase for this node
         su - {{ MGAADMININS }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item.name }} -g production -f $MACHINENAME" 2>&1 | tee /dev/tty7 | tee /var/log/post-install.log
