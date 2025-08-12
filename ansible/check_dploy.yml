@@ -5,7 +5,7 @@
 
   handlers:
     - name: "Set of handlers"
-      ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/handlers.yml"
+      ansible.builtin.import_tasks: "{{ MGAANSIBLEDIR }}/handlers.yml"
 
   tasks:
     - name: Include variables for the underlying distribution
