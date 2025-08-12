@@ -174,12 +174,17 @@ $o = {
         # Ansible needs a mounted /dev/shm
         mount -t tmpfs shmfs /dev/shm
         # Get the hostname to deploy
-{% for item in nodes -%}
-{% if item.name == MGATYPE -%}
-ITF={{ item.ifcfg }}
+        ITF={{ item.ifcfg }}
+        MAC=`ip a show dev $ITF | grep link/ | awk \'{ print $2 }\'`
+{% for n in nodes -%}
+{% if n.name == MGATYPE -%}
+{% for machine in n.nodenames -%}
+{% if machine.mac == $MAC -%}
+        MACHINENAME={{ machine.name }}
 {% endif -%}
 {% endfor -%}
+{% endfor -%}
         # Launch install phase for this node
-        su - {{ MGAADMININS }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item.name }} -g production -f {{ inventory_hostname }}" 2>&1 | tee /dev/tty7 | tee /var/log/post-install.log
+        su - {{ MGAADMININS }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item.name }} -g production -f $MACHINENAME" 2>&1 | tee /dev/tty7 | tee /var/log/post-install.log
         ',
         };
