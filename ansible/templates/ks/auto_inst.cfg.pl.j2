@@ -178,8 +178,9 @@ $o = {
         MAC=`ip a show dev $ITF | grep link/ | awk \'{ print $2 }\'`
 {% if item.name == MGATYPE -%}
 {% for machine in item.nodenames -%}
-{% if machine.mac == env['MAC'] -%}
-        MACHINENAME={{ machine.name }}
+        if [ _"{{ machine.mac }}" = _"$MAC" ]; then
+            MACHINENAME={{ machine.name }}
+        fi
 {% endif -%}
 {% endfor -%}
 {% endif -%}
