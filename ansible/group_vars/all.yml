@@ -27,6 +27,9 @@ nodes:
   - name: system
     mgaver: 9
     mgaarch: x86_64
+    nodenames:
+      - name: void
+        mac: 00:00:00:00:00:00
     ports:
       - tcp 22,53,123
       - udp 53,123
@@ -114,6 +117,10 @@ nodes:
 
   - name: dploy
     ifcfg: eno1:0
+    nodenames:
+      - name: dploy
+        mac: 30:8d:99:b2:f9:23
+        ip: 192.168.16.71
     mgaver: 9
     mgaarch: x86_64
     ports:
