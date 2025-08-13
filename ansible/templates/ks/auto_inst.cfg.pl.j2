@@ -183,6 +183,6 @@ $o = {
         fi
 {% endfor -%}
         # Launch install phase for this node
-        su - {{ MGAADMININS }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item.name }} -g production -f $MACHINENAME" -i $MACHINEIP 2>&1 | tee /dev/tty7 | tee /var/log/post-install.log
+        su - {{ MGAADMININS }} -c "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n {{ item.name }} -g production -f $MACHINENAME -i $MACHINEIP" 2>&1 | tee /dev/tty7 | tee /var/log/post-install.log
         ',
         };
