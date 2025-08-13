@@ -1,6 +1,6 @@
 ---
 - name: Load variables generated at install time
-  ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/mga.yml"
+  ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/mageia.yml"
 
 - name: Ensure that common packages are installed for repo setup
   become: true
@@ -184,3 +184,12 @@
     - /usr/local/bin
     - /usr/local/sbin
     - /usr/local/share
+
+- name: Disable autoinstall
+  become: true
+  become_user: root
+  ansible.builtin.systemd:
+    state: stopped
+    daemon_reload: true
+    enabled: false
+    name: autoinstall-mageia

@@ -31,7 +31,7 @@
       become_user: root
       ansible.builtin.file:
         src: /etc/sysctl.conf
-        dest: /etc/sysctl.d/99-mga.conf
+        dest: /etc/sysctl.d/99-mageia.conf
         state: link
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
@@ -108,12 +108,12 @@
       become: true
       become_user: root
       ansible.builtin.cron: 
-        name: mga-mirror 
+        name: mageia-mirror 
         minute: 43 
         hour: 23 
         user: "{{ MGAUSER }}" 
-        job: /usr/local/bin/mirror-mga
-        cron_file: mirror-mga
+        job: /usr/local/bin/mirror-mageia
+        cron_file: mirror-mageia
         state: present 
         backup: yes
 
@@ -206,6 +206,15 @@
         backup: yes
       loop: "{{ nodes }}"
       when: item.name != "system"
+
+    - name: "Generate systemd conf file to lauch install after first boot
+      ansible.builtin.template:
+        src: "{{ MGAANSIBLEDIR }}/templates/systemd/autoinstall-mageia.service.j2"
+        dest: "{{ MGAKSDIR }}/autoinstall-mageia.service"
+        mode: 0644
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        backup: yes
 
     - name: Start dploy services
       become: true

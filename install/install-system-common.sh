@@ -84,10 +84,10 @@ MGADISTRIB: $MGADISTRIB
 MGAINSDIR: $MGAINSDIR
 MGAREPODIR: $MGAREPODIR
 EOF
-cat $MGAREPODIR/ansible/group_vars/mga-system >> $MGAREPODIR/ansible/group_vars/$MGAGROUP
+cat $MGAREPODIR/ansible/group_vars/mageia-system >> $MGAREPODIR/ansible/group_vars/$MGAGROUP
 
-if [ -f $MGAREPODIR/ansible/group_vars/mga-$MGATYPE ]; then
-	cat $MGAREPODIR/ansible/group_vars/mga-$MGATYPE >> $MGAREPODIR/ansible/group_vars/$MGAGROUP
+if [ -f $MGAREPODIR/ansible/group_vars/mageia-$MGATYPE ]; then
+	cat $MGAREPODIR/ansible/group_vars/mageia-$MGATYPE >> $MGAREPODIR/ansible/group_vars/$MGAGROUP
 fi
 
 # Inventory based on the installed system

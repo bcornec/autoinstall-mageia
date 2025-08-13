@@ -1,5 +1,5 @@
 # Fail2Ban configuration file 
 # from triumvirat.org
 [Definition]
-actionban = /usr/local/bin/mga-fail2ban-IP ban <ip>
-actionunban = /usr/local/bin/mga-fail2ban-IP unban <ip>
+actionban = /usr/local/bin/mageia-fail2ban-IP ban <ip>
+actionunban = /usr/local/bin/mageia-fail2ban-IP unban <ip>

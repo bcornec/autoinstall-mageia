@@ -20,19 +20,19 @@ email = $MGAUSER@mageia.org
 EOF
 fi
 
-# This is where mga.sh will be stored
+# This is where mageia.sh will be stored
 MGASCRIPTDIR="$MGAREPODIR/scripts"
 MGAPBKDIR=$MGAGROUP
 
 # Declares shell variables as ansible variables as well
 # then they can be used in playbooks
-cat > $MGASCRIPTDIR/mga.sh << EOF
-# This is the mga.sh script, generated at install
+cat > $MGASCRIPTDIR/mageia.sh << EOF
+# This is the mageia.sh script, generated at install
 #
 # Name of the admin user
 export MGAUSER=$MGAUSER
 
-# Name of the mga machine type (build, web, dploy, repo, ...)
+# Name of the mageia machine type (build, web, dploy, repo, ...)
 export MGATYPE=$MGATYPE
 
 # Location of the autoinstall directory
@@ -56,17 +56,17 @@ export MGAPBKDIR=$MGAPBKDIR
 
 EOF
 
-chmod 755 $MGASCRIPTDIR/mga.sh
-source $MGASCRIPTDIR/mga.sh
+chmod 755 $MGASCRIPTDIR/mageia.sh
+source $MGASCRIPTDIR/mageia.sh
 
 export MGAANSPLAYOPT="-e MGAANSIBLEDIR=$MGAANSIBLEDIR -e LDAPSETUP=0"
-cat >> $MGASCRIPTDIR/mga.sh << EOF
+cat >> $MGASCRIPTDIR/mageia.sh << EOF
 export MGAANSPLAYOPT="$MGAANSPLAYOPT"
 EOF
 
 cd $MGAANSIBLEDIR
 # Prepare variables for ansible
-cat > $MGAANSIBLEDIR/mga.yml << EOF
+cat > $MGAANSIBLEDIR/mageia.yml << EOF
 MGAUSER: $MGAUSER
 MGAANSIBLEDIR: $MGAANSIBLEDIR
 MGAREPODIR: $MGAREPODIR
@@ -97,21 +97,21 @@ if [ $? -ne 0 ]; then
 fi
 
 # Create a conformity check script and runs it
-cat > $MGASCRIPTDIR/mga-srv-check << EOF
+cat > $MGASCRIPTDIR/mageia-srv-check << EOF
 #!/bin/bash
 
 # Get needed variables build at install
-source $MGASCRIPTDIR/mga.sh
+source $MGASCRIPTDIR/mageia.sh
 EOF
 
-cat >> $MGASCRIPTDIR/mga-srv-check << 'EOF'
+cat >> $MGASCRIPTDIR/mageia-srv-check << 'EOF'
 cd $MGAANSIBLEDIR
 CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT check_$MGATYPE.yml"
 echo "Executing $CMD"
 $CMD
 EOF
 
-chmod 755 $MGASCRIPTDIR/mga-srv-check
-$MGASCRIPTDIR/mga-srv-check
+chmod 755 $MGASCRIPTDIR/mageia-srv-check
+$MGASCRIPTDIR/mageia-srv-check
 
 date

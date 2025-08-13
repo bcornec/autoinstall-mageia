@@ -1,5 +1,5 @@
 - name: Load variables generated at install time
-  ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/mga.yml"
+  ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/mageia.yml"
 
 - name: Ensure correct nproc soft limits
   become: true
@@ -106,6 +106,17 @@
   with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/*' ]
   notify:
     - restart shorewall
+
+- name: "Generate autoinstall-mageia script"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/bin/autoinstall-mageia.j2"
+    dest: /usr/local/bin/autoinstall-mageia
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0750
+    backup: yes
 
 - name: Start base services
   become: true
