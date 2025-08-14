@@ -207,6 +207,15 @@
       loop: "{{ nodes }}"
       when: item.name != "system"
 
+    - name: "Generate autoinstall-mageia script file"
+      ansible.builtin.template:
+        src: "{{ MGAANSIBLEDIR }}/templates/bin/autoinstall-mageia.j2"
+        dest: "{{ MGAKSDIR }}/autoinstall-mageia"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0755
+        backup: yes
+
     - name: "Generate systemd conf file to lauch install after first boot"
       ansible.builtin.template:
         src: "{{ MGAANSIBLEDIR }}/templates/systemd/autoinstall-mageia.service.j2"

@@ -173,6 +173,8 @@ $o = {
         # Get the systemd conf file for reboot
         wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia.service -O /etc/systemd/system/autoinstall-mageia.service
         chmod 644 /etc/systemd/system/autoinstall-mageia.service
+        wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia -O /usr/local/bin/autoinstall-mageia
+        chmod 750 /usr/local/bin/autoinstall-mageia
         # At first boot finish install - disabled at end of install script
         systemctl enable autoinstall-mageia
         # Get the hostname to deploy

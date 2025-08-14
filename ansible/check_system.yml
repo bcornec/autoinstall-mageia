@@ -107,17 +107,6 @@
   notify:
     - restart shorewall
 
-- name: "Generate autoinstall-mageia script"
-  become: true
-  become_user: root
-  ansible.builtin.template:
-    src: "{{ MGAANSIBLEDIR }}/templates/bin/autoinstall-mageia.j2"
-    dest: /usr/local/bin/autoinstall-mageia
-    owner: "{{ MGAUSER }}"
-    group: "{{ MGAUSER }}"
-    mode: 0750
-    backup: yes
-
 - name: Start base services
   become: true
   become_user: root
