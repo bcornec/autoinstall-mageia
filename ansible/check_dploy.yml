@@ -207,7 +207,7 @@
       loop: "{{ nodes }}"
       when: item.name != "system"
 
-    - name: "Generate systemd conf file to lauch install after first boot
+    - name: "Generate systemd conf file to lauch install after first boot"
       ansible.builtin.template:
         src: "{{ MGAANSIBLEDIR }}/templates/systemd/autoinstall-mageia.service.j2"
         dest: "{{ MGAKSDIR }}/autoinstall-mageia.service"
