@@ -174,21 +174,21 @@ $o = {
         wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia.service -O /etc/systemd/system/autoinstall-mageia.service
         chmod 644 /etc/systemd/system/autoinstall-mageia.service
         wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia -O /usr/local/bin/autoinstall-mageia
-        chmod 750 /usr/local/bin/autoinstall-mageia
+        chmod 755 /usr/local/bin/autoinstall-mageia
         # At first boot finish install - disabled at end of install script
         systemctl enable autoinstall-mageia
-        # Get the hostname to deploy
-        MGAMACHINETYPE={{ item.name }}
-        MGAMACHINEITF={{ item.ifcfg }}
-        MGAMACHINEMAC=`ip a show dev $MGAMACHINEITF | grep link/ | awk \'{ print $2 }\'`
+        # Create an environment file to store these variables used by systemd process and script
+        cat > /etc/autoinstall-mageia.sh << EOF
+        export MGAMACHINETYPE={{ item.name }}
+        export MGAMACHINEITF={{ item.ifcfg }}
+        export MGAMACHINEMAC=`ip a show dev $MGAMACHINEITF | grep link/ | awk \'{ print $2 }\'`
 {% for machine in item.nodenames -%}
         if [ _"{{ machine.mac }}" = _"$MGAMACHINEMAC" ]; then
-            MGAMACHINENAME={{ machine.name }}
-            MGAMACHINEIP={{ machine.ip }}
+            export MGAMACHINENAME={{ machine.name }}
+            export MGAMACHINEIP={{ machine.ip }}
         fi
 {% endfor -%}
-        # Create an environment file to store these varaibles used by systemd process
-        env | grep MGAMACHINE > /etc/autoinstall-mageia.sh
+EOF
         chmod 644 /etc/autoinstall-mageia.sh
         ',
         };

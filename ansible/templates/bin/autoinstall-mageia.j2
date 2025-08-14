@@ -6,15 +6,15 @@ set -e
 set -u
 set -o pipefail
 
-exec &> >(tee /var/log/post-autoinstall-mageia.log)
+exec &> >(tee $HOME/autoinstall-mageia.log)
 # Check user is correct
 MGAUSER=`id -u -n`
 if [ _"$MGAUSER" != _"{{ MGAADMININS }}" ]; then
 	echo "This script should be launched as user {{ MGAADMININS }}"
 	exit -1
 fi
-cd $HOME
 # Clean old install
+cd $HOME
 rm -rf autoinstall-mageia 
 # Reinstantiate
 git clone https://github.com/bcornec/autoinstall-mageia.git
