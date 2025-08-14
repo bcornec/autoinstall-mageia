@@ -7,7 +7,7 @@ set -o pipefail
 
 # This first part is distribution specific and should be adapted based on its nature
 
-PKGLIST="perl ansible openssh-server git"
+PKGLIST="perl ansible openssh-server git python3-rpm"
 
 # Base packages required
 urpmi --auto $PKGLIST
