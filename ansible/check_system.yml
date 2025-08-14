@@ -111,7 +111,7 @@
   become: true
   become_user: root
   ansible.builtin.template:
-    src: "{{ MGAANSIBLEDIR }}/bin/autoinstall-mageia.j2"
+    src: "{{ MGAANSIBLEDIR }}/templates/bin/autoinstall-mageia.j2"
     dest: /usr/local/bin/autoinstall-mageia
     owner: "{{ MGAUSER }}"
     group: "{{ MGAUSER }}"
