@@ -193,3 +193,4 @@
     daemon_reload: true
     enabled: false
     name: autoinstall-mageia
+  ignore_errors: true
