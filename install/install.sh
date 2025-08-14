@@ -196,7 +196,7 @@ fi
 useradd -U -m -s /bin/bash $MGAUSER
 
 # Manage passwd
-export MGAPWD=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1`
+export MGAPWD=`head -80 /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1`
 echo "$MGAUSER:$MGAPWD" | chpasswd
 echo "$MGAUSER is $MGAPWD" > $HDIR/.mgainstall/$MGAUSER
 
