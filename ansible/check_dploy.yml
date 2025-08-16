@@ -225,7 +225,7 @@
         group: "{{ MGAUSER }}"
         backup: yes
 
-    - name: Start dploy services
+    - name: Enable and start dploy services
       become: true
       become_user: root
       ansible.builtin.systemd:
@@ -233,7 +233,5 @@
         daemon_reload: true
         enabled: true
         name: "{{ item.1 }}"
-      with_subelements: 
-        - "{{ nodes }}"
-        - svcs
+      loop: "{{ nodes | subelements('svcs', { 'skip_missing': true })}}"
       when: item.0.name == "dploy"

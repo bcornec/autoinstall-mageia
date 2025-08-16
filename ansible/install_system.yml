@@ -19,9 +19,7 @@
     name: "{{ item.1 }}"
     update_cache: true
     state: present
-  with_subelements: 
-      - "{{ nodes }}"
-      - pkgs
+  loop: "{{ nodes | subelements('pkgs', { 'skip_missing': true })}}"
   when: item.0.name == "system" or item.0.name == MGATYPE
 
     # TODO conf NTP
