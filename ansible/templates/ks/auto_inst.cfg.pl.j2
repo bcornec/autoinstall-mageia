@@ -167,6 +167,7 @@ $o = {
         },
         'postInstall' => '
         exec &> >(tee $HOME/postinstall.log)
+        # Setup ssh for {{ MGAADMININS }}
         # Setup sudo for {{ MGAADMININS }}
         echo "Defaults:{{ MGAADMININS }} !fqdn" > /etc/sudoers.d/{{ MGAADMININS }}
         echo "Defaults:{{ MGAADMININS }} !requiretty" >> /etc/sudoers.d/{{ MGAADMININS }}

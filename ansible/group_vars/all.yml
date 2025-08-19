@@ -55,7 +55,6 @@ nodes:
       - vim-minimal
       - wget
       - xz
-      # This list is complementary
       - bash-completion
       - bind-utils
       - bzip2
@@ -64,7 +63,6 @@ nodes:
       - diffutils
       - drakxtools-curses
       - fail2ban
-      # - firewalld
       - inxi
       - ldetect
       - lm_sensors
@@ -88,6 +86,7 @@ nodes:
       - sos
       - strace
       - usbutils
+      - vim-common
       - vim-enhanced
       - vlock
       - wget
@@ -106,12 +105,6 @@ nodes:
     mgaarch: x86_64
     pkgs:
       - iurt
-      # - moreutils
-      # - net-tools
-      # - netkit-telnet
-      # - unzip
-      # - patch
-      # - expect
     svcs:
       - none
 
