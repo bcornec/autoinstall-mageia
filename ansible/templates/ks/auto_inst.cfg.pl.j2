@@ -166,7 +166,7 @@ $o = {
                 CAT_X => 0,
         },
         'postInstall' => '
-        exec &> >(tee $HOME/drakx/postinstall.log)
+        exec &> >(tee $HOME/postinstall.log)
         # Setup sudo for {{ MGAADMININS }}
         echo "Defaults:{{ MGAADMININS }} !fqdn" > /etc/sudoers.d/{{ MGAADMININS }}
         echo "Defaults:{{ MGAADMININS }} !requiretty" >> /etc/sudoers.d/{{ MGAADMININS }}
@@ -176,22 +176,9 @@ $o = {
         chmod 644 /etc/systemd/system/autoinstall-mageia.service
         wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia -O /usr/local/bin/autoinstall-mageia
         chmod 755 /usr/local/bin/autoinstall-mageia
+        wget http://{{ MGADPLOYIP }}/ks/{{ item.name }}_autoinstall-mageia.sh -O /etc/autoinstall-mageia.sh
+        chmod 644 /etc/autoinstall-mageia.sh
         # At first boot finish install - disabled at end of install script
         systemctl enable autoinstall-mageia
-        # Create an environment file to store these variables used by systemd process and script
-        cat > /etc/autoinstall-mageia.sh << EOF
-MGAMACHINETYPE={{ item.name }}
-MGAMACHINEITF={{ item.ifcfg }}
-MGAMACHINEMAC=`ip a show dev $MGAMACHINEITF | grep link/ | awk \'{ print $2 }\'`
-EOF
-{% for machine in item.nodenames -%}
-        if [ _"{{ machine.mac }}" = _"$MGAMACHINEMAC" ]; then
-            cat >> /etc/autoinstall-mageia.sh << EOF
-MGAMACHINENAME={{ machine.name }}
-MGAMACHINEIP={{ machine.ip }}
-EOF
-        fi
-{% endfor -%}
-        chmod 644 /etc/autoinstall-mageia.sh
         ',
         };

@@ -13,6 +13,9 @@ if [ _"$MGAUSER" != _"{{ MGAADMININS }}" ]; then
 	echo "This script should be launched as user {{ MGAADMININS }}"
 	exit -1
 fi
+
+# Get env var
+source /etc/autoinstall-mageia.sh
 # Clean old install
 cd $HOME
 rm -rf autoinstall-mageia 

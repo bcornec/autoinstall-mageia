@@ -5,7 +5,6 @@ After=network.target
 [Service]
 Type=oneshot
 # Build by auto_inst
-EnvironmentFile=/etc/autoinstall-mageia.sh
 ExecStart=/usr/local/bin/autoinstall-mageia
 User={{ MGAADMININS }}
 RemainAfterExit=true
