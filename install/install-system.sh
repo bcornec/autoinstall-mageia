@@ -84,7 +84,7 @@ then
 fi
 
 # Install ansible collections needed
-if [ $WODDISTRIB = "mageia-9" ]; then
+if [ $MGADISTRIB = "mageia-9" ]; then
     # Older distributions require an older version of the collection to work.
     # See https://github.com/ansible-collections/community.general
     ansible-galaxy collection install --force-with-deps community.general:4.8.5
