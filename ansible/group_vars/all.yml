@@ -108,7 +108,7 @@ nodes:
     pkgs:
       - iurt
     svcs:
-      - none
+      - sshd
 
   - name: dploy
     ifcfg: eno1:0
