@@ -166,7 +166,7 @@ $o = {
                 CAT_X => 0,
         },
         'postInstall' => '
-        exec &> >(tee $HOME/postinstall.log)
+        exec &> >(tee /root/postautoinstall.log)
         # Setup ssh for {{ MGAADMININS }}
         # Setup sudo for {{ MGAADMININS }}
         echo "Defaults:{{ MGAADMININS }} !fqdn" > /etc/sudoers.d/{{ MGAADMININS }}

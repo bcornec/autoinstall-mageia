@@ -17,6 +17,6 @@
         state: started
         daemon_reload: true
         enabled: true
-        name: {{ item.1 }}
+        name: "{{ item.1 }}"
       loop: "{{ nodes | subelements('svcs', { 'skip_missing': true })}}"
       when: item.0.name == MGATYPE
