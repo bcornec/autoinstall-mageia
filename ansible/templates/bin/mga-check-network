@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+if [ _"$1" == _"" ]; then
+	echo "Syntax: mga-check-network IP|name"
+	exit -1
+fi
+MACHINE=$1
+CMD="ping -q -c1 $MACHINE"
+$CMD 2>&1 >/dev/null
+ret=$?
+while [ $ret != 0 ]; do
+	echo "waiting for network availability..."
+	sleep 1
+	$CMD 2>&1 >/dev/null
+	ret=$?
+done
+echo "network up online!"
