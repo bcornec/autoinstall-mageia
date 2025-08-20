@@ -84,7 +84,13 @@ then
 fi
 
 # Install ansible collections needed
-ansible-galaxy collection install community.general
+if [ $WODDISTRIB = "mageia-9" ]; then
+    # Older distributions require an older version of the collection to work.
+    # See https://github.com/ansible-collections/community.general
+    ansible-galaxy collection install --force-with-deps community.general:4.8.5
+else
+    ansible-galaxy collection install community.general
+fi
 ansible-galaxy collection install ansible.posix
 
 # Automatic Installation script for the system 

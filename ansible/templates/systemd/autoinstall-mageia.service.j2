@@ -1,6 +1,7 @@
 [Unit]
 Description=Mageia autoinstall at first boot
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
