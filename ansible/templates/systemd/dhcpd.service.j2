@@ -11,7 +11,7 @@ Type=notify
 Environment=CONFIGFILE=/etc/dhcpd.conf LEASEFILE=/var/lib/dhcpd/dhcpd.leases
 EnvironmentFile=-/etc/sysconfig/dhcpd
 # Patch to allow dhcpd to always start
-ExecStartPre=/bin/bash -c '(while !ping -c1 {{ MGADNS1 }} 2>/dev/null; do echo "waiting for network availability..."; sleep 1; done); echo "network up online!"'
+ExecStartPre=/usr/local/bin/mga-check-network {{ MGADNS1 }}
 ExecStart=/usr/sbin/dhcpd -f -cf $CONFIGFILE -lf $LEASEFILE -user dhcpd -group dhcpd --no-pid $OPTIONS $INTERFACES
 StandardError=null
 

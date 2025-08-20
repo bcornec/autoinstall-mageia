@@ -177,6 +177,8 @@ $o = {
         chmod 644 /etc/systemd/system/autoinstall-mageia.service
         wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia -O /usr/local/bin/autoinstall-mageia
         chmod 755 /usr/local/bin/autoinstall-mageia
+        wget http://{{ MGADPLOYIP }}/ks/mga-check-network -O /usr/local/bin/mga-check-network
+        chmod 755 /usr/local/bin/mga-check-network
         wget http://{{ MGADPLOYIP }}/ks/{{ item.name }}_autoinstall-mageia.sh -O /etc/autoinstall-mageia.sh
         chmod 644 /etc/autoinstall-mageia.sh
         # At first boot finish install - disabled at end of install script

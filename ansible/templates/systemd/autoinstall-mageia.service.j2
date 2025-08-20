@@ -7,7 +7,7 @@ Wants=network-online.target
 Type=oneshot
 # Build by auto_inst
 # Patch to allow service to always start after network
-ExecStartPre=/bin/bash -c '(while !ping -c1 github.com 2>/dev/null; do echo "waiting for network availability..."; sleep 1; done); echo "network up online!"'
+ExecStartPre=/usr/local/bin/mga-check-network github.com
 ExecStart=/usr/local/bin/autoinstall-mageia
 User={{ MGAADMININS }}
 RemainAfterExit=true
