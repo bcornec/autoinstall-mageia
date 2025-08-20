@@ -187,7 +187,6 @@
   become: true
   become_user: root
   ansible.builtin.systemd:
-    state: stopped
     daemon_reload: true
     enabled: false
     name: autoinstall-mageia
