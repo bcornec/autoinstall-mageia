@@ -103,6 +103,8 @@ nodes:
         ip: 192.168.16.73
     mgaver: 9
     mgaarch: x86_64
+    ports:
+      - tcp 22
     pkgs:
       - iurt
     svcs:
@@ -137,6 +139,8 @@ nodes:
         ip: 192.168.16.74
     mgaver: 9
     mgaarch: x86_64
+    ports:
+      - tcp 80
     svcs:
       - rsynd
     pkgs:
