@@ -99,7 +99,7 @@ nodes:
         mac: 80:30:e0:24:fb:c4
         ip: 192.168.16.72
       - name: mganode2
-        mac: 14:02:ec:96:9b:b0
+        mac: 94:40:c9:3d:47:28
         ip: 192.168.16.73
     mgaver: 9
     mgaarch: x86_64
