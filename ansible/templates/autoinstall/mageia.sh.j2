@@ -1,0 +1,75 @@
+# 
+# Environment variable for autoinstall-mageia
+#
+MGAMACHINETYPE={{ item.name }}
+# Here we care about deployment interfaces
+{% for machine in item.nodenames -%}
+FOUND=`ip a | grep "{{ machine.dif.mac }}"`
+if [ _"$FOUND" != _"" ]; then
+	# we are on the right machine
+	MGAMACHINEDMAC="{{ machine.dif.mac }}"
+	MGAMACHINENAME={{ machine.name }}
+	MGAMACHINEDITF={{ machine.dif.name }}
+	MGAMACHINEDIP={{ machine.dif.ip | ansible.utils.ipaddr('address') }}
+	MGAMACHINEDMASK={{ machine.dif.ip | ansible.utils.ipaddr('netmask') }}
+	MGAMACHINEIITF={{ machine.iif.name }}
+	MGAMACHINEIIP={{ machine.iif.ip | ansible.utils.ipaddr('address') }}
+	MGAMACHINEIMASK={{ machine.iif.ip | ansible.utils.ipaddr('netmask') }}
+	MGAMACHINEINET={{ machine.iif.ip | ansible.utils.ipaddr('network') }}
+	MGAMACHINEPUBITF={{ machine.pubif.name }}
+	MGAMACHINEPUBIP={{ machine.pubif.ip | ansible.utils.ipaddr('address') }}
+	MGAMACHINEPUBMASK={{ machine.pubif.ip | ansible.utils.ipaddr('netmask') }}
+
+	type=`echo $MGAMACHINEPUBITF | cut -c1-4`
+	if [ _"$type" = _"bond" ]; then
+		# Keep slave interfaces names
+		itfs=""
+		for mac in {{ machine.pubif.mac }}; do
+			itfs=$itfs",`ip a | grep -A 0 -B 1 $mac | head -1 | cut -d: -f2`"
+		done
+		MGAMACHINEPUBSLAVE=`echo $itfs | sed 's/^,//'`
+	fi
+
+	type=`echo $MGAMACHINEIITF | cut -c1-4`
+	if [ _"$type" = _"bond" ]; then
+		# Keep slave interfaces names
+		itfs=""
+		for mac in {{ machine.iif.mac }}; do
+			itfs=$itfs",`ip a | grep -A 0 -B 1 $mac | head -1 | cut -d: -f2`"
+		done
+		MGAMACHINEISLAVE=`echo $itfs | sed 's/^,//'`
+	fi
+
+	# That file should be writable by both MGAUSER and MGAADMININS
+	sudo chgrp {{ MGAUSER }} {{ MGALOCAL }}/autoinstall
+	sudo chmod 775 {{ MGALOCAL }}/autoinstall
+	rm -f {{ MGALOCAL }}/autoinstall/mageia.yml
+
+	cat > {{ MGALOCAL }}/autoinstall/mageia.yml << EOF
+MGAMACHINEDMAC: $MGAMACHINEDMAC
+MGAMACHINENAME: $MGAMACHINENAME
+MGAMACHINEDITF: $MGAMACHINEDITF
+MGAMACHINEDIP: $MGAMACHINEDIP
+MGAMACHINEDMASK: $MGAMACHINEDMASK
+MGAMACHINEIITF: $MGAMACHINEIITF
+MGAMACHINEIIP: $MGAMACHINEIIP
+MGAMACHINEIMASK: $MGAMACHINEIMASK
+MGAMACHINEINET: $MGAMACHINEINET
+MGAMACHINEPUBITF: $MGAMACHINEPUBITF
+MGAMACHINEPUBIP: $MGAMACHINEPUBIP
+MGAMACHINEPUBMASK: $MGAMACHINEPUBMASK
+EOF
+	if [ _"$MGAMACHINEPUBSLAVE" != _"" ]; then
+		cat >> {{ MGALOCAL }}/autoinstall/mageia.yml << EOF
+MGAMACHINEPUBSLAVE: $MGAMACHINEPUBSLAVE
+EOF
+	fi
+	if [ _"$MGAMACHINEISLAVE" != _"" ]; then
+		cat >> {{ MGALOCAL }}/autoinstall/mageia.yml << EOF
+MGAMACHINEISLAVE: $MGAMACHINEISLAVE
+EOF
+	fi
+fi
+{% endfor -%}
+# For autoinstall-mageia startup script
+MGAREPODIR={{ MGAREPODIR }}

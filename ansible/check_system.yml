@@ -1,5 +1,15 @@
 - name: Load variables generated at install time
-  ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/mageia.yml"
+  ansible.builtin.include_vars: "{{ MGALOCAL }}/etc/mageia.yml"
+
+- name: Load variables generated with autoinstall-mageia if any
+  ansible.builtin.include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ MGALOCAL }}/autoinstall/mageia.yml"
+      skip: true
+
+- name: Check for installed packages
+  ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
 
 - name: Ensure correct nproc soft limits
   become: true
@@ -93,6 +103,76 @@
     line: UserTasksMax=100000
     state: present
 
+- name: "Check public network configuration"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/ifcfg-pubif.j2"
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ MGAMACHINEPUBITF }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+
+- name: Adds real network interfaces in case of bonding
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/ifcfg-slave.j2"
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  when: MGAMACHINEPUBITF | truncate(4) == "bond"
+  loop: "{{ MGAMACHINEPUBSLAVE.split(',') }}"
+
+- name: "Check default network route"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/network.j2"
+    dest: "/etc/sysconfig/network"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+
+- name: "Check resolver"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/etc/resolv.conf.j2"
+    dest: "/etc/resolv.conf"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+
+- name: "Check internal network configuration"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/ifcfg-iif.j2"
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ MGAMACHINEIITF }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+
+- name: Adds real network interfaces in case of bonding
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/ifcfg-slave.j2"
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  when: MGAMACHINEIITF | truncate(4) == "bond"
+  loop: "{{ MGAMACHINEISLAVE.split(',') }}"
+
 - name: "Generate shorewall rules"
   become: true
   become_user: root
@@ -118,6 +198,18 @@
     mode: 0755
     backup: yes
 
+- name: Setup crontab for daily conformity check
+  become: true
+  become_user: root
+  ansible.builtin.cron:
+    name: mageia-srv-check
+    minute: "{{ 59 | random(seed=inventory_hostname) }} "
+    hour: "04"
+    user: "{{ MGAUSER }}"
+    job: "{{ MGALOCAL }}/bin/mageia-srv-check"
+    cron_file: mageia-srv-check
+    state: present
+
 - name: Start base services
   become: true
   become_user: root
@@ -128,4 +220,3 @@
     name: "{{ item.1 }}"
   loop: "{{ nodes | subelements('svcs', { 'skip_missing': true })}}"
   when: item.0.name == "system"
-

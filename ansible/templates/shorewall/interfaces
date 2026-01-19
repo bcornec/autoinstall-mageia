@@ -9,6 +9,6 @@
 ###############################################################################
 ?FORMAT 2
 #ZONE           INTERFACE               OPTIONS
-# Shouldn't be harcoded and also adapted for difrent node types
-net eno1 routeback,tcpflags,nosmurfs,routefilter,logmartians
-net eno2 routeback,tcpflags,nosmurfs,routefilter,logmartians
+net {{ MGAMACHINEDITF }} routeback,tcpflags,nosmurfs,routefilter,logmartians
+net {{ MGAMACHINEIITF }} routeback,tcpflags,nosmurfs,routefilter,logmartians
+net {{ MGAMACHINEPUBITF }} routeback,tcpflags,nosmurfs,routefilter,logmartians

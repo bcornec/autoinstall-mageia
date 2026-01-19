@@ -7,8 +7,8 @@ Wants=network-online.target
 Type=oneshot
 # Build by auto_inst
 # Patch to allow service to always start after network
-ExecStartPre=/usr/local/bin/mga-check-network github.com
-ExecStart=/usr/local/bin/autoinstall-mageia
+ExecStartPre={{ MGALOCAL }}/bin/mga-check-network github.com
+ExecStart={{ MGALOCAL }}/autoinstall/autoinstall-mageia
 User={{ MGAADMININS }}
 RemainAfterExit=true
 

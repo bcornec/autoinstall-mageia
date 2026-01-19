@@ -74,21 +74,23 @@ $o = {
                         'dnsServer2' => '{{ MGADNS2 }}',
                 },
                 'wireless' => {},
+{% for machine in item.nodenames -%}
                 'ifcfg' => {
-                        '{{ item.ifcfg }}' => {
+                        '{{ machine.dif.name }}' => {
                                 'BROADCAST' => '',
                                 'isUp' => 1,
                                 'BOOTPROTO' => 'dhcp',
                                 'isPtp' => '',
                                 'NETWORK' => '',
                                 'HWADDR' => undef,
-                                'DEVICE' => '{{ item.ifcfg }}',
+                                'DEVICE' => '{{ machine.dif.name }}',
                                 'METRIC' => 10
                         }
                 },
-                'net_interface' => '{{ item.ifcfg }}',
+                'net_interface' => '{{ machine.dif.name }}',
                 'type' => 'network::connection::ethernet',
                 'PROFILE' => 'default'
+{% endfor -%}
         },
         'authentication' => {
                 'shadow' => 1,
@@ -175,12 +177,17 @@ $o = {
         # Get the systemd conf file for reboot
         wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia.service -O /etc/systemd/system/autoinstall-mageia.service
         chmod 644 /etc/systemd/system/autoinstall-mageia.service
-        wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia -O /usr/local/bin/autoinstall-mageia
-        chmod 755 /usr/local/bin/autoinstall-mageia
-        wget http://{{ MGADPLOYIP }}/ks/mga-check-network -O /usr/local/bin/mga-check-network
-        chmod 755 /usr/local/bin/mga-check-network
-        wget http://{{ MGADPLOYIP }}/ks/{{ item.name }}_autoinstall-mageia.sh -O /etc/autoinstall-mageia.sh
-        chmod 644 /etc/autoinstall-mageia.sh
+        # autoinstall-mageia
+        mkdir -p {{ MGALOCAL }}/autoinstall
+        wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia -O {{ MGALOCAL }}/autoinstall/autoinstall-mageia
+        chmod 755 {{ MGALOCAL }}/autoinstall/autoinstall-mageia
+        wget http://{{ MGADPLOYIP }}/ks/{{ item.name }}_autoinstall-mageia.sh -O {{ MGALOCAL }}/autoinstall/mageia.sh
+        chmod 755 {{ MGALOCAL }}/autoinstall/mageia.sh
+        chown -R {{ MGAADMININS }}:{{ MGAADMININS }} {{ MGALOCAL }}/autoinstall
+        chmod 755 {{ MGALOCAL }}/autoinstall
+        # helper script
+        wget http://{{ MGADPLOYIP }}/ks/mga-check-network -O {{ MGALOCAL }}/bin/mga-check-network
+        chmod 755 {{ MGALOCAL }}/bin/mga-check-network
         # At first boot finish install - disabled at end of install script
         systemctl enable autoinstall-mageia
         ',

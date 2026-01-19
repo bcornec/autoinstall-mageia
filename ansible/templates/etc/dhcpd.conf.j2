@@ -4,23 +4,16 @@ allow unknown-clients;
 authoritative;
 
 shared-network mgalan {
-subnet 192.168.16.0 netmask 255.255.255.0 {
 # --- default gateway
-{% for item in nodes -%}
-{% if item.name == 'dploy' -%}
-{% for machine in item.nodenames -%}
-	option routers			{{ machine.ip }};
-{% endfor -%}
-{% endif -%}
-{% endfor -%}
+subnet {{ MGAMACHINEINET }} netmask {{ MGAMACHINEIMASK }} {
+	option routers			{{ MGAMACHINEIIP }};
+	option subnet-mask		{{ MGAMACHINEIMASK }};
 
-	option subnet-mask		255.255.255.0;
-
-	#option domain-name		"home.musique-ancienne.org";
-	option domain-name-servers	ns.home.musique-ancienne.org;
+	option domain-name		"{{ MGADOMAIN }}";
+	option domain-name-servers	ns0.mageia.org, ns1.mageia.org;
 
 #	option time-offset		-5;	# Eastern Standard Time
-	option ntp-servers		ntp.home.musique-ancienne.org;
+	option ntp-servers		2.mageia.pool.ntp.org;
 
     group {
 	next-server {{ MGADPLOYIP }};
@@ -43,14 +36,14 @@ subnet 192.168.16.0 netmask 255.255.255.0 {
 	# Mageia DL80 Gen9 LOM 1
 	#host mgadploy {
 		#hardware ethernet 30:8d:99:b2:f9:23;
-		#fixed-address 192.168.16.71;
+		#fixed-address 192.168.26.71;
 	#}
 {% for item in nodes -%}
 {% if item.name != 'system' and item.name != 'dploy' -%}
 {% for machine in item.nodenames -%}
 	host {{ machine.name }} {
-		hardware ethernet {{ machine.mac }};
-		fixed-address {{ machine.ip }};
+		hardware ethernet {{ machine.dif.mac }};
+		fixed-address {{ machine.dif.ip | ansible.utils.ipaddr('address') }};
 	}
 {% endfor -%}
 {% endif -%}

@@ -48,4 +48,20 @@ else
 	usage
 	exit -2
 fi
-ssh fwadmin@$MGAINSFQDN "rm -rf autoinstall-mageia ; git clone https://github.com/bcornec/autoinstall-mageia.git ; cd autoinstall-mageia/install ; sudo ./install.sh -n $MGATYPE -g production -f ${f}"
+
+# redirect stdout/stderr to a file in the launching user directory
+mkdir -p $HDIR/.mgainstall
+exec &> >(tee $HDIR/.mgainstall/dploy.log)
+
+echo "dploy starting at `date`"
+# Get path of execution
+EXEPATH=`dirname "$0"`
+export EXEPATH=`( cd "$EXEPATH" && pwd )`
+
+source $EXEPATH/install.repo
+# Overload MGAINSREPO if using a private one
+if [ -f $EXEPATH/install.priv ]; then
+    source $EXEPATH/install.priv
+fi
+
+ssh fwadmin@$MGAINSFQDN "rm -rf autoinstall-mageia ; git clone $MGAINSREPO ; cd autoinstall-mageia ; git checkout $MGAINSBRANCH ; cd install ; sudo ./install.sh -n $MGATYPE -g production -f ${f}"

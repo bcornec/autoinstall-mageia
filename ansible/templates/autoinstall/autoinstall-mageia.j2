@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Launch the automatic installation of this Mageia node
+#
+set -e
+set -u
+set -o pipefail
+
+exec &> >(tee $HOME/autoinstall-mageia.log)
+# Check user is correct
+export LAUNCHUSER=`id -u -n`
+if [ _"$LAUNCHUSER" != _"{{ MGAUSER }}" ]; then
+	echo "This script should be launched as user {{ MGAUSER }}"
+	exit -1
+fi
+
+# Get env var
+if [ -f  {{ MGALOCAL }}/autoinstall/mageia.sh ]; then
+	source {{ MGALOCAL }}/autoinstall/mageia.sh
+fi
+
+cd $MGAREPODIR
+# Install as root
+sudo ./install.sh -n $MGAMACHINETYPE -g production -f $MGAMACHINENAME -i $MGAMACHINEDIP

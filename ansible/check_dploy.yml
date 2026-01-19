@@ -14,6 +14,9 @@
     - name: Base setup for a Mageia Infra server
       ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/check_system.yml"
 
+    - name: Check for installed packages
+      ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
+
     - name: Setup sysctl params
       become: true
       become_user: root
@@ -94,15 +97,24 @@
         - "{{ MGATFTPDIR }}/help.txt"
         - "{{ MGATFTPDIR }}/pxelinux.cfg/default"
 
-    - name: "Copy mirror script to /usr/local/bin"
+    - name: "Copy scripts to bin under {{ MGALOCAL }}"
       ansible.builtin.template:
         src: "{{ item }}"
-        dest: "/usr/local/bin/{{ item | basename }}"
+        dest: "{{ MGALOCAL }}/bin/{{ item | basename | regex_replace('.j2$') }}"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0755
         backup: yes
-      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/bin/*' ]
+      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/bin/*.j2' ]
+
+    - name: "Generate autoinstall-mageia script file"
+      ansible.builtin.template:
+        src: "{{ MGAANSIBLEDIR }}/templates/autoinstall/autoinstall-mageia.j2"
+        dest: "{{ MGAKSDIR }}/autoinstall-mageia"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0755
+        backup: yes
 
     - name: "Setup cron based mirror of Mageia"
       become: true
@@ -112,7 +124,7 @@
         minute: 43 
         hour: 23 
         user: "{{ MGAUSER }}" 
-        job: /usr/local/bin/mirror-mageia
+        job: "{{ MGALOCAL }}/bin/mirror-mageia"
         cron_file: mirror-mageia
         state: present 
         backup: yes
@@ -164,8 +176,8 @@
       become: true
       become_user: root
       ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/etc/dhcpd.conf"
-        dest: /etc
+        src: "{{ MGAANSIBLEDIR }}/templates/etc/dhcpd.conf.j2"
+        dest: /etc/dhcpd.conf
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
@@ -177,8 +189,8 @@
       become: true
       become_user: root
       ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/dhcpd"
-        dest: /etc/sysconfig
+        src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/dhcpd.j2"
+        dest: /etc/sysconfig/dhcpd
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
@@ -231,7 +243,7 @@
 
     - name: "Generate autoinstall-mageia.sh conf file"
       ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/etc/autoinstall-mageia.sh.j2"
+        src: "{{ MGAANSIBLEDIR }}/templates/autoinstall/mageia.sh.j2"
         dest: "{{ MGAKSDIR }}/{{ item.name }}_autoinstall-mageia.sh"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
@@ -239,15 +251,6 @@
         backup: yes
       loop: "{{ nodes }}"
       when: item.name != "system"
-
-    - name: "Generate autoinstall-mageia script file"
-      ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/bin/autoinstall-mageia.j2"
-        dest: "{{ MGAKSDIR }}/autoinstall-mageia"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0755
-        backup: yes
 
     - name: "Generate systemd conf file to lauch install after first boot"
       ansible.builtin.template:

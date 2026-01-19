@@ -4,10 +4,21 @@ MGAMIRROR: rsync://fr2.rpmfind.net/linux/mageia/distrib/
 MGAKSDIR: /var/www/html/ks
 MGALDIR: /var/www/html/distrib
 MGATFTPDIR: /var/lib/tftpboot
-MGADPLOYIP: 192.168.8.71
-MGAGW: 192.168.8.254
-MGADNS1: 192.168.8.2
+# Network
+MGADOMAIN: mageia.org
+MGAIDOMAIN: mga.musique-ancienne.org
+# at IELO
+#MGAIDOMAIN: i.mageia.org
+MGADPLOYIP: 192.168.26.156
+MGAGW: 192.168.26.2
+# at IELO
+#MGAGW: 212.85.158.145
+MGADNS1: 192.168.26.2
 MGADNS2: 172.16.8.120
+MGADNS3: 1.1.1.1
+# at IELO
+#MGADNS1: 212.85.158.151
+#MGADNS2: 163.172.148.228
 # linux1 - temporary
 MGAADMINPWD: $2a$08$37k9US2q3ST4eLFeR/.ype6SaYD3KgRL5ODOPjH9yStTKVW1zTDm.
 # Name of the user during auto_inst install
@@ -26,6 +37,7 @@ LDAPPORT: "389"
 # MGA services per node type
 #
 nodes:
+  # Common content for all nodes
   - name: system
     mgaver: 9
     mgaarch: x86_64
@@ -37,6 +49,7 @@ nodes:
       - udp 53,123
       - icmp 8
     svcs:
+      - network
       - crond
       - fail2ban
       - ntpd
@@ -95,14 +108,55 @@ nodes:
       - xymon-client
 
   - name: build
-    ifcfg: eno1
     nodenames:
-      - name: mganode1
-        mac: 80:30:e0:24:fb:c4
-        ip: 192.168.16.72
-      - name: mganode2
-        mac: 94:40:c9:3d:47:28
-        ip: 192.168.16.73
+      - name: garcimore
+        # interface for deployment
+        dif:
+          name: eno1
+          mac: 80:30:e0:24:fb:c4
+          ip: 192.168.26.154/24
+        # For internal comm
+        iif:
+          name: bond1
+          mac:
+            # eno1
+            - 80:30:e0:24:fb:c4
+            # eno2
+            - 80:30:e0:24:fb:c5
+          ip: 192.168.26.154/24
+        # IELO /28
+        pubif:
+          name: bond0
+          mac:
+            # eno5
+            - 14:02:ec:96:9b:b0
+            # eno6
+            - 14:02:ec:96:9b:b1
+          ip: 212.85.158.154/28
+      - name: houdini
+        # for deployment
+        dif:
+          name: eno1
+          mac: 94:40:c9:3d:47:28
+          ip: 192.168.26.155/24
+        # for internal comm
+        iif:
+          name: bond1
+          mac:
+            # eno1
+            - 94:40:c9:3d:47:28
+            # eno2
+            - 94:40:c9:3d:47:29
+          ip: 192.168.26.155/24
+        # IELO /28
+        pubif:
+          name: bond0
+          mac:
+            # eno5
+            - 14:02:ec:81:18:80
+            # eno6
+            - 14:02:ec:81:18:81
+          ip: 212.85.158.155/28
     mgaver: 9
     mgaarch: x86_64
     ports:
@@ -113,11 +167,25 @@ nodes:
       - sshd
 
   - name: dploy
-    ifcfg: eno1:0
     nodenames:
       - name: dploy
-        mac: 30:8d:99:b2:f9:23
-        ip: 192.168.16.71
+        # for deployment
+        dif:
+          name: eno2
+          mac: 30:8d:99:b2:f9:24
+          ip: 192.168.26.156/24
+        # for internal comm
+        iif:
+          name: eno2
+          mac:
+            - 30:8d:99:b2:f9:24
+          ip: 192.168.26.156/24
+        # IELO /28
+        pubif:
+          name: eno1
+          mac:
+            - xx:8d:99:b2:f9:24
+          ip: 212.85.158.156/28
     mgaver: 9
     mgaarch: x86_64
     ports:
@@ -132,13 +200,29 @@ nodes:
       - dhcp-server
       - pxelinux
       - tftp-server
+      - python3-netaddr
 
   - name: repo
     ifcfg: TBD
     nodenames:
-      - name: mgarepo
-        mac: 80:30:e0:00:00:00
-        ip: 192.168.16.74
+      - name: melies
+        # for deployment
+        dif:
+          name: eno1
+          mac: 80:30:e0:00:00:00
+          ip: 192.168.26.158/24
+        iif:
+          name: bond1
+          mac:
+            - 80:30:e0:00:00:00
+            - 80:30:e0:00:00:00
+          ip: 192.168.26.158/24
+        # IELO /28
+        pubif:
+          name: bond0
+          mac:
+            - 80:30:e0:00:00:00
+          ip: 212.85.158.158/28
     mgaver: 9
     mgaarch: x86_64
     ports:
@@ -151,9 +235,25 @@ nodes:
   - name: web
     ifcfg: TBD
     nodenames:
-      - name: www
-        mac: 80:30:e0:00:00:00
-        ip: 192.168.16.75
+      - name: webb
+        # for deployment
+        dif:
+          name: eno1
+          mac: 80:30:e0:00:00:00
+          ip: 192.168.26.157/24
+        iif:
+          name: bond1
+          mac:
+            - 80:30:e0:00:00:00
+            - 80:30:e0:00:00:00
+          ip: 192.168.26.157/24
+        # IELO /28
+        pubif:
+          name: bond0
+          mac:
+            - 80:30:e0:00:00:00
+            - 80:30:e0:00:00:00
+          ip: 212.85.158.157/28
     mgaver: 9
     mgaarch: x86_64
     ports:

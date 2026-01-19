@@ -229,7 +229,7 @@ chmod o+x $HDIR
 # Now drop priviledges
 # Call the common install script to finish install
 echo "Installing common remaining stuff as $MGAUSER"
-su - $MGAUSER -w MGAGROUP,MGAINSFQDN,MGATYPE,MGAINSIP,MGADISTRIB,MGAUSER,MGAINSREPO,MGAINSBRANCH,MGAGENKEYS,MGATMPDIR,MGAHDIR -c "$EXEPATH/install-system-common.sh"
+su - $MGAUSER -w MGAGROUP,MGAINSFQDN,MGATYPE,MGAINSIP,MGADISTRIB,MGAUSER,MGAINSREPO,MGAINSBRANCH,MGAGENKEYS,MGATMPDIR,MGAHDIR,EXEPATH -c "$EXEPATH/install-system-common.sh"
 
 echo "Setting up original rights for $MGAHDIR with $BKPSTAT"
 chmod $BKPSTAT $MGAHDIR

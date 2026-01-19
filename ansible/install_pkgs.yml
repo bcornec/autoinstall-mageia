@@ -1,0 +1,20 @@
+- name: Ensure that common packages are installed for repo setup
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    name:
+      - curl
+      - gnupg2
+    state: present
+    update_cache: true
+
+- name: Ensure all required packages are installed and urpmi db updated
+  become: true
+  become_user: root
+  ansible.builtin.package:
+    name: "{{ item.1 }}"
+    update_cache: true
+    state: present
+  loop: "{{ nodes | subelements('pkgs', { 'skip_missing': true })}}"
+  when: item.0.name == "system" or item.0.name == MGATYPE
+
