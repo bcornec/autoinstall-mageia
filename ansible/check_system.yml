@@ -1,5 +1,5 @@
 - name: Load variables generated at install time
-  ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/mageia.yml"
+  ansible.builtin.include_vars: "{{ MGALOCAL }}/etc/mageia.yml"
 
 - name: Ensure correct nproc soft limits
   become: true

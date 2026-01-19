@@ -20,13 +20,14 @@ email = $MGAUSER@mageia.org
 EOF
 fi
 
-# This is where mageia.sh will be stored
 MGASCRIPTDIR="$MGAREPODIR/scripts"
 MGAPBKDIR=$MGAGROUP
+# This is where mageia.sh will be stored
+MGALOCAL=`ansible-inventory -i $MGAANSIBLEDIR/inventory --host $MGAGROUP --playbook-dir $MGAANSIBLEDIR | jq ".MGALOCAL"`
 
 # Declares shell variables as ansible variables as well
 # then they can be used in playbooks
-cat > $MGASCRIPTDIR/mageia.sh << EOF
+cat > $MGALOCAL/bin/mageia.sh << EOF
 # This is the mageia.sh script, generated at install
 #
 # Name of the admin user
@@ -44,7 +45,7 @@ export MGAINSDIR=$MGAINSDIR
 # The autosinstall dir has some fixed subdirs 
 # autoinstall-mageia (MGAREPODIR)
 #    |---------- ansible (MGAANSIBLEDIR)
-#    |---------- scripts (MGASCRIPTDIR defined in all.yml not here to allow overloading)
+#    |---------- scripts (MGASCRIPTDIR)
 #    |---------- sys (MGASYSDIR)
 #    |---------- install (MGAINSDIR)
 #    |---------- conf
@@ -54,19 +55,20 @@ export MGAANSIBLEDIR=$MGAREPODIR/ansible
 export MGASYSDIR=$MGAREPODIR/sys
 export MGAPBKDIR=$MGAPBKDIR
 
+export MGALOCAL=$MGALOCAL
 EOF
 
-chmod 755 $MGASCRIPTDIR/mageia.sh
-source $MGASCRIPTDIR/mageia.sh
+chmod 755 $MGALOCAL/bin/mageia.sh
+source $MGALOCAL/bin/mageia.sh
 
 export MGAANSPLAYOPT="-e MGAANSIBLEDIR=$MGAANSIBLEDIR -e LDAPSETUP=0"
-cat >> $MGASCRIPTDIR/mageia.sh << EOF
+cat >> $MGALOCAL/bin/mageia.sh << EOF
 export MGAANSPLAYOPT="$MGAANSPLAYOPT"
 EOF
 
 cd $MGAANSIBLEDIR
 # Prepare variables for ansible
-cat > $MGAANSIBLEDIR/mageia.yml << EOF
+cat > $MGALOCAL/etc/mageia.yml << EOF
 MGAUSER: $MGAUSER
 MGAANSIBLEDIR: $MGAANSIBLEDIR
 MGAREPODIR: $MGAREPODIR
@@ -103,21 +105,21 @@ if [ $? -ne 0 ]; then
 fi
 
 # Create a conformity check script and runs it
-cat > $MGASCRIPTDIR/mageia-srv-check << EOF
+cat > $MGALOCAL/bin/mageia-srv-check << EOF
 #!/bin/bash
 
 # Get needed variables build at install
-source $MGASCRIPTDIR/mageia.sh
+source $MGALOCAL/bin/mageia.sh
 EOF
 
-cat >> $MGASCRIPTDIR/mageia-srv-check << 'EOF'
+cat >> $MGALOCAL/bin/mageia-srv-check << 'EOF'
 cd $MGAANSIBLEDIR
 CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT check_$MGATYPE.yml"
 echo "Executing $CMD"
 $CMD
 EOF
 
-chmod 755 $MGASCRIPTDIR/mageia-srv-check
-$MGASCRIPTDIR/mageia-srv-check
+chmod 755 $MGALOCAL/bin/mageia-srv-check
+$MGALOCAL/bin/mageia-srv-check
 
 date

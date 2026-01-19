@@ -1,6 +1,6 @@
 ---
 - name: Load variables generated at install time
-  ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/mageia.yml"
+  ansible.builtin.include_vars: "{{ MGALOCAL }}/etc/mageia.yml"
 
 - name: Ensure that common packages are installed for repo setup
   become: true
@@ -179,9 +179,10 @@
     group: "{{ MGAUSER }}"
     mode: "0755"
   with_items:
-    - /usr/local/bin
-    - /usr/local/sbin
-    - /usr/local/share
+    - "{{ MGALOCAL }}/etc"
+    - "{{ MGALOCAL }}/bin"
+    - "{{ MGALOCAL }}/sbin"
+    - "{{ MGALOCAL }}/share"
 
 - name: Disable autoinstall
   become: true
