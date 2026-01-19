@@ -97,7 +97,7 @@
     - name: "Copy mirror script to /usr/local/bin"
       ansible.builtin.template:
         src: "'{{ item }}"
-        dest: "/usr/local/bin/{{ item | basename | regex_replace('\.j2$') }}"
+        dest: "/usr/local/bin/{{ item | basename | regex_replace('.j2$') }}"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0755
