@@ -13,4 +13,5 @@
 {% set mgaver,mgaarch = item.split('-') -%}
 rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/{{ mgaver }}/{{ mgaarch }} {{ MGALDIR }}/{{ mgaver }}/{{ mgaarch }}/
 {% endfor -%}
+rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/cauldron/{{ mgaarch }} {{ MGALDIR }}/cauldron/{{ mgaarch }}/
 
