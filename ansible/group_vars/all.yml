@@ -13,12 +13,14 @@ MGADPLOYIP: 192.168.26.156
 MGAGW: 192.168.26.2
 # at IELO
 #MGAGW: 212.85.158.145
+# Usefull ? MGAGW6:
 MGADNS1: 192.168.26.2
 MGADNS2: 172.16.8.120
 MGADNS3: 1.1.1.1
 # at IELO
 #MGADNS1: 212.85.158.151
 #MGADNS2: 163.172.148.228
+#MGADNS3: 1.1.1.1
 # linux1 - temporary
 MGAADMINPWD: $2a$08$37k9US2q3ST4eLFeR/.ype6SaYD3KgRL5ODOPjH9yStTKVW1zTDm.
 # Name of the user during auto_inst install
@@ -133,6 +135,7 @@ nodes:
             # eno6
             - 14:02:ec:96:9b:b1
           ip: 212.85.158.154/28
+          ipv6: 2a02:2178:2:7::a/64
       - name: houdini
         # for deployment
         dif:
@@ -157,6 +160,7 @@ nodes:
             # eno6
             - 14:02:ec:81:18:81
           ip: 212.85.158.155/28
+          ipv6: 2a02:2178:2:7::b/64
     mgaver: 9
     mgaarch: x86_64
     ports:
@@ -168,7 +172,7 @@ nodes:
 
   - name: dploy
     nodenames:
-      - name: dploy
+      - name: mandrake
         # for deployment
         dif:
           name: eno2
@@ -186,6 +190,7 @@ nodes:
           mac:
             - xx:8d:99:b2:f9:24
           ip: 212.85.158.156/28
+          ipv6: 2a02:2178:2:7::c/64
     mgaver: 9
     mgaarch: x86_64
     ports:
@@ -203,7 +208,6 @@ nodes:
       - python3-netaddr
 
   - name: repo
-    ifcfg: TBD
     nodenames:
       - name: melies
         # for deployment
@@ -223,6 +227,7 @@ nodes:
           mac:
             - 80:30:e0:00:00:00
           ip: 212.85.158.158/28
+          ipv6: 2a02:2178:2:7::e/64
     mgaver: 9
     mgaarch: x86_64
     ports:
@@ -233,27 +238,27 @@ nodes:
       - rpmtools
 
   - name: web
-    ifcfg: TBD
     nodenames:
       - name: webb
         # for deployment
         dif:
           name: eno1
-          mac: 80:30:e0:00:00:00
+          mac: 5c:b9:01:8d:b4:f4
           ip: 192.168.26.157/24
         iif:
           name: bond1
           mac:
-            - 80:30:e0:00:00:00
-            - 80:30:e0:00:00:00
+            - 5c:b9:01:8d:b4:f4
+            - 5c:b9:01:8d:b4:f5
           ip: 192.168.26.157/24
         # IELO /28
         pubif:
           name: bond0
           mac:
-            - 80:30:e0:00:00:00
-            - 80:30:e0:00:00:00
+            - b8:83:03:51:eb:1e
+            - b8:83:03:51:eb:1f
           ip: 212.85.158.157/28
+          ipv6: 2a02:2178:2:7::d/64
     mgaver: 9
     mgaarch: x86_64
     ports:

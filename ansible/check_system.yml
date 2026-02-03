@@ -112,20 +112,6 @@
     owner: "{{ MGAUSER }}"
     group: "{{ MGAUSER }}"
     mode: 0644
-    backup: yes
-
-- name: Adds real network interfaces in case of bonding
-  become: true
-  become_user: root
-  ansible.builtin.template:
-    src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/ifcfg-slave.j2"
-    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"
-    owner: "{{ MGAUSER }}"
-    group: "{{ MGAUSER }}"
-    mode: 0644
-    backup: yes
-  when: MGAMACHINEPUBITF | truncate(4) == "bond"
-  loop: "{{ MGAMACHINEPUBSLAVE.split(',') }}"
 
 - name: "Check default network route"
   become: true
@@ -136,7 +122,6 @@
     owner: "{{ MGAUSER }}"
     group: "{{ MGAUSER }}"
     mode: 0644
-    backup: yes
 
 - name: "Check resolver"
   become: true
@@ -147,7 +132,6 @@
     owner: "{{ MGAUSER }}"
     group: "{{ MGAUSER }}"
     mode: 0644
-    backup: yes
 
 - name: "Check internal network configuration"
   become: true
@@ -158,20 +142,51 @@
     owner: "{{ MGAUSER }}"
     group: "{{ MGAUSER }}"
     mode: 0644
-    backup: yes
 
-- name: Adds real network interfaces in case of bonding
+- name: "fix hostname"
   become: true
   become_user: root
   ansible.builtin.template:
-    src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/ifcfg-slave.j2"
+    src: "{{ MGAANSIBLEDIR }}/templates/etc/hostname.j2"
+    dest: "/etc/hostname"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+
+- name: Adds real network interfaces in case of pub bonding
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/ifcfg-pubslave.j2"
     dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"
     owner: "{{ MGAUSER }}"
     group: "{{ MGAUSER }}"
     mode: 0644
-    backup: yes
-  when: MGAMACHINEIITF | truncate(4) == "bond"
-  loop: "{{ MGAMACHINEISLAVE.split(',') }}"
+  when: MGAMACHINEPUBITF.startswith('bond')
+  loop: "{{ MGAMACHINEPUBSLAVE | split(',') }}"
+
+- name: Adds real network interfaces in case of internal bonding
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/ifcfg-islave.j2"
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+  when: MGAMACHINEIITF.startswith('bond')
+  loop: "{{ MGAMACHINEISLAVE | split(',') }}"
+
+- name: Configure bonding module
+  become: true
+  become_user: root
+  lineinfile:
+    path: /etc/modules-load.d/modules.conf
+    line: "alias {{ item }} bonding\noptions {{ item }} miimon=100 mode=4"
+  when: item.startswith('bond')
+  with_items:
+    - "{{ MGAMACHINEPUBITF }}"
+    - "{{ MGAMACHINEIITF }}"
 
 - name: "Generate shorewall rules"
   become: true

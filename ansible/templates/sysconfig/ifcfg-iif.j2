@@ -3,15 +3,17 @@
 DEVICE={{ MGAMACHINEIITF }}
 BOOTPROTO=static
 ONBOOT=yes
-{% if MGAMACHINEIITF | truncate(4) == "bond" -%}
+{% if MGAMACHINEIITF.startswith('bond') -%}
 # We have a bonding interface
+TYPE=Bond
 BONDING_MASTER=yes
-BONDING_OPTS=”mode=4 miimon=100″
+BONDING_OPTS="mode=802.3ad"
 {% else -%}
+# We have a simple interface
+TYPE=Ethernet
 METRIC=10
 MII_NOT_SUPPORTED=no
 USERCTL=no
-# We have a simple interface
 {% endif -%}
 IPADDR={{ MGAMACHINEIIP }}
 NETMASK={{ MGAMACHINEIMASK }}

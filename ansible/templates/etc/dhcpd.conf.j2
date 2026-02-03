@@ -10,10 +10,10 @@ subnet {{ MGAMACHINEINET }} netmask {{ MGAMACHINEIMASK }} {
 	option subnet-mask		{{ MGAMACHINEIMASK }};
 
 	option domain-name		"{{ MGADOMAIN }}";
-	option domain-name-servers	ns0.mageia.org, ns1.mageia.org;
+	option domain-name-servers	1.1.1.1, ns0.mageia.org, ns1.mageia.org;
 
 #	option time-offset		-5;	# Eastern Standard Time
-	option ntp-servers		2.mageia.pool.ntp.org;
+	option ntp-servers		fr.pool.ntp.org;
 
     group {
 	next-server {{ MGADPLOYIP }};

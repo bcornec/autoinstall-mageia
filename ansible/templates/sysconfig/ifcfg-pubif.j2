@@ -3,15 +3,21 @@
 DEVICE={{ MGAMACHINEPUBITF }}
 BOOTPROTO=static
 ONBOOT=yes
-{% if MGAMACHINEPUBITF | truncate(4) == "bond" -%}
+{% if MGAMACHINEPUBITF.startswith('bond') -%}
 # We have a bonding interface
+TYPE=Bond
 BONDING_MASTER=yes
-BONDING_OPTS=”mode=4 miimon=100″
+BONDING_OPTS="mode=802.3ad"
 {% else -%}
+# We have a simple interface
+TYPE=Ethernet
 METRIC=10
 MII_NOT_SUPPORTED=no
 USERCTL=no
-# We have a simple interface
 {% endif -%}
 IPADDR={{ MGAMACHINEPUBIP }}
 NETMASK={{ MGAMACHINEPUBMASK }}
+{% if MGAMACHINEPUBIP6 is defined -%}
+IPV6INIT=yes
+IPV6ADDR={{ MGAMACHINEPUBIP6 }}
+{% endif -%}

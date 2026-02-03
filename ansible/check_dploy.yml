@@ -230,27 +230,50 @@
         mode: 0644
         backup: yes
 
+    - name: "Generate postinstall script"
+      ansible.builtin.template:
+        src: "{{ MGAANSIBLEDIR }}/templates/ks/postinstall.pl"
+        dest: "{{ MGAKSDIR }}/{{ item.1.name }}_postinstall.pl"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0644
+        backup: yes
+      loop: "{{ nodes | subelements('nodenames', { 'skip_missing': true }) }}"
+      when: item.0.name != "system"
+
     - name: "Generate auto_inst perl conf files"
       ansible.builtin.template:
         src: "{{ MGAANSIBLEDIR }}/templates/ks/auto_inst.cfg.pl.j2"
-        dest: "{{ MGAKSDIR }}/{{ item.name }}_auto_inst.cfg.pl"
+        dest: "{{ MGAKSDIR }}/{{ item.1.name }}_auto_inst.cfg.pl"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
         backup: yes
-      loop: "{{ nodes }}"
-      when: item.name != "system"
+      loop: "{{ nodes | subelements('nodenames', { 'skip_missing': true }) }}"
+      when: item.0.name != "system"
 
-    - name: "Generate autoinstall-mageia.sh conf file"
+    - name: "Generate autoinstall/mageia.sh conf file"
       ansible.builtin.template:
         src: "{{ MGAANSIBLEDIR }}/templates/autoinstall/mageia.sh.j2"
-        dest: "{{ MGAKSDIR }}/{{ item.name }}_autoinstall-mageia.sh"
+        dest: "{{ MGAKSDIR }}/{{ item.1.name }}_autoinstall-mageia.sh"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
         backup: yes
-      loop: "{{ nodes }}"
-      when: item.name != "system"
+      loop: "{{ nodes | subelements('nodenames', { 'skip_missing': true }) }}"
+      when: item.0.name != "system"
+
+    - name: "Generate autoinstall utility files"
+      ansible.builtin.copy:
+        src: "{{ MGAINSDIR }}/{{ item }}"
+        dest: "{{ MGAKSDIR }}/{{ item }}"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0644
+        backup: yes
+      with_items:
+        - install.repo
+        - install-functions.sh
 
     - name: "Generate systemd conf file to lauch install after first boot"
       ansible.builtin.template:

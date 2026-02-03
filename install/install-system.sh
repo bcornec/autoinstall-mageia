@@ -28,6 +28,8 @@ MGAPBKDIR=$MGAGROUP
 MGAANSIBLEDIR=$MGAREPODIR/ansible
 # This is where mageia.sh will be stored
 MGALOCAL=`ansible-inventory -i $MGAANSIBLEDIR/inventory --host $MGAGROUP --playbook-dir $MGAANSIBLEDIR | jq ".MGALOCAL" | sed 's/"//g'`
+# We need to be able to create files there
+sudo chown $MGAUSER $MGALOCAL/{etc,bin}
 
 # Declares shell variables as ansible variables as well
 # then they can be used in playbooks

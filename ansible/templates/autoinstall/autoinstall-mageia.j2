@@ -9,16 +9,30 @@ set -o pipefail
 exec &> >(tee $HOME/autoinstall-mageia.log)
 # Check user is correct
 export LAUNCHUSER=`id -u -n`
-if [ _"$LAUNCHUSER" != _"{{ MGAUSER }}" ]; then
-	echo "This script should be launched as user {{ MGAUSER }}"
+if [ _"$LAUNCHUSER" != _"{{ MGAADMININS }}" ]; then
+	echo "This script should be launched as user {{ MGAADMININS }}"
 	exit -1
 fi
 
-# Get env var
+# Get env var for git clone
+if [ -f  {{ MGALOCAL }}/autoinstall/install.repo ]; then
+	source {{ MGALOCAL }}/autoinstall/install.repo
+fi
+# 
 if [ -f  {{ MGALOCAL }}/autoinstall/mageia.sh ]; then
 	source {{ MGALOCAL }}/autoinstall/mageia.sh
 fi
+if [ -f  {{ MGALOCAL }}/autoinstall/install-functions.sh ]; then
+	source {{ MGALOCAL }}/autoinstall/install-functions.sh
+fi
 
-cd $MGAREPODIR
+# Ensure we're at the right place for cloning
+cd $HOME
+
+# Variables from install.repo
+mga_clean_clone_log $MGAINSBRANCH $MGAINSREPO
+
+# Exist thanks to previous function call
+cd $MGAREPODIR/install
 # Install as root
 sudo ./install.sh -n $MGAMACHINETYPE -g production -f $MGAMACHINENAME -i $MGAMACHINEDIP
