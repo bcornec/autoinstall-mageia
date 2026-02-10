@@ -25,25 +25,16 @@ subnet {{ MGAMACHINEINET }} netmask {{ MGAMACHINEIMASK }} {
     filename "linux.0";
   }
 
-	#host ilomganode1 {
-		#hardware ethernet 30:8d:99:b2:f9:21;
-		#fixed-address 192.168.8.210;
-	#}
-	#host ilomganode2 {
-		#hardware ethernet 80:30:e0:38:90:42;
-		#fixed-address 192.168.8.214;
-	#}
-	# Mageia DL80 Gen9 LOM 1
-	#host mgadploy {
-		#hardware ethernet 30:8d:99:b2:f9:23;
-		#fixed-address 192.168.26.71;
-	#}
 {% for item in nodes -%}
 {% if item.name != 'system' and item.name != 'dploy' -%}
 {% for machine in item.nodenames -%}
 	host {{ machine.name }} {
 		hardware ethernet {{ machine.dif.mac }};
 		fixed-address {{ machine.dif.ip | ansible.utils.ipaddr('address') }};
+	}
+	host {{ machine.name }}-ilo {
+		hardware ethernet {{ machine.ilo.mac }};
+		fixed-address {{ machine.ilo.ip | ansible.utils.ipaddr('address') }};
 	}
 {% endfor -%}
 {% endif -%}

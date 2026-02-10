@@ -128,6 +128,10 @@ nodes:
             - 14:02:ec:96:9b:b1
           ip: 212.85.158.154/28
           ipv6: 2a02:2178:2:7::a/64
+        ilo:
+          name: ilo
+          mac: 80:30:e0:38:90:42
+          ip: 192.168.25.154
       - name: houdini
         # for deployment
         dif:
@@ -153,6 +157,10 @@ nodes:
             - 14:02:ec:81:18:81
           ip: 212.85.158.155/28
           ipv6: 2a02:2178:2:7::b/64
+        ilo:
+          name: ilo
+          mac: B4:7A:F1:4F:A0:04
+          ip: 192.168.25.155
     mgaver: 9
     mgaarch: x86_64
     ports:
@@ -183,6 +191,10 @@ nodes:
             - xx:8d:99:b2:f9:24
           ip: 212.85.158.156/28
           ipv6: 2a02:2178:2:7::c/64
+        ilo:
+          name: ilo
+          mac: 30:8d:99:b2:f9:21
+          ip: 192.168.25.154
     mgaver: 9
     mgaarch: x86_64
     ports:
@@ -220,6 +232,10 @@ nodes:
             - 80:30:e0:00:00:00
           ip: 212.85.158.158/28
           ipv6: 2a02:2178:2:7::e/64
+        ilo:
+          name: ilo
+          mac: x:y:z:t:u:v
+          ip: 192.168.25.154
     mgaver: 9
     mgaarch: x86_64
     ports:
@@ -251,6 +267,10 @@ nodes:
             - b8:83:03:51:eb:1f
           ip: 212.85.158.157/28
           ipv6: 2a02:2178:2:7::d/64
+        ilo:
+          name: ilo
+          mac: b8:83:03:51:eb:1c
+          ip: 192.168.25.157
     mgaver: 9
     mgaarch: x86_64
     ports:
