@@ -217,25 +217,26 @@ nodes:
         # for deployment
         dif:
           name: eno1
-          mac: 80:30:e0:00:00:00
+          mac: 14:02:ec:96:9c:88
           ip: 192.168.26.158/24
         iif:
           name: bond1
           mac:
-            - 80:30:e0:00:00:00
-            - 80:30:e0:00:00:00
+            - b8:83:03:51:ec:c2
+            - b8:83:03:51:ec:c3
           ip: 192.168.26.158/24
         # IELO /28
         pubif:
           name: bond0
           mac:
-            - 80:30:e0:00:00:00
+            - 14:02:ec:96:9c:88
+            - 14:02:ec:96:9c:89
           ip: 212.85.158.158/28
           ipv6: 2a02:2178:2:7::e/64
         ilo:
           name: ilo
-          mac: x:y:z:t:u:v
-          ip: 192.168.25.154
+          mac: B8:83:03:51:EC:C0 
+          ip: 192.168.25.158
     mgaver: 9
     mgaarch: x86_64
     ports:
