@@ -15,6 +15,9 @@ if [ _"$FOUND" != _"" ]; then
 	MGAMACHINEIIP={{ item.1.iif.ip | ansible.utils.ipaddr('address') }}
 	MGAMACHINEIMASK={{ item.1.iif.ip | ansible.utils.ipaddr('netmask') }}
 	MGAMACHINEINET={{ item.1.iif.ip | ansible.utils.ipaddr('network') }}
+	MGAMACHINEILOIP={{ item.1.ilo.ip | ansible.utils.ipaddr('address') }}
+	MGAMACHINEILOMASK={{ item.1.ilo.ip | ansible.utils.ipaddr('netmask') }}
+	MGAMACHINEILONET={{ item.1.ilo.ip | ansible.utils.ipaddr('network') }}
 	MGAMACHINEPUBITF={{ item.1.pubif.name }}
 	MGAMACHINEPUBIP={{ item.1.pubif.ip | ansible.utils.ipaddr('address') }}
 	{% if item.1.pubif.ipv6 is defined -%}
