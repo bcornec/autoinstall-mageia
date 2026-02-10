@@ -6,21 +6,13 @@ MGALDIR: /var/www/html/distrib
 MGATFTPDIR: /var/lib/tftpboot
 # Network
 MGADOMAIN: mageia.org
-MGAIDOMAIN: mga.musique-ancienne.org
-# at IELO
-#MGAIDOMAIN: i.mageia.org
+MGAIDOMAIN: i.mageia.org
 MGADPLOYIP: 192.168.26.156
-MGAGW: 192.168.26.2
-# at IELO
-#MGAGW: 212.85.158.145
+MGAGW: 212.85.158.145
 # Usefull ? MGAGW6:
-MGADNS1: 192.168.26.2
-MGADNS2: 172.16.8.120
+MGADNS1: 212.85.158.151
+MGADNS2: 163.172.148.228
 MGADNS3: 1.1.1.1
-# at IELO
-#MGADNS1: 212.85.158.151
-#MGADNS2: 163.172.148.228
-#MGADNS3: 1.1.1.1
 # linux1 - temporary
 MGAADMINPWD: $2a$08$37k9US2q3ST4eLFeR/.ype6SaYD3KgRL5ODOPjH9yStTKVW1zTDm.
 # Name of the user during auto_inst install

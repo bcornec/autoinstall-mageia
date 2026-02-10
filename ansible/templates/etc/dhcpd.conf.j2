@@ -9,7 +9,7 @@ subnet {{ MGAMACHINEINET }} netmask {{ MGAMACHINEIMASK }} {
 	option routers			{{ MGAMACHINEIIP }};
 	option subnet-mask		{{ MGAMACHINEIMASK }};
 
-	option domain-name		"{{ MGADOMAIN }}";
+	option domain-name		"{{ MGAIDOMAIN }}";
 	option domain-name-servers	1.1.1.1, ns0.mageia.org, ns1.mageia.org;
 
 #	option time-offset		-5;	# Eastern Standard Time
