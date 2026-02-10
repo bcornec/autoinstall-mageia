@@ -11,7 +11,9 @@
 {% endfor -%}
 {% for item in va -%}
 {% set mgaver,mgaarch = item.split('-') -%}
-rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/{{ mgaver }}/{{ mgaarch }} {{ MGALDIR }}/{{ mgaver }}/{{ mgaarch }}/
-rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/cauldron/{{ mgaarch }} {{ MGALDIR }}/cauldron/{{ mgaarch }}/
+mkdir -p {{ MGALDIR }}/{{ mgaver }}/{{ mgaarch }}
+rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/{{ mgaver }}/{{ mgaarch }}/ {{ MGALDIR }}/{{ mgaver }}/{{ mgaarch }}/
+mkdir -p {{ MGALDIR }}/cauldron/{{ mgaarch }}
+rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/cauldron/{{ mgaarch }}/ {{ MGALDIR }}/cauldron/{{ mgaarch }}/
 {% endfor -%}
 

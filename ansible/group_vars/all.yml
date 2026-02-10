@@ -1,6 +1,6 @@
 ---
 # Stable Mageia version to use for deployment
-MGAMIRROR: rsync://fr2.rpmfind.net/linux/mageia/distrib/
+MGAMIRROR: rsync://duvel.mageia.org/mageia/distrib
 MGAKSDIR: /var/www/html/ks
 MGALDIR: /var/www/html/distrib
 MGATFTPDIR: /var/lib/tftpboot
