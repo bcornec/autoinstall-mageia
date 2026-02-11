@@ -194,7 +194,7 @@ nodes:
         ilo:
           name: ilo
           mac: 30:8d:99:b2:f9:21
-          ip: 192.168.25.154
+          ip: 192.168.25.156
     mgaver: 9
     mgaarch: x86_64
     ports:

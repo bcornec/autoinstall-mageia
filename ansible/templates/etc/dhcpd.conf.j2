@@ -38,29 +38,3 @@ subnet {{ MGAMACHINEINET }} netmask {{ MGAMACHINEIMASK }} {
 }
 }
 }
-
-shared-network ilolan {
-# --- default gateway
-subnet {{ MGAMACHINEILONET }} netmask {{ MGAMACHINEILOMASK }} {
-	option routers			{{ MGAMACHINEIILOIP }};
-	option subnet-mask		{{ MGAMACHINEILOMASK }};
-
-	option domain-name		"{{ MGAIDOMAIN }}";
-	option domain-name-servers	1.1.1.1, ns0.mageia.org, ns1.mageia.org;
-
-#	option time-offset		-5;	# Eastern Standard Time
-	option ntp-servers		fr.pool.ntp.org;
-
-{% for item in nodes -%}
-{% if item.name != 'system' and item.name != 'dploy' -%}
-{% for machine in item.nodenames -%}
-	host {{ machine.name }}-ilo {
-		hardware ethernet {{ machine.ilo.mac }};
-		fixed-address {{ machine.ilo.ip | ansible.utils.ipaddr('address') }};
-	}
-{% endfor -%}
-{% endif -%}
-{% endfor -%}
-}
-}
-}
