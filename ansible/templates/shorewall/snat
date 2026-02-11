@@ -8,4 +8,4 @@
 ###################################################################################################################################################
 # Shouldn't be harcoded and also adapted for difrent node types
 #ACTION                 SOURCE                  DEST            PROTO   DPORT   SPORT   IPSEC   MARK    USER    SWITCH  ORIGDEST        PROBABILITY
-#MASQUERADE      192.168.26.0/24               eno1
+MASQUERADE      {{ MGAMACHINEINET }}/{{ MGAMACHINEIMASK | ansible.utils.ipaddr('prefix') }}               {{ MGAMACHINEPUBITF }}

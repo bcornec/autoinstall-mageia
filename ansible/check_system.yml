@@ -198,7 +198,7 @@
     group: "{{ MGAUSER }}"
     mode: 0640
     backup: yes
-  with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/*' ]
+  with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/rules*', '{{ MGAANSIBLEDIR }}/templates/shorewall/interfaces' ]
   notify:
     - restart shorewall
 

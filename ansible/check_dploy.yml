@@ -40,6 +40,20 @@
         group: "{{ MGAUSER }}"
         mode: "0644"
 
+    - name: "Generate additional shorewall rules"
+      become: true
+      become_user: root
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "/etc/shorewall/{{ item | basename }}"
+        owner: "{{ MGAUSER }}"
+        group: "{{ MGAUSER }}"
+        mode: 0640
+        backup: yes
+      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/snat' ]
+      notify:
+        - restart shorewall
+
     - name: "Create local dploy directories"
       become: true
       become_user: root

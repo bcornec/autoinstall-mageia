@@ -9,6 +9,5 @@
 ###############################################################################
 ?FORMAT 2
 #ZONE           INTERFACE               OPTIONS
-net {{ MGAMACHINEDITF }} routeback,tcpflags,nosmurfs,routefilter,logmartians
 net {{ MGAMACHINEIITF }} routeback,tcpflags,nosmurfs,routefilter,logmartians
 net {{ MGAMACHINEPUBITF }} routeback,tcpflags,nosmurfs,routefilter,logmartians
