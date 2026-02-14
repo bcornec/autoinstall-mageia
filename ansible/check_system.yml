@@ -103,6 +103,19 @@
     line: UserTasksMax=100000
     state: present
 
+- name: Copy sshutout configuration file
+  become: true
+  become_user: root
+  template:
+    src: templates/sshutout.conf
+    dest: /etc
+    owner: root
+    group: root
+    mode: 0640
+    backup: yes
+  notify:
+    - restart sshutout
+
 - name: "Check public network configuration"
   become: true
   become_user: root

@@ -50,6 +50,7 @@ nodes:
       - postfix
       - shorewall
       - sshd
+      - sshutout
     pkgs:
       # This list should have been auto_installed, but check for sure
       - ansible
@@ -93,6 +94,7 @@ nodes:
       - puppet
       - rsync
       - sos
+      - sshutout
       - strace
       - usbutils
       - vim-common

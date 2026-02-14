@@ -22,3 +22,8 @@
   become: true
   become_user: root
   service: name=dhcpd state=restarted
+
+- name: restart sshutout
+  become: true
+  become_user: root
+  service: name=sshutout state=restarted
