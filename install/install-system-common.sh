@@ -33,7 +33,7 @@ else
 	# Setup ssh for MGAUSER
 	echo "Generating ssh keys for $MGAUSER"
 	ssh-keygen -t rsa -b 4096 -N '' -f $HOME/.ssh/id_rsa
-	install -m 0600 $MGAREPODIR/skel/.ssh/authorized_keys .ssh/
+	install -m 0600 $MGAREPODIR/skel/.ssh/fwadmin_pub_keys .ssh/authorized_keys
 	cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 fi
 # temp dir remove in caller by root to avoid issues
