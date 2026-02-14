@@ -113,25 +113,7 @@ if [ $? -ne 0 ]; then
 	exit -1
 fi
 
-# Create a conformity check script and runs it
-cat > $MGALOCAL/bin/mageia-srv-check << EOF
-#!/bin/bash
-#
-# Get needed variables build at install
-source $MGALOCAL/bin/mageia.sh
-if [ -f $MGALOCAL/autoinstall/mageia.sh ]; then
-	source $MGALOCAL/autoinstall/mageia.sh
-fi
-EOF
-
-cat >> $MGALOCAL/bin/mageia-srv-check << 'EOF'
-cd $MGAANSIBLEDIR
-CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT check_$MGATYPE.yml"
-echo "Executing $CMD"
-$CMD
-EOF
-
-chmod 755 $MGALOCAL/bin/mageia-srv-check
-$MGALOCAL/bin/mageia-srv-check
+# Runs the conformity check script
+$MGALOCAL/bin/mga-check-srv
 
 date

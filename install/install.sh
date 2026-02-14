@@ -141,7 +141,7 @@ EXEPATH=`dirname "$0"`
 export EXEPATH=`( cd "$EXEPATH" && pwd )`
 
 source $EXEPATH/install.repo
-# Overload MGAINSREPO if using a private one
+# Overload MGAINSREPO and MGAADMINPWD if using a private one
 if [ -f $EXEPATH/install.priv ]; then
     source $EXEPATH/install.priv
 fi

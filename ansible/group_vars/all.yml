@@ -13,7 +13,7 @@ MGAGW: 212.85.158.145
 MGADNS1: 212.85.158.151
 MGADNS2: 163.172.148.228
 MGADNS3: 1.1.1.1
-# linux1 - temporary
+# for temporary tests use linux1 - overloaded at install in install.priv
 MGAADMINPWD: $2a$08$37k9US2q3ST4eLFeR/.ype6SaYD3KgRL5ODOPjH9yStTKVW1zTDm.
 # Name of the user during auto_inst install
 MGAADMININS: fwadmin

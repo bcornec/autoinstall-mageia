@@ -241,12 +241,12 @@
   become: true
   become_user: root
   ansible.builtin.cron:
-    name: mageia-srv-check
+    name: mga-check-srv
     minute: "{{ 59 | random(seed=inventory_hostname) }} "
     hour: "04"
     user: "{{ MGAUSER }}"
-    job: "{{ MGALOCAL }}/bin/mageia-srv-check"
-    cron_file: mageia-srv-check
+    job: "{{ MGALOCAL }}/bin/mga-check-srv"
+    cron_file: mga-check-srv
     state: present
 
 - name: Start base services
