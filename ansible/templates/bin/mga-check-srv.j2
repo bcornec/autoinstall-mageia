@@ -12,8 +12,8 @@ if [ -f {{ MGALOCAL }}/autoinstall/mageia.sh ]; then
 	source {{ MGALOCAL }}/autoinstall/mageia.sh
 fi
 LAUNCHUSER=`id -u -n`
-if [ _"$LAUNCHUSER" != _"{{ MGAADMININS }}" ]; then
-	echo "This script should be launched as user {{ MGAADMININS }}"
+if [ _"$LAUNCHUSER" != _"{{ MGAUSER }}" ]; then
+	echo "This script should be launched as user {{ MGAUSER }}"
 	exit -1
 fi
 
