@@ -17,29 +17,33 @@ if [ _"$FOUND" != _"" ]; then
 	MGAMACHINEINET={{ item.1.iif.ip | ansible.utils.ipaddr('network') }}
 	MGAMACHINEPUBITF={{ item.1.pubif.name }}
 	MGAMACHINEPUBIP={{ item.1.pubif.ip | ansible.utils.ipaddr('address') }}
-	{% if item.1.pubif.ipv6 is defined -%}
+{% if item.1.pubif.ipv6 is defined -%}
 	MGAMACHINEPUBIP6={{ item.1.pubif.ipv6 | ansible.utils.ipv6('address') }}
-	{% endif -%}
+{% endif -%}
 	MGAMACHINEPUBMASK={{ item.1.pubif.ip | ansible.utils.ipaddr('netmask') }}
 
 	type=`echo $MGAMACHINEPUBITF | cut -c1-4`
 	if [ _"$type" = _"bond" ]; then
 		# Keep slave interfaces names
 		itfs=""
-		{% for mac in item.1.pubif.mac -%}
+{% for mac in item.1.pubif.mac -%}
 		itfs="$itfs,`ip a | grep -A 0 -B 1 '{{ mac }}' | head -1 | cut -d: -f2`"
-		{% endfor -%}
+{% endfor -%}
 		MGAMACHINEPUBSLAVE=`echo $itfs | sed 's/^,//' | sed 's/ //g'`
+	else
+		MGAMACHINEPUBSLAVE=""
 	fi
 
 	type=`echo $MGAMACHINEIITF | cut -c1-4`
 	if [ _"$type" = _"bond" ]; then
 		# Keep slave interfaces names
 		itfs=""
-		{% for mac in item.1.iif.mac -%}
+{% for mac in item.1.iif.mac -%}
 		itfs="$itfs,`ip a | grep -A 0 -B 1 '{{ mac }}' | head -1 | cut -d: -f2`"
-		{% endfor -%}
+{% endfor -%}
 		MGAMACHINEISLAVE=`echo $itfs | sed 's/^,//' | sed 's/ //g'`
+	else
+		MGAMACHINEISLAVE=""
 	fi
 
 	# Regenerate this file during postinstall of system
@@ -68,11 +72,13 @@ EOF
 MGAMACHINEPUBSLAVE: $MGAMACHINEPUBSLAVE
 EOF
 		fi
+{% if item.1.pubif.ipv6 is defined -%}
 		if [ _"$MGAMACHINEPUBIP6" != _"" ]; then
 			cat >> {{ MGALOCAL }}/autoinstall/mageia.yml << EOF
 MGAMACHINEPUBIP6: $MGAMACHINEPUBIP6
 EOF
 		fi
+{% endif -%}
 		if [ _"$MGAMACHINEISLAVE" != _"" ]; then
 			cat >> {{ MGALOCAL }}/autoinstall/mageia.yml << EOF
 MGAMACHINEISLAVE: $MGAMACHINEISLAVE
