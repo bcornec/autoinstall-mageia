@@ -133,6 +133,7 @@ fi
 
 # redirect stdout/stderr to a file in the launching user directory
 mkdir -p $HDIR/.mgainstall
+chmod 700 $HDIR/.mgainstall
 exec &> >(tee $HDIR/.mgainstall/install.log)
 
 echo "Install starting at `date`"

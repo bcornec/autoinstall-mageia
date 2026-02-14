@@ -1,9 +1,17 @@
 exec &> >(tee /root/postautoinstall.log)
-# Setup ssh for {{ MGAADMININS }}
 # Setup sudo for {{ MGAADMININS }}
 echo "Defaults:{{ MGAADMININS }} !fqdn" > /etc/sudoers.d/{{ MGAADMININS }}
 echo "Defaults:{{ MGAADMININS }} !requiretty" >> /etc/sudoers.d/{{ MGAADMININS }}
 echo "{{ MGAADMININS }} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/{{ MGAADMININS }}
+# Setup passwd for root
+MGAPWD=`head -80 /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1`
+echo "root:$MGAPWD" | chpasswd
+echo "root is $MGAPWD" > /root/drakx/root
+# Setup passwd for {{ MGAADMININS }}
+MGAPWD=`head -80 /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1`
+echo "$MGAADMININS:$MGAPWD" | chpasswd
+echo "$MGAADMININS is $MGAPWD" > /root/drakx/$MGAADMININS
+
 # Get the systemd conf file for reboot
 wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia.service -O /etc/systemd/system/autoinstall-mageia.service
 chmod 644 /etc/systemd/system/autoinstall-mageia.service
