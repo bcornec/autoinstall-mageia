@@ -171,7 +171,7 @@
   become: true
   become_user: root
   ansible.builtin.template:
-    src: "{{ MGAANSIBLEDIR }}/bin/mga-check-srv.j2"
+    src: "{{ MGAANSIBLEDIR }}/templates/bin/mga-check-srv.j2"
     dest: "{{ MGALOCAL }}/bin/mga-check-srv"
     owner: "{{ MGAUSER }}"
     group: "{{ MGAUSER }}"
