@@ -107,8 +107,8 @@
   become: true
   become_user: root
   template:
-    src: templates/sshutout.conf
-    dest: /etc
+    src: templates/etc/sshutout.conf.j2
+    dest: /etc/sshutout.conf
     owner: root
     group: root
     mode: 0640
