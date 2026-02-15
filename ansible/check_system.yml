@@ -122,7 +122,7 @@
   ansible.posix.authorized_key:
     user: "{{ MGAADMININS }}"
     state: present
-    key: "{{ lookup('file', '{{ MGAREPODIR }}/skel/{{ item }}_pub_keys') }}"
+    key: "{{ lookup('file', '{{ MGAREPODIR }}/skel/.ssh/{{ item }}_pub_keys') }}"
   with_items:
     - "{{ MGAADMININS }}"
     - "{{ MGAUSER }}"
