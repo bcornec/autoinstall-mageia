@@ -54,14 +54,6 @@
       notify:
         - restart shorewall
 
-    - name: Check ssh public keys for iurt
-      become: true
-      become_user: root
-      ansible.posix.authorized_key:
-        user: iurt
-        state: present
-        key: "{{ lookup('file', '{{ MGAREPODIR }}/skel/.ssh/iurt_pub_keys') }}"
-
     - name: "Create local dploy directories"
       become: true
       become_user: root

@@ -25,6 +25,14 @@
         mode: 0644
         backup: yes
 
+    - name: Check ssh public keys for iurt
+      become: true
+      become_user: root
+      ansible.posix.authorized_key:
+        user: iurt
+        state: present
+        key: "{{ lookup('file', '{{ MGAREPODIR }}/skel/.ssh/iurt_pub_keys') }}"
+
     - name: Enable build services
       become: true
       become_user: root
