@@ -60,7 +60,7 @@
       ansible.posix.authorized_key:
         user: iurt
         state: present
-        key: "{{ lookup('file', '{{ MGAANSIBLEDIR }}/skel/iurt_pub_keys') }}"
+        key: "{{ lookup('file', '{{ MGAREPODIR }}/skel/iurt_pub_keys') }}"
 
     - name: "Create local dploy directories"
       become: true
