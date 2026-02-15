@@ -123,9 +123,9 @@
     user: "{{ MGAADMININS }}"
     state: present
     key: "{{ lookup('file', '{{ MGAANSIBLEDIR }}/skel/{{ item }}_pub_keys') }}"
-    with_items: 
-      - "{{ MGAADMININS }}"
-      - "{{ MGAUSER }}"
+  with_items:
+    - "{{ MGAADMININS }}"
+    - "{{ MGAUSER }}"
 
 - name: "Check public network configuration"
   become: true
