@@ -120,7 +120,7 @@
   become: true
   become_user: root
   ansible.posix.authorized_key:
-    user: {{ MGAADMININS }}
+    user: "{{ MGAADMININS }}"
     state: present
     key: "{{ lookup('file', '{{ MGAANSIBLEDIR }}/skel/{{ item }}_pub_keys') }}"
     with_items: 
