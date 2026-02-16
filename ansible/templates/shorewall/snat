@@ -8,4 +8,6 @@
 ###################################################################################################################################################
 # Shouldn't be harcoded and also adapted for difrent node types
 #ACTION                 SOURCE                  DEST            PROTO   DPORT   SPORT   IPSEC   MARK    USER    SWITCH  ORIGDEST        PROBABILITY
-MASQUERADE      {{ MGAMACHINEINET }}/{{ MGAMACHINEIMASK | ansible.utils.ipaddr('prefix') }}               {{ MGAMACHINEPUBITF }}
+{% set net_mask = MGAMACHINEINET ~ '/' ~ MGAMACHINEIMASK %}
+# {{ net_mask }} => {{ net_mask | ansible.utils.ipaddr('prefix') }}
+MASQUERADE      {{ MGAMACHINEINET }}/{{ net_mask | ansible.utils.ipaddr('prefix') }}               {{ MGAMACHINEPUBITF }}
