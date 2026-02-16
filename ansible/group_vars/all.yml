@@ -82,6 +82,7 @@ nodes:
       - msec
       - mutt
       - netcat-traditional
+      - net-tools
       - numlock
       - ntpsec
       - openldap-clients
