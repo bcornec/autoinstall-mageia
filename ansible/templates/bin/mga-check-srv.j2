@@ -5,6 +5,8 @@ set -u
 set -o pipefail
 
 # Check conformity of the server
+# Some commands (ip) need to be found
+export PATH=$PATH:/sbin:/usr/sbin
 
 # Get needed variables build at install
 source {{ MGALOCAL }}/bin/mageia.sh
