@@ -28,11 +28,11 @@ LDAPPWD: MotDePasseLDAPCompliquéAussi123!!!##
 LDAPPORT: "389"
 
 #
-# MGA services per node type
+# MGA configuration items per node role
 #
 nodes:
   # Common content for all nodes
-  - name: system
+  - role: system
     mgaver: 9
     mgaarch: x86_64
     nodenames:
@@ -104,7 +104,7 @@ nodes:
       - wget
       - xymon-client
 
-  - name: build
+  - role: build
     nodenames:
       - name: garcimore
         # interface for deployment
@@ -173,7 +173,7 @@ nodes:
     svcs:
       - sshd
 
-  - name: dploy
+  - role: dploy
     nodenames:
       - name: mandrake
         # for deployment
@@ -214,7 +214,7 @@ nodes:
       - tftp-server
       - python3-netaddr
 
-  - name: repo
+  - role: repo
     nodenames:
       - name: melies
         # for deployment
@@ -249,7 +249,7 @@ nodes:
     pkgs:
       - rpmtools
 
-  - name: web
+  - role: web
     nodenames:
       - name: webb
         # for deployment
