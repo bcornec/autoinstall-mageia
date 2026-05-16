@@ -1,0 +1,15 @@
+vars:
+  backup:
+    neru:
+      rsync: vhosts
+      
+
+- name: Backup Mageia servers data
+  ansible.builtin.cron:
+    name: "backup {{ item.key}}"
+    job: "rsync -av {{ item.key}}.mageia.org::{{ item.value.rsync }} {{ item.value.rsync }}"
+    minute: '0'
+    hour: '1'
+    user: fwadmin
+    state: present
+    loop: "{{ backup | dict2items }}"
