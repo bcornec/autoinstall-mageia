@@ -13,6 +13,8 @@ MGAGW: 212.85.158.145
 MGADNS1: 212.85.158.151
 MGADNS2: 163.172.148.228
 MGADNS3: 1.1.1.1
+# NTP setup
+MGANTP: 
 # for temporary tests use linux1 - overloaded at install
 MGAADMINPWD: $2a$08$37k9US2q3ST4eLFeR/.ype6SaYD3KgRL5ODOPjH9yStTKVW1zTDm.
 # Name of the user during auto_inst install
@@ -20,12 +22,12 @@ MGAADMININS: fwadmin
 # Local scripts
 MGALOCAL: /usr/local
 #
-# In case we have a LDAP server to use, use the following values:
+# LDAP setup
 #
-LDAPSRVNAME: ldap.mageia.org
-LDAPDMN: mageia.org
-LDAPPWD: MotDePasseLDAPCompliquéAussi123!!!##
-LDAPPORT: "389"
+MGALDAPSRV: ldap.mageia.org
+MGALDAPDMN: mageia.org
+MGALDAPPWD: MotDePasseLDAPCompliquéAussi123!!!##
+MGALDAPPORT: "389"
 
 #
 # MGA configuration items per node role
@@ -65,6 +67,7 @@ nodes:
       - vim-minimal
       - wget
       - xz
+      # List used by most sysadmin
       - bash-completion
       - bind-utils
       - bzip2
@@ -74,11 +77,17 @@ nodes:
       - drakxtools-curses
       - fail2ban
       - inxi
+      - iotop
+      - htop
       - ldetect
+      - less
       - lm_sensors
-      - lsof
+      - locales-en
       - locales-fr
+      - lsof
+      - lshw
       - man
+      - mcelog
       - msec
       - mutt
       - netcat-traditional
@@ -92,17 +101,19 @@ nodes:
       - plocate
       - postfix
       - procmail
-      - puppet
       - rsync
+      - screen
       - sos
       - sshutout
       - strace
+      - tcpdump
       - usbutils
-      - vim-common
       - vim-enhanced
       - vlock
       - wget
       - xymon-client
+    sudoers:
+      - 00-sysadmin
 
   - role: build
     nodenames:
@@ -198,7 +209,7 @@ nodes:
           name: ilo
           mac: 30:8d:99:b2:f9:21
           ip: 192.168.25.156
-    mgaver: 9
+    mgaver: 10
     mgaarch: x86_64
     ports:
       - tcp 80
