@@ -140,6 +140,50 @@
     - "{{ MGAADMININS }}"
     - "{{ MGAUSER }}"
 
+- name: Configure fail2ban filter
+  become: true
+  become_user: root
+  ansible.builtin.copy: src={{ item }} dest=/etc/fail2ban/filter.d/{{ item | basename }} owner=root group=root mode=0644 backup=yes
+  with_fileglob: ['{{ MGASYSDIR }}/*.conf']
+  notify:
+    - restart fail2ban
+
+- name: Configure fail2ban jail
+  become: true
+  become_user: root
+  ansible.builtin.copy:
+    src: "{{ MGASYSDIR }}/fail2ban.jail"
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - restart fail2ban
+
+- name: Configure fail2ban action
+  become: true
+  become_user: root
+  ansible.builtin.copy:
+    src: "{{ MGASYSDIR }}/fail2ban.action"
+    dest: /etc/fail2ban/action.d/fail2ban.action
+    owner: root
+    group: root
+    mode: "0755"
+  notify:
+    - restart fail2ban
+
+- name: Install action script
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGASYSDIR }}/mageia-fail2ban-IP.j2"
+    dest: "{{ MGALOCAL }}/mageia-fail2ban-IP"
+    owner: root
+    group: root
+    mode: "0755"
+  notify:
+    - restart fail2ban
+
 ### NETWORK ###
 - name: "Check public network configuration"
   become: true

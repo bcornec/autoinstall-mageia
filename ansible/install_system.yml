@@ -111,41 +111,6 @@
     enabled: true
     name: postfix
 
-- name: Configure fail2ban filter
-  become: true
-  become_user: root
-  ansible.builtin.copy: src={{ item }} dest=/etc/fail2ban/filter.d/{{ item | basename }} owner=root group=root mode=0644 backup=yes
-  with_fileglob: ['{{ MGASYSDIR }}/*.conf']
-
-- name: Configure fail2ban jail
-  become: true
-  become_user: root
-  ansible.builtin.copy:
-    src: "{{ MGASYSDIR }}/fail2ban.jail"
-    dest: /etc/fail2ban/jail.local
-    owner: root
-    group: root
-    mode: "0644"
-
-- name: Configure fail2ban action
-  become: true
-  become_user: root
-  ansible.builtin.copy:
-    src: "{{ MGASYSDIR }}/fail2ban.action"
-    dest: /etc/fail2ban/action.d/fail2ban.action
-    owner: root
-    group: root
-    mode: "0755"
-
-- name: Enable fail2ban
-  become: true
-  become_user: root
-  ansible.builtin.systemd:
-    state: started
-    daemon_reload: true
-    enabled: true
-    name: fail2ban
-
 - name: Setup ansible configuration
   ansible.builtin.copy:
     src: "{{ MGAREPODIR }}/.ansible.cfg"
