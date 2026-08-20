@@ -4,9 +4,9 @@
 | local       | Boot on local disk (default mode)                            |
 |----------------------------------------------------------------------------|
 {% for node in nodes -%}
-{% if node.name != 'system' and node.name != 'dploy' -%}
+{% if node.role != 'system' and node.role != 'dploy' -%}
 {% for machine in node.nodenames -%}
-| {{ machine.name }}      | Installation of Mageia {{ node.name }} node {{ machine.name }} ({{ node.mgaver }} {{ node.mgaarch }}) |
+| {{ machine.name }}      | Installation of Mageia {{ node.role }} node {{ machine.name }} ({{ node.mgaver }} {{ node.mgaarch }}) |
 {% endfor -%}
 {% endif -%}
 {% endfor -%}
