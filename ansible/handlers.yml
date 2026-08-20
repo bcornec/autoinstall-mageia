@@ -27,3 +27,8 @@
   become: true
   become_user: root
   service: name=sshutout state=restarted
+
+- name: restart sshd
+  become: true
+  become_user: root
+  service: name=sshd state=restarted

@@ -1,3 +1,4 @@
+### INCLUDES ###
 - name: Load variables generated at install time
   ansible.builtin.include_vars: "{{ MGALOCAL }}/etc/mageia.yml"
 
@@ -8,9 +9,11 @@
       - "{{ MGALOCAL }}/autoinstall/mageia.yml"
       skip: true
 
+### PACKAGES ###
 - name: Check for installed packages
   ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
 
+### SYSTEM LIMITS ###
 - name: Ensure correct nproc soft limits
   become: true
   become_user: root
@@ -64,12 +67,21 @@
 
 - name: Ensure limits are correct for "{{ MGAUSER }}" account
   lineinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc"
+    path: "{{ ansible_facts['env']['HOME'] }}/.bashrc"
     line: "{{ item }}"
   with_items:
     - "ulimit -u 641465"
     - "ulimit -n 65535"
 
+- name: Setup logind.conf
+  become: true
+  become_user: root
+  lineinfile:
+    path: /etc/systemd/logind.conf
+    line: UserTasksMax=100000
+    state: present
+
+### USER SETUP ###
 - name: Copy the skeleton content under /etc/skel
   become: true
   become_user: root
@@ -78,7 +90,7 @@
     src: '{{ MGAREPODIR }}/skel/'
 
 - name: Test .profile file
-  ansible.builtin.command: ls "{{ ansible_env.HOME }}/.profile"
+  ansible.builtin.command: ls "{{ ansible_facts['env']['HOME'] }}/.profile"
   register: profile_path
   failed_when: false
   changed_when: false
@@ -86,13 +98,14 @@
 - name: Ensure we have a .profile file
   ansible.builtin.copy:
     src: /etc/skel/.bash_profile
-    dest: "{{ ansible_env.HOME }}/.profile"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.profile"
   when:
     - profile_path.rc != 0
 
+### EDITOR ###
 - name: Ensure vim is the default EDITOR
   lineinfile:
-    path: "{{ ansible_env.HOME }}/.profile"
+    path: "{{ ansible_facts['env']['HOME'] }}/.profile"
     line: export EDITOR=vim
 
 - name: Setup logind.conf
@@ -127,6 +140,7 @@
     - "{{ MGAADMININS }}"
     - "{{ MGAUSER }}"
 
+### NETWORK ###
 - name: "Check public network configuration"
   become: true
   become_user: root
@@ -212,6 +226,18 @@
     - "{{ MGAMACHINEPUBITF }}"
     - "{{ MGAMACHINEIITF }}"
 
+- name: "Generate mga-check-network"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/bin/mga-check-network"
+    dest: "/usr/local/bin/mga-check-network"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0755
+    backup: yes
+
+### FIREWALL ###
 - name: "Generate shorewall rules"
   become: true
   become_user: root
@@ -226,17 +252,7 @@
   notify:
     - restart shorewall
 
-- name: "Generate mga-check-network"
-  become: true
-  become_user: root
-  ansible.builtin.template:
-    src: "{{ MGAANSIBLEDIR }}/templates/bin/mga-check-network"
-    dest: "/usr/local/bin/mga-check-network"
-    owner: "{{ MGAUSER }}"
-    group: "{{ MGAUSER }}"
-    mode: 0755
-    backup: yes
-
+### CONFORMITY ###
 - name: Setup crontab for daily conformity check
   become: true
   become_user: root
@@ -249,6 +265,7 @@
     cron_file: mga-check-srv
     state: present
 
+### SERVICES ###
 - name: Start base services
   become: true
   become_user: root
