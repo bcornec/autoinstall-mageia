@@ -3,10 +3,10 @@
 | ----------- | ------------------------------------------------------------ |
 | local       | Boot on local disk (default mode)                            |
 |----------------------------------------------------------------------------|
-{% for item in nodes -%}
-{% if item.name != 'system' and item.name != 'dploy' -%}
-{% for machine in item.nodenames -%}
-| {{ machine.name }}      | Installation of Mageia {{ item.name }} node {{ machine.name }} ({{ item.mgaver }} {{ item.mgaarch }}) |
+{% for node in nodes -%}
+{% if node.name != 'system' and node.name != 'dploy' -%}
+{% for machine in node.nodenames -%}
+| {{ machine.name }}      | Installation of Mageia {{ node.name }} node {{ machine.name }} ({{ node.mgaver }} {{ node.mgaarch }}) |
 {% endfor -%}
 {% endif -%}
 {% endfor -%}

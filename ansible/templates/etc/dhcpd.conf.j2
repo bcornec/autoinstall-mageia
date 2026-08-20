@@ -25,9 +25,9 @@ subnet {{ MGAMACHINEINET }} netmask {{ MGAMACHINEIMASK }} {
     filename "linux.0";
   }
 
-{% for item in nodes -%}
-{% if item.name != 'system' and item.name != 'dploy' -%}
-{% for machine in item.nodenames -%}
+{% for node in nodes -%}
+{% if node.name != 'system' and node.name != 'dploy' -%}
+{% for machine in node.nodenames -%}
 	host {{ machine.name }} {
 		hardware ethernet {{ machine.dif.mac }};
 		fixed-address {{ machine.dif.ip | ansible.utils.ipaddr('address') }};

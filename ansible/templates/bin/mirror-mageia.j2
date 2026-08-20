@@ -3,14 +3,14 @@
 # Mirror locally Mageia distribution versions
 
 {% set va = [] -%}
-{% for item in nodes -%}
-	{% set ver = item.mgaver | string -%}
-	{% if ver+'-'+item.mgaarch not in va -%}
-		{{ va.append(ver+'-'+item.mgaarch) }}
+{% for node in nodes -%}
+	{% set ver = node.mgaver | string -%}
+	{% if ver+'-'+node.mgaarch not in va -%}
+		{{ va.append(ver+'-'+node.mgaarch) }}
 	{% endif -%}
 {% endfor -%}
-{% for item in va -%}
-{% set mgaver,mgaarch = item.split('-') -%}
+{% for verarch in va -%}
+{% set mgaver,mgaarch = verarch.split('-') -%}
 mkdir -p {{ MGALDIR }}/{{ mgaver }}/{{ mgaarch }}
 rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/{{ mgaver }}/{{ mgaarch }}/ {{ MGALDIR }}/{{ mgaver }}/{{ mgaarch }}/
 mkdir -p {{ MGALDIR }}/{{ mgaver }}/SRPMS

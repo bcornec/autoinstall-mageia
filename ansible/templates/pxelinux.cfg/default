@@ -7,12 +7,12 @@ F1 help.txt
 label local
         LOCALBOOT 0
 
-{% for item in nodes -%}
-{% if item.name != 'system' and item.name != 'dploy' -%}
-{% for machine in item.nodenames -%}
+{% for node in nodes -%}
+{% if node.name != 'system' and node.name != 'dploy' -%}
+{% for machine in node.nodenames -%}
 label {{ machine.name }}
-  kernel k{{ item.mgaver }}-{{ item.mgaarch }}
-  append initrd=i{{ item.mgaver }}-{{ item.mgaarch }}.img automatic=method:http,interface:{{ machine.dif.name }},server:{{ MGADPLOYIP }},directory:/distrib/{{ item.mgaver }}/{{ item.mgaarch }},network:dhcp kickstart=http://{{ MGADPLOYIP }}/ks/{{ machine.name }}_auto_inst.cfg.pl useless_thing_accepted
+  kernel k{{ node.mgaver }}-{{ node.mgaarch }}
+  append initrd=i{{ node.mgaver }}-{{ node.mgaarch }}.img automatic=method:http,interface:{{ machine.dif.name }},server:{{ MGADPLOYIP }},directory:/distrib/{{ node.mgaver }}/{{ node.mgaarch }},network:dhcp kickstart=http://{{ MGADPLOYIP }}/ks/{{ machine.name }}_auto_inst.cfg.pl useless_thing_accepted
 
 {% endfor -%}
 {% endif -%}
