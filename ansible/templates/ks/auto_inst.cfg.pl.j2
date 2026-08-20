@@ -96,7 +96,7 @@ $o = {
         },
         'partitions' => [
 # By default look under MGAANSIBLEDIR/templates
-{% include "ks/part_" + item.0.name + ".pl" %}
+{% include "ks/part_" + item.0.role + ".pl" %}
         ],
         'partitioning' => {
                         'auto_allocate' => 1,
