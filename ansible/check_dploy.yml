@@ -249,7 +249,7 @@
     - name: "Generate postinstall script"
       ansible.builtin.template:
         src: "{{ MGAANSIBLEDIR }}/templates/ks/postinstall.pl"
-        dest: "{{ MGAKSDIR }}/{{ item.1.role }}_postinstall.pl"
+        dest: "{{ MGAKSDIR }}/{{ item.1.name }}_postinstall.pl"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
@@ -260,7 +260,7 @@
     - name: "Generate auto_inst perl conf files"
       ansible.builtin.template:
         src: "{{ MGAANSIBLEDIR }}/templates/ks/auto_inst.cfg.pl.j2"
-        dest: "{{ MGAKSDIR }}/{{ item.1.role }}_auto_inst.cfg.pl"
+        dest: "{{ MGAKSDIR }}/{{ item.1.name }}_auto_inst.cfg.pl"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
@@ -271,7 +271,7 @@
     - name: "Generate autoinstall/mageia.sh conf file"
       ansible.builtin.template:
         src: "{{ MGAANSIBLEDIR }}/templates/autoinstall/mageia.sh.j2"
-        dest: "{{ MGAKSDIR }}/{{ item.1.role }}_autoinstall-mageia.sh"
+        dest: "{{ MGAKSDIR }}/{{ item.1.name }}_autoinstall-mageia.sh"
         owner: "{{ MGAUSER }}"
         group: "{{ MGAUSER }}"
         mode: 0644
