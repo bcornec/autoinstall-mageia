@@ -5,14 +5,14 @@ findtime = 10m
 bantime = 24h
 maxretry = 3
 
-[httpd]
-enabled = true
-port = 443
-filter = apache-auth
-backend = systemd
-maxretry = 3
-banaction = httpd
-bantime = 10d
+#[httpd]
+#enabled = true
+#port = 443
+#filter = apache-auth
+#backend = systemd
+#maxretry = 3
+#banaction = httpd
+#bantime = 10d
 #destemail = root@localhost
 #
 [sshd]
