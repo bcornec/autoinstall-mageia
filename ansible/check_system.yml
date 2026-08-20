@@ -108,13 +108,43 @@
     path: "{{ ansible_facts['env']['HOME'] }}/.profile"
     line: export EDITOR=vim
 
-- name: Setup logind.conf
+### I18N ###
+- name: 'Deploy template: /etc/sysconfig/i18n'
   become: true
   become_user: root
-  lineinfile:
-    path: /etc/systemd/logind.conf
-    line: UserTasksMax=100000
-    state: present
+  ansible.builtin.template:
+    src: templates/sysconfig/i18n.j2
+    dest: /etc/sysconfig/i18n
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+
+- name: 'Deploy template: /etc/locale.conf'
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: templates/etc/locale.conf.j2
+    dest: /etc/locale.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+
+### SSH SECURITY ###
+
+- name: 'Deploy template: /etc/ssh/sshd_config'
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: template/etc/sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify:
+  - restart sshd
 
 - name: Copy sshutout configuration file
   become: true

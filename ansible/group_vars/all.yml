@@ -73,6 +73,7 @@ nodes:
       - bzip2
       - cronie
       - curl
+      - chkrootkit
       - diffutils
       - drakxtools-curses
       - fail2ban
