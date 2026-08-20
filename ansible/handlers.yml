@@ -28,6 +28,11 @@
   become_user: root
   service: name=sshutout state=restarted
 
+- name: restart fail2ban
+  become: true
+  become_user: root
+  service: name=fail2ban state=restarted
+
 - name: restart sshd
   become: true
   become_user: root
