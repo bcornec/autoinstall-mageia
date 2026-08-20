@@ -1,7 +1,7 @@
 # 
 # Environment variable for autoinstall-mageia
 #
-MGAMACHINETYPE={{ item.0.name }}
+MGAMACHINETYPE={{ item.0.role }}
 # Here we care about deployment interfaces - only works on the target machine
 FOUND=`/usr/sbin/ip a | grep "{{ item.1.dif.mac }}"`
 if [ _"$FOUND" != _"" ]; then
