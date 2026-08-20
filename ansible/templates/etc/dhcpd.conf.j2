@@ -26,7 +26,7 @@ subnet {{ MGAMACHINEINET }} netmask {{ MGAMACHINEIMASK }} {
   }
 
 {% for node in nodes -%}
-{% if node.name != 'system' and node.name != 'dploy' -%}
+{% if node.role != 'system' and node.role != 'dploy' -%}
 {% for machine in node.nodenames -%}
 	host {{ machine.name }} {
 		hardware ethernet {{ machine.dif.mac }};

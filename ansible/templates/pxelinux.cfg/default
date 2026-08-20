@@ -8,7 +8,7 @@ label local
         LOCALBOOT 0
 
 {% for node in nodes -%}
-{% if node.name != 'system' and node.name != 'dploy' -%}
+{% if node.role != 'system' and node.role != 'dploy' -%}
 {% for machine in node.nodenames -%}
 label {{ machine.name }}
   kernel k{{ node.mgaver }}-{{ node.mgaarch }}
