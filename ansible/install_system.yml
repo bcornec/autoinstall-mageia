@@ -5,8 +5,6 @@
 - name: Check for installed packages
   ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
 
-    # TODO conf NTP - dans check ?
-
 - name: Configure LDAP client 1/3
   become: true
   become_user: root
@@ -117,30 +115,10 @@
     dest: "{{ ansible_facts['env']['HOME'] }}/.ansible.cfg"
     mode: "0644"
 
-- name: Ensure required directories under /usr/local are owned by "{{ MGAUSER }}"
-  become: true
-  become_user: root
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ MGAUSER }}"
-    group: "{{ MGAUSER }}"
-    mode: "0755"
-  with_items:
-    - "{{ MGALOCAL }}/etc"
-    - "{{ MGALOCAL }}/bin"
-    - "{{ MGALOCAL }}/sbin"
-    - "{{ MGALOCAL }}/share"
-
-- name: Generate mga-check-srv
-  become: true
-  become_user: root
-  ansible.builtin.template:
-    src: "{{ MGAANSIBLEDIR }}/templates/bin/mga-check-srv.j2"
-    dest: "{{ MGALOCAL }}/bin/mga-check-srv"
-    owner: "{{ MGAUSER }}"
-    group: "{{ MGAUSER }}"
-    mode: '0755'
+- name: 'Include role: system::mga-check-srv'
+  ansible.builtin.import_role:
+    name: system
+    tasks_from: mga-check-srv
 
 - name: Disable autoinstall
   become: true

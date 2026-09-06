@@ -1,0 +1,6 @@
+--
+- hosts: dploy
+  roles:
+  - dploy
+  handlers:
+  - include: "{{ MGAANSIBLEDIR }}/"{{ MGAANSIBLEDIR }}/handlers.yml

@@ -23,6 +23,7 @@ cd $MGAANSIBLEDIR
 
 #git remote update
 #git rebase 
-CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT check_$MGATYPE.yml"
+# Play the role (MGATYPE) of this system
+CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT $MGATYPE.yml"
 echo "Executing $CMD"
 $CMD

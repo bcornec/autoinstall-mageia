@@ -61,6 +61,7 @@ fi
 cat > $MGAREPODIR/ansible/inventory << EOF
 [$MGAGROUP]
 $MGAINSFQDN ansible_connection=local
+
 EOF
 
 # Change default passwd for vagrant and root

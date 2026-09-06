@@ -1,0 +1,11 @@
+---
+- name: 'Include role: system::check_system'
+  ansible.builtin.import_role:
+    name: system
+    tasks_from: check_system
+
+- name: 'Include role: system::default_ssh_key'
+  ansible.builtin.import_role:
+    name: system
+    tasks_from: default_ssh_key
+

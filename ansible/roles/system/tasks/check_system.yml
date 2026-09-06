@@ -159,17 +159,6 @@
   notify:
     - restart sshutout
 
-- name: 'Check ssh public keys for admins'
-  become: true
-  become_user: root
-  ansible.posix.authorized_key:
-    user: "{{ MGAADMININS }}"
-    state: present
-    key: "{{ lookup('file', '{{ MGAREPODIR }}/skel/.ssh/{{ item }}_pub_keys') }}"
-  with_items:
-    - "{{ MGAADMININS }}"
-    - "{{ MGAUSER }}"
-
 - name: Configure fail2ban filter
   become: true
   become_user: root
@@ -327,6 +316,26 @@
     - restart shorewall
 
 ### CONFORMITY ###
+- name: Ensure required directories under /usr/local are owned by "{{ MGAUSER }}"
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: "0755"
+  with_items:
+    - "{{ MGALOCAL }}/etc"
+    - "{{ MGALOCAL }}/bin"
+    - "{{ MGALOCAL }}/sbin"
+    - "{{ MGALOCAL }}/share"
+
+- name: 'Include role: system::mga-check-srv'
+  ansible.builtin.import_role:
+    name: system
+    tasks_from: mga-check-srv
+
 - name: Setup crontab for daily conformity check
   become: true
   become_user: root
@@ -338,6 +347,21 @@
     job: "{{ MGALOCAL }}/bin/mga-check-srv"
     cron_file: mga-check-srv
     state: present
+
+# TODO conf NTP
+# TODO URPMI upd + cron
+# TODO postfix-client
+
+- name: Configure xymon-client to report to monitoring server
+  ansible.builtin.lineinfile:
+    path: /etc/sysconfig/xymon-client
+    regexp: '^XYMSRV='
+    line: 'XYMSRV="xymon.{{ MGADOMAIN }}"'
+    create: true
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart xymon-client
 
 ### SERVICES ###
 - name: Start base services

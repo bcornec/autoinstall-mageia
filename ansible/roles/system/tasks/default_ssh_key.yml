@@ -1,0 +1,56 @@
+---
+# Converted from: deployment/common/manifests/default_ssh_root_key.pp
+
+- name: 'SSH authorized key: ssh_key_pterjan'
+  become: true
+  become_user: root
+  ansible.posix.authorized_key:
+    user: root
+    key: AAAAB3NzaC1yc2EAAAABIwAAAQEAspyZMl5zAkk5SL45zFvtJF7UhXTRb0bEaZ3nuCC1Ql5wM3GWuftqd5zLH88dCu7ZO/BVh213LZTq/UHb6lI7kWalygk53qtdEx2cywjWFOW23Rg6xybatCEZ2/ZrpGZoBGnu63otAp4h2Nnj/VkOio3pGwD8vavmZ4xPrcECPAwtMPJsYf44Ptu2JdXizi4iY8I0/HKitQ113I4NbDcAiMKbTXSbOfqC+ldcgW3+9xShx/kuMFTKeJOy4LI4GR6gykzkV6+vfnalp24x/SIEjuohBarCRQKo4megHqZOzdMYAHqq0QuNubXURNb0Mvz1sE7Y8AFIxwSfXdQGi5hcQQ==
+    type: ssh-rsa
+    state: present
+    comment: ssh_key_pterjan
+
+- name: 'SSH authorized key: ssh_key_maat'
+  become: true
+  become_user: root
+  ansible.posix.authorized_key:
+    user: root
+    key: AAAAB3NzaC1yc2EAAAADAQABAAACAQDNQqKZkAhPiMFoeE3uqioaTFLDAP6cTwBsRA7angVMDpAThbYxGK439oe3xaj/cgGrlEApAnCmEPL81in6hubQaTRMR/RigA3FEkoO3H/J2Xng1rD+aVQFFK0EerjzxDa+bxUu7eRcHv1ar49LY7spNjk0LzNtI/n32L+t3WifCE/ithHi80Qh2kMq36kTm10wW4Gxpz9tYzSQz/f7dfrzhX+yOVUbmnevuS1BDeF21hmxmltBFQZvBh3jiUiWeTMHePHaod8jI8voJkxXJ+TxsniJ3AfxgCaMmIoU0a0rBxeTpzQVkUHJUsmsmji8WdeW9J9gNwXYYv2PuSli8iz5mAWG0eo6y2W+tOHNy6RhvcIkPi4pViycxBjQvoxki5nCZDXo1KwWCYoJ0wg5YIrqdqBb70ibAqMOS1wXSO5KwWbUoVYrP+tSvz+i1EQtgEHtamgCzFAkJXQrjXhvJ/L1GVJLsvqTpee+kN/9NnbH8GnHKvnenvE7ecITcMoy8hODulYaqZrx+0jWivTv5UpHO7gX9RwsDB2nviT4rluYWjIugIjCnBJIroD1QP6UWFFwG6MM44QPaByXjz8AC7vw1fNefhWFmS+CT7dQ8Vd2zglP4gQwlWePTC8sASHDLSoe0nIXGXcfY2Af8bThV1fMEteI850thUvIKfrx34z4rw==
+    type: ssh-rsa
+    state: present
+    comment: ssh_key_maat
+
+- name: 'SSH authorized key: ssh_key_wally'
+  become: true
+  become_user: root
+  ansible.posix.authorized_key:
+    user: root
+    key: AAAAB3NzaC1yc2EAAAABIwAAAQEAsB/PAEQJE/M5c3keyef6rKQvCtTk5cdw6ujXl6n8G7D7Q6h4IgIccd5mYcBU7ij2S5N3lfOQmKJqf2Pa5pByLfXlQnhCLzsgL9X45WJmpsoVK1MzjDY8iY+aL/74tj3wiMzuzAAwwpE3EftyfscxhSwf2e11B3qDzVRmNnxPVKlm85nTygnrZ0ag4nOC6O4yC3Hh1ULhKGtNAsGNF2yRGs7IcN9ytcVhGF3WGJfRI2c2kIuKW/lXxeE04sWWb+k019ys4ah0iQoLja6xVSHgxbVlm3oDz+mGGsPtoSvtoWpvF3q9FKqGclJpboWRMo3jyP6yDRVcTMXUSONmq3N8uw==
+    type: ssh-rsa
+    state: present
+    comment: ssh_key_wally
+
+- name: 'SSH authorized key: ssh_key_danf'
+  become: true
+  become_user: root
+  ansible.posix.authorized_key:
+    user: root
+    key: AAAAB3NzaC1yc2EAAAADAQABAAABAQCgWFg4EsUkZ5uh34ScVbfwhVdP7kTLRwsojeF+DgmwXSPbM9NUxiCmyFrHuh3m6bxG3BPMwrDskqUrQ3z/5WX6dB/CzSP/j03EkslzaE7eTzIpGt/vKIuZHR+4Z9FZcY1pyoI44rdgW5MVC+yBoJkvBerOkvNzfiRSfQ9R4eopPNTif3vb4MP/cFzFfa3o8NMqHxhgGFhF945NlzCUmnec13sNggx1wGNFHMpWttSaQ0izgvSdb61WSswNnCjBF5t3oyh7DgI80TN/XfXfDWZPjkQUzLrh9inuPollAWfreeInoCmF8ou268efaRoSfRMZ3qdRkJLDDy2Os8eL/d3d
+    type: ssh-rsa
+    state: present
+    comment: ssh_key_danf
+
+- name: 'SSH authorized key: ssh_key_bcornec'
+  become: true
+  become_user: root
+  ansible.posix.authorized_key:
+    user: {{ item }}
+    key: AAAAB3NzaC1yc2EAAAADAQABAAABAQC0tyRl5qxbMEIoG8yGVsVU2nxEDeVf3QjCzZg+bohdQq2ibUr2adYl0KLIfS8Wd73DTet7GIHtKQ3tZlC8C3B+W4GIN3dqGEeyAZpZaesRsL0Fwotjs0E0enYfTiJCzLEKWMzshMU6AQVnSre6v1MpR+E7NPpnPwFbHeA9FvD16iLb4uXs3RpGZjw0edUTB7zulxASwfsrCNN0feyDfkQAtn8GZEQd56z2OEjCpsvDdAvKwmwSNq1LbpHEEOBSXtQ2ub+3HBL1u69qMK+mpicMMhpd++mIH/Z8FZ2eM/BNkHh7L/3E29WWtfd6o+wyGHMBGk8lfVJyXJE9DGzZDxYf
+    type: ssh-rsa
+    state: present
+    comment: ssh_key_bcornec
+    with_items:
+      - root
+      - "{{ MGAADMININS }}"
+      - "{{ MGAUSER }}"
