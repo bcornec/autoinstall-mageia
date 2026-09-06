@@ -35,10 +35,10 @@ MGALDAPPORT: "389"
 nodes:
   # Common content for all nodes
   - role: system
-    mgaver: 9
+    mgaver: 10
     mgaarch: x86_64
     nodenames:
-      - name: void
+      - name: all
         mac: 00:00:00:00:00:00
     ports:
       - tcp 22,53,123
@@ -53,6 +53,7 @@ nodes:
       - shorewall
       - sshd
       - sshutout
+      - xymon-client
     pkgs:
       # This list should have been auto_installed, but check for sure
       - ansible
@@ -176,7 +177,7 @@ nodes:
           name: ilo
           mac: B4:7A:F1:4F:A0:04
           ip: 192.168.25.155
-    mgaver: 9
+    mgaver: 10
     mgaarch: x86_64
     ports:
       - tcp 22
@@ -252,7 +253,7 @@ nodes:
           name: ilo
           mac: B8:83:03:51:EC:C0 
           ip: 192.168.25.158
-    mgaver: 9
+    mgaver: 10
     mgaarch: x86_64
     ports:
       - tcp 80
@@ -287,7 +288,7 @@ nodes:
           name: ilo
           mac: b8:83:03:51:eb:1c
           ip: 192.168.25.157
-    mgaver: 9
+    mgaver: 10
     mgaarch: x86_64
     ports:
       - tcp 80
