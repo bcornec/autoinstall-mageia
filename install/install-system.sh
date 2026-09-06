@@ -35,6 +35,11 @@ sudo chown $MGAUSER $MGALOCAL/{etc,bin,sbin,share}
 for r in `ansible-inventory -i $MGAANSIBLEDIR/inventory --host localhost --playbook-dir . | jq '.nodes[] | .role'| sed 's/"//g'`; do
 	echo "[$r]" >> $MGAANSIBLEDIR/inventory
 	for m in `ansible-inventory -i $MGAANSIBLEDIR/inventory --host localhost --playbook-dir . | jq '.nodes[] | select(.role=="'$r'") | .nodenames[] | .name' | sed 's/"//g'`; do
+		if [ _"$m" = _"all" ]; then
+			for m1 in `ansible-inventory -i $MGAANSIBLEDIR/inventory --host localhost --playbook-dir . | jq '.nodes[] | .nodenames[] | .name' | sed 's/"//g' | grep -Ev '^all$'`; do
+				echo "$m1.$MGADOMAIN" >> $MGAANSIBLEDIR/inventory
+			done
+		fi
 		echo "$m.$MGADOMAIN" >> $MGAANSIBLEDIR/inventory
 	done
 	echo " " >> $MGAANSIBLEDIR/inventory

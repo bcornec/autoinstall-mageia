@@ -3,4 +3,4 @@
   roles:
   - dploy
   handlers:
-  - include: "{{ MGAANSIBLEDIR }}/"{{ MGAANSIBLEDIR }}/handlers.yml
+  - include_tasks: "{{ MGAANSIBLEDIR }}/"{{ MGAANSIBLEDIR }}/handlers.yml

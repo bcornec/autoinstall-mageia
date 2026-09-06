@@ -33,11 +33,6 @@
   become_user: root
   ansible.builtin.service: name=fail2ban state=restarted
 
-- name: restart sshd
-  become: true
-  become_user: root
-  ansible.builtin.service: name=sshd state=restarted
-
 - name: restart xymon-client
   become: true
   become_user: root

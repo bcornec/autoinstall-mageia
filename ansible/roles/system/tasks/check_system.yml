@@ -137,7 +137,7 @@
   become: true
   become_user: root
   ansible.builtin.template:
-    src: template/etc/sshd_config.j2
+    src: templates/etc/sshd_config.j2
     dest: /etc/ssh/sshd_config
     owner: root
     group: root
@@ -353,6 +353,8 @@
 # TODO postfix-client
 
 - name: Configure xymon-client to report to monitoring server
+  become: true
+  become_user: root
   ansible.builtin.lineinfile:
     path: /etc/sysconfig/xymon-client
     regexp: '^XYMSRV='

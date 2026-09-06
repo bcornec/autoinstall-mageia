@@ -1,7 +1,11 @@
 ---
 - name: 'Use system playbook check_system'
-  ansible.builtin.include_tasks: check_system.yml
+  ansible.builtin.import_role:
+    name: system
+    tasks_from: check_system
 
 - name: 'Use system playbook default_ssh_key'
-  ansible.builtin.include_task: default_ssh_key.yml
+  ansible.builtin.import_role:
+    name: system
+    tasks_from: default_ssh_key
 
