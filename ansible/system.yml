@@ -1,0 +1,6 @@
+---
+- hosts: system
+  roles:
+  - system
+  handlers:
+  - include: "{{ MGAANSIBLEDIR }}/handlers.yml"
