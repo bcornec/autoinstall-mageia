@@ -3,4 +3,4 @@
   roles:
   - system
   handlers:
-  - include_tasks: "{{ MGAANSIBLEDIR }}/handlers.yml"
+  - import_tasks: "{{ MGAANSIBLEDIR }}/handlers.yml"
