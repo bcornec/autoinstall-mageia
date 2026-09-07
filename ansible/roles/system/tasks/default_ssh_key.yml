@@ -45,7 +45,7 @@
     key: "ssh-rsa bohdQq2ibUr2adYl0KLIfS8Wd73DTet7GIHtKQ3tZlC8C3B+W4GIN3dqGEeyAZpZaesRsL0Fwotjs0E0enYfTiJCzLEKWMzshMU6AQVnSre6v1MpR+E7NPpnPwFbHeA9FvD16iLb4uXs3RpGZjw0edUTB7zulxASwfsrCNN0feyDfkQAtn8GZEQd56z2OEjCpsvDdAvKwmwSNq1LbpHEEOBSXtQ2ub+3HBL1u69qMK+mpicMMhpd++mIH/Z8FZ2eM/BNkHh7L/3E29WWtfd6o+wyGHMBGk8lfVJyXJE9DGzZDxYf"
     state: present
     comment: ssh_key_bcornec
-    with_items:
-      - root
-      - "{{ MGAADMININS }}"
-      - "{{ MGAUSER }}"
+  with_items:
+    - root
+    - "{{ MGAADMININS }}"
+    - "{{ MGAUSER }}"
