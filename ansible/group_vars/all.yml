@@ -53,7 +53,7 @@ nodes:
       - shorewall
       - sshd
       - sshutout
-      - xymon-client
+      - xymon
     pkgs:
       # This list should have been auto_installed, but check for sure
       - ansible
