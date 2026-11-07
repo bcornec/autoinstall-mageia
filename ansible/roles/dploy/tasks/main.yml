@@ -1,0 +1,5 @@
+---
+- name: 'Use dploy playbook check_dploy'
+  ansible.builtin.import_role:
+    name: dploy
+    tasks_from: check_dploy
