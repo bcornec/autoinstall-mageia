@@ -1,314 +1,305 @@
 ---
-- name: Playbook for Mageia Infra dployment server installation
-  hosts: all
-  gather_facts: true
+- name: Include variables for the underlying distribution
+  ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/group_vars/{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
 
-  handlers:
-    - name: "Set of handlers"
-      ansible.builtin.import_tasks: "{{ MGAANSIBLEDIR }}/handlers.yml"
+- name: Base setup for a Mageia Infra server
+  ansible.builtin.import_role:
+    name: system
+    tasks_from: check_system
 
-  tasks:
-    - name: Include variables for the underlying distribution
-      ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/group_vars/{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+- name: Check for installed packages
+  ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
 
-    - name: Base setup for a Mageia Infra server
-      ansible.builtin.import_role:
-        name: system
-        tasks_from: check_system
+- name: Setup sysctl params
+  become: true
+  become_user: root
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: true
+    sysctl_set: true
+  with_items:
+    - { key: "net.ipv4.ip_forward", value: "1" }
 
-    - name: Check for installed packages
-      ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
+- name: "Create sysctl file link for systemd"
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    src: /etc/sysctl.conf
+    dest: /etc/sysctl.d/99-mageia.conf
+    state: link
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: "0644"
 
-    - name: Setup sysctl params
-      become: true
-      become_user: root
-      ansible.posix.sysctl:
-        name: "{{ item.key }}"
-        value: "{{ item.value }}"
-        state: present
-        reload: true
-        sysctl_set: true
-      with_items:
-        - { key: "net.ipv4.ip_forward", value: "1" }
+- name: "Generate additional shorewall rules"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/shorewall/{{ item | basename }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0640
+    backup: yes
+  with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/snat' ]
+  notify:
+    - restart shorewall
 
-    - name: "Create sysctl file link for systemd"
-      become: true
-      become_user: root
-      ansible.builtin.file:
-        src: /etc/sysctl.conf
-        dest: /etc/sysctl.d/99-mageia.conf
-        state: link
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: "0644"
+- name: "Create local dploy directories"
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: "0755"
+  with_items:
+    - "{{ MGAKSDIR }}"
+    - "{{ MGALDIR }}"
+    - "{{ MGATFTPDIR }}"
+    - "{{ MGATFTPDIR }}/pxelinux.cfg"
 
-    - name: "Generate additional shorewall rules"
-      become: true
-      become_user: root
-      ansible.builtin.template:
-        src: "{{ item }}"
-        dest: "/etc/shorewall/{{ item | basename }}"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0640
-        backup: yes
-      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/snat' ]
-      notify:
-        - restart shorewall
+- name: "Create local mirror directories"
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}"
+    state: directory
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: "0755"
+  loop: "{{ nodes }}"
 
-    - name: "Create local dploy directories"
-      become: true
-      become_user: root
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: "0755"
-      with_items:
-        - "{{ MGAKSDIR }}"
-        - "{{ MGALDIR }}"
-        - "{{ MGATFTPDIR }}"
-        - "{{ MGATFTPDIR }}/pxelinux.cfg"
+- name: "Install PXE original files for tftp"
+  become: true
+  become_user: root
+  ansible.builtin.synchronize:
+    src: "{{ MGATFTPDIR }}/X86PC/linux/"
+    dest: "{{ MGATFTPDIR }}/"
 
-    - name: "Create local mirror directories"
-      become: true
-      become_user: root
-      ansible.builtin.file:
-        path: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}"
-        state: directory
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: "0755"
-      loop: "{{ nodes }}"
+- name: "Assess local dploy directories rights and owner"
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: "0644"
+  with_fileglob:
+    - "{{ MGATFTPDIR }}/*"
+    - "{{ MGATFTPDIR }}/pxelinux.cfg/*"
 
-    - name: "Install PXE original files for tftp"
-      become: true
-      become_user: root
-      ansible.builtin.synchronize:
-        src: "{{ MGATFTPDIR }}/X86PC/linux/"
-        dest: "{{ MGATFTPDIR }}/"
+- name: "Modify local files owner for current Mageia version"
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: "0644"
+  with_items:
+    - "{{ MGATFTPDIR }}/help.txt"
+    - "{{ MGATFTPDIR }}/pxelinux.cfg/default"
 
-    - name: "Assess local dploy directories rights and owner"
-      become: true
-      become_user: root
-      ansible.builtin.file:
-        path: "{{ item }}"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: "0644"
-      with_fileglob:
-        - "{{ MGATFTPDIR }}/*"
-        - "{{ MGATFTPDIR }}/pxelinux.cfg/*"
+- name: "Copy scripts to bin under {{ MGALOCAL }}"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ MGALOCAL }}/bin/{{ item | basename | regex_replace('.j2$') }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0755
+    backup: yes
+  with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/bin/*.j2' ]
 
-    - name: "Modify local files owner for current Mageia version"
-      become: true
-      become_user: root
-      ansible.builtin.file:
-        path: "{{ item }}"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: "0644"
-      with_items:
-        - "{{ MGATFTPDIR }}/help.txt"
-        - "{{ MGATFTPDIR }}/pxelinux.cfg/default"
+- name: "Generate autoinstall-mageia script file"
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/autoinstall/autoinstall-mageia.j2"
+    dest: "{{ MGAKSDIR }}/autoinstall-mageia"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0755
+    backup: yes
 
-    - name: "Copy scripts to bin under {{ MGALOCAL }}"
-      become: true
-      become_user: root
-      ansible.builtin.template:
-        src: "{{ item }}"
-        dest: "{{ MGALOCAL }}/bin/{{ item | basename | regex_replace('.j2$') }}"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0755
-        backup: yes
-      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/bin/*.j2' ]
+- name: "Setup cron based mirror of Mageia"
+  become: true
+  become_user: root
+  ansible.builtin.cron:
+    name: mageia-mirror
+    minute: 43
+    hour: 23
+    user: "{{ MGAUSER }}"
+    job: "{{ MGALOCAL }}/bin/mirror-mageia"
+    cron_file: mirror-mageia
+    state: present
+    backup: yes
 
-    - name: "Generate autoinstall-mageia script file"
-      ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/autoinstall/autoinstall-mageia.j2"
-        dest: "{{ MGAKSDIR }}/autoinstall-mageia"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0755
-        backup: yes
+- name: "Copy Mageia kernel for tftp boot"
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}/isolinux/{{ item.mgaarch }}/vmlinuz"
+    dest: "{{ MGATFTPDIR }}/k{{ item.mgaver }}-{{ item.mgaarch }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  loop: "{{ nodes }}"
 
-    - name: "Setup cron based mirror of Mageia"
-      become: true
-      become_user: root
-      ansible.builtin.cron: 
-        name: mageia-mirror 
-        minute: 43 
-        hour: 23 
-        user: "{{ MGAUSER }}" 
-        job: "{{ MGALOCAL }}/bin/mirror-mageia"
-        cron_file: mirror-mageia
-        state: present 
-        backup: yes
+- name: "Copy Mageia initrd for tftp boot"
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}/isolinux/{{ item.mgaarch }}/all-nonfree.rdz"
+    dest: "{{ MGATFTPDIR }}/i{{ item.mgaver }}-{{ item.mgaarch }}.img"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  loop: "{{ nodes }}"
 
-    - name: "Copy Mageia kernel for tftp boot"
-      ansible.builtin.copy:
-        remote_src: true
-        src: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}/isolinux/{{ item.mgaarch }}/vmlinuz"
-        dest: "{{ MGATFTPDIR }}/k{{ item.mgaver }}-{{ item.mgaarch }}"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      loop: "{{ nodes }}"
+- name: "Copy Mageia ldlinux for tftp boot"
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}/isolinux/ldlinux.c32"
+    dest: "{{ MGATFTPDIR }}/ldlinux.c32"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  loop: "{{ nodes }}"
 
-    - name: "Copy Mageia initrd for tftp boot"
-      ansible.builtin.copy:
-        remote_src: true
-        src: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}/isolinux/{{ item.mgaarch }}/all-nonfree.rdz"
-        dest: "{{ MGATFTPDIR }}/i{{ item.mgaver }}-{{ item.mgaarch }}.img"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      loop: "{{ nodes }}"
+- name: "Copy Mageia conf files for tftp boot"
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ MGATFTPDIR }}/{{ item | basename }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/tftp/*' ]
 
-    - name: "Copy Mageia ldlinux for tftp boot"
-      ansible.builtin.copy:
-        remote_src: true
-        src: "{{ MGALDIR }}/{{ item.mgaver }}/{{ item.mgaarch }}/isolinux/ldlinux.c32"
-        dest: "{{ MGATFTPDIR }}/ldlinux.c32"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      loop: "{{ nodes }}"
+- name: "Copy Mageia conf file for dhcpd service"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/etc/dhcpd.conf.j2"
+    dest: /etc/dhcpd.conf
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  notify:
+    - restart dhcpd
 
-    - name: "Copy Mageia conf files for tftp boot"
-      ansible.builtin.template:
-        src: "{{ item }}"
-        dest: "{{ MGATFTPDIR }}/{{ item | basename }}"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/tftp/*' ]
+- name: "Copy Mageia conf file for dhcpd sysconfig"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/dhcpd.j2"
+    dest: /etc/sysconfig/dhcpd
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  notify:
+    - restart dhcpd
 
-    - name: "Copy Mageia conf file for dhcpd service"
-      become: true
-      become_user: root
-      ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/etc/dhcpd.conf.j2"
-        dest: /etc/dhcpd.conf
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      notify:
-        - restart dhcpd
+- name: "Generate dhcpd systemd conf file"
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/systemd/dhcpd.service.j2"
+    dest: /usr/lib/systemd/system/dhcpd.service
+    mode: 0644
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    backup: yes
+  notify:
+    - restart dhcpd
 
-    - name: "Copy Mageia conf file for dhcpd sysconfig"
-      become: true
-      become_user: root
-      ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/sysconfig/dhcpd.j2"
-        dest: /etc/sysconfig/dhcpd
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      notify:
-        - restart dhcpd
+- name: "Copy Mageia conf files for pxelinux booted servers"
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ MGATFTPDIR }}/pxelinux.cfg/{{ item | basename }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/pxelinux.cfg/*' ]
 
-    - name: "Generate dhcpd systemd conf file"
-      become: true
-      become_user: root
-      ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/systemd/dhcpd.service.j2"
-        dest: /usr/lib/systemd/system/dhcpd.service
-        mode: 0644
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        backup: yes
-      notify:
-        - restart dhcpd
+- name: "Generate mga-check-network for auto_inst"
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/bin/mga-check-network"
+    dest: "{{ MGAKSDIR }}/mga-check-network"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
 
-    - name: "Copy Mageia conf files for pxelinux booted servers"
-      ansible.builtin.template:
-        src: "{{ item }}"
-        dest: "{{ MGATFTPDIR }}/pxelinux.cfg/{{ item | basename }}"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/pxelinux.cfg/*' ]
+- name: "Generate postinstall script"
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/ks/postinstall.pl"
+    dest: "{{ MGAKSDIR }}/{{ item.1.name }}_postinstall.pl"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  loop: "{{ nodes | subelements('nodenames', { 'skip_missing': true }) }}"
+  when: item.0.role != "system"
 
-    - name: "Generate mga-check-network for auto_inst"
-      ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/bin/mga-check-network"
-        dest: "{{ MGAKSDIR }}/mga-check-network"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
+- name: "Generate auto_inst perl conf files"
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/ks/auto_inst.cfg.pl.j2"
+    dest: "{{ MGAKSDIR }}/{{ item.1.name }}_auto_inst.cfg.pl"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  loop: "{{ nodes | subelements('nodenames', { 'skip_missing': true }) }}"
+  when: item.0.role != "system"
 
-    - name: "Generate postinstall script"
-      ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/ks/postinstall.pl"
-        dest: "{{ MGAKSDIR }}/{{ item.1.name }}_postinstall.pl"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      loop: "{{ nodes | subelements('nodenames', { 'skip_missing': true }) }}"
-      when: item.0.role != "system"
+- name: "Generate autoinstall/mageia.sh conf file"
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/autoinstall/mageia.sh.j2"
+    dest: "{{ MGAKSDIR }}/{{ item.1.name }}_autoinstall-mageia.sh"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  loop: "{{ nodes | subelements('nodenames', { 'skip_missing': true }) }}"
+  when: item.0.role != "system"
 
-    - name: "Generate auto_inst perl conf files"
-      ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/ks/auto_inst.cfg.pl.j2"
-        dest: "{{ MGAKSDIR }}/{{ item.1.name }}_auto_inst.cfg.pl"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      loop: "{{ nodes | subelements('nodenames', { 'skip_missing': true }) }}"
-      when: item.0.role != "system"
+- name: "Generate autoinstall utility files"
+  ansible.builtin.copy:
+    src: "{{ MGAINSDIR }}/{{ item }}"
+    dest: "{{ MGAKSDIR }}/{{ item }}"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: 0644
+    backup: yes
+  with_items:
+    - install.repo
+    - install-functions.sh
 
-    - name: "Generate autoinstall/mageia.sh conf file"
-      ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/autoinstall/mageia.sh.j2"
-        dest: "{{ MGAKSDIR }}/{{ item.1.name }}_autoinstall-mageia.sh"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      loop: "{{ nodes | subelements('nodenames', { 'skip_missing': true }) }}"
-      when: item.0.role != "system"
+- name: "Generate systemd conf file to lauch install after first boot"
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/systemd/autoinstall-mageia.service.j2"
+    dest: "{{ MGAKSDIR }}/autoinstall-mageia.service"
+    mode: 0644
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    backup: yes
 
-    - name: "Generate autoinstall utility files"
-      ansible.builtin.copy:
-        src: "{{ MGAINSDIR }}/{{ item }}"
-        dest: "{{ MGAKSDIR }}/{{ item }}"
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        mode: 0644
-        backup: yes
-      with_items:
-        - install.repo
-        - install-functions.sh
-
-    - name: "Generate systemd conf file to lauch install after first boot"
-      ansible.builtin.template:
-        src: "{{ MGAANSIBLEDIR }}/templates/systemd/autoinstall-mageia.service.j2"
-        dest: "{{ MGAKSDIR }}/autoinstall-mageia.service"
-        mode: 0644
-        owner: "{{ MGAUSER }}"
-        group: "{{ MGAUSER }}"
-        backup: yes
-
-    - name: Enable and start dploy services
-      become: true
-      become_user: root
-      ansible.builtin.systemd:
-        state: started
-        daemon_reload: true
-        enabled: true
-        name: "{{ item.1 }}"
-      loop: "{{ nodes | subelements('svcs', { 'skip_missing': true })}}"
-      when: item.0.role == "dploy"
+- name: Enable and start dploy services
+  become: true
+  become_user: root
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: true
+    enabled: true
+    name: "{{ item.1 }}"
+  loop: "{{ nodes | subelements('svcs', { 'skip_missing': true })}}"
+  when: item.0.role == "dploy"
