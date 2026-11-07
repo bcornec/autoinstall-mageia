@@ -2,6 +2,7 @@
 - hosts: dploy
   gather_facts: true
   roles:
+  - system
   - dploy
   handlers:
   - include_tasks: "{{ MGAANSIBLEDIR }}/handlers.yml"

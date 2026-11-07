@@ -2,11 +2,6 @@
 - name: Include variables for the underlying distribution
   ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/group_vars/{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
 
-- name: Base setup for a Mageia Infra server
-  ansible.builtin.import_role:
-    name: system
-    tasks_from: check_system
-
 - name: Check for installed packages
   ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
 
