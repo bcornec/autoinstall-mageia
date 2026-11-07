@@ -1,6 +1,6 @@
---
+---
 - hosts: dploy
   roles:
   - dploy
   handlers:
-  - include_tasks: "{{ MGAANSIBLEDIR }}/"{{ MGAANSIBLEDIR }}/handlers.yml
+  - include_tasks: "{{ MGAANSIBLEDIR }}/{{ MGAANSIBLEDIR }}/handlers.yml"

@@ -121,7 +121,7 @@ Subsystem	sftp	/usr/libexec/openssh/sftp-server
 #	ForceCommand cvs server
 {% for node in nodes -%}
 {% for machine in node.nodenames -%}
-{% if  machine.name == 'duvel' then -%}
+{% if  machine.name == 'duvel' -%}
 # git command is already forced to "gitolite <username>" in /var/lib/git/.ssh/authorized_keys
 Match User *,!schedbot,!root,!git Group *,!mga-sysadmin,!mga-unrestricted_shell_access
         ForceCommand /usr/local/bin/sv_membersh.pl -c "$SSH_ORIGINAL_COMMAND"
