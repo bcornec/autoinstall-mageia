@@ -9,8 +9,9 @@ echo "root:$MGAPWD" | chpasswd
 echo "root is $MGAPWD" > /root/drakx/root
 # Setup passwd for {{ MGAADMININS }}
 MGAPWD=`head -80 /dev/urandom | tr -dc "a-zA-Z0-9" | fold -w 8 | head -n 1`
-echo "$MGAADMININS:$MGAPWD" | chpasswd
-echo "$MGAADMININS is $MGAPWD" > /root/drakx/$MGAADMININS
+# MGAPWD="linux1"
+echo "{{ MGAADMININS }}:$MGAPWD" | chpasswd
+echo "{{ MGAADMININS }} is $MGAPWD" > /root/drakx/$MGAADMININS
 
 # Get the systemd conf file for reboot
 wget http://{{ MGADPLOYIP }}/ks/autoinstall-mageia.service -O /etc/systemd/system/autoinstall-mageia.service
