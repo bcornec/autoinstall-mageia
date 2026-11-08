@@ -180,6 +180,7 @@ nodes:
     mgaver: 10
     mgaarch: x86_64
     ports:
+      - icmp 8
       - tcp 22
     pkgs:
       - iurt
@@ -214,6 +215,8 @@ nodes:
     mgaver: 10
     mgaarch: x86_64
     ports:
+      - icmp 8
+      - tcp 22
       - tcp 80
       - udp 68,69
     svcs:
@@ -256,6 +259,8 @@ nodes:
     mgaver: 10
     mgaarch: x86_64
     ports:
+      - icmp 8
+      - tcp 22
       - tcp 80
     svcs:
       - rsynd
@@ -291,6 +296,8 @@ nodes:
     mgaver: 10
     mgaarch: x86_64
     ports:
+      - icmp 8
+      - tcp 22
       - tcp 80
     svcs:
       - httpd

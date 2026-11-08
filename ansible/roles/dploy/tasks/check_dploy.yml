@@ -28,6 +28,7 @@
     group: "{{ MGAUSER }}"
     mode: "0644"
 
+### FIREWALL ###
 - name: "Generate additional shorewall rules"
   become: true
   become_user: root
@@ -38,7 +39,7 @@
     group: "{{ MGAUSER }}"
     mode: 0640
     backup: yes
-  with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/snat' ]
+  with_fileglob: [ '{{ MGAANSIBLEDIR }}/templates/shorewall/rules*', '{{ MGAANSIBLEDIR }}/templates/shorewall/snat' ]
   notify:
     - restart shorewall
 

@@ -1,0 +1,8 @@
+---
+- hosts: build
+  gather_facts: true
+  roles:
+  - system
+  - build
+  handlers:
+  - import_tasks: "{{ MGAANSIBLEDIR }}/handlers.yml"

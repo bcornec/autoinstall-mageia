@@ -1,6 +1,6 @@
-{% for node in nodes %}
-{% if node.nodenames == MGATYPE or node.nodenames == "system" %}
-{% for p in node.ports %}
+{% for node in nodes -%}
+{% if node.nodenames == MGATYPE -%}
+{% for p in node.ports -%}
 ACCEPT net fw {{ p }} -
 {% endfor %}
 {% endif %}
