@@ -2,28 +2,27 @@
                  {
                         'fs_type' => 'ext4',
                         'mntpoint' => '/boot',
-                        # 200 MB
-                        'size' => 403808,
-                        'hd' => 'sda',
+                        'size' => 1003808,
+                        'hd' => 'sdb',
                  },
                 # 4 GB swap spaces
                  {
                         'fs_type' => 'swap',
                         'size' => 8038086,
-                        'hd' => 'sda',
+                        'hd' => 'sdb',
                  },
                 # 15 GB /
                  {
                         'fs_type' => 'ext4',
                         'mntpoint' => '/',
                         'size' => 30165190,
-            			'hd' => 'sda',
+            		'hd' => 'sdb',
                 },
                 # 10 GB mini /home
                  {
                         'fs_type' => 'ext4',
                         'mntpoint' => '/home',
                         'size' => 20283384,
-            			'hd' => 'sda',
+            		'hd' => 'sdb',
                         'ratio' => 100,
                 },

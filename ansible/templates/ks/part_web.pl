@@ -2,8 +2,7 @@
                  {
                         'fs_type' => 'ext4',
                         'mntpoint' => '/boot',
-                        # 200 MB
-                        'size' => 403808,
+                        'size' => 1003808,
                         'hd' => 'sda',
                  },
                 # 4 GB swap spaces
