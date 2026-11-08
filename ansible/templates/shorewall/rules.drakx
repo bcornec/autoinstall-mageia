@@ -1,5 +1,5 @@
 {% for node in nodes -%}
-{% if node.nodenames == MGATYPE -%}
+{% if node.role == MGATYPE -%}
 {% for p in node.ports -%}
 ACCEPT net fw {{ p }} -
 {% endfor %}
