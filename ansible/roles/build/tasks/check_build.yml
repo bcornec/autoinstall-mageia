@@ -1,0 +1,36 @@
+---
+- name: Include variables for the underlying distribution
+  ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/group_vars/{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+
+- name: Check for installed packages
+  ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
+
+- name: Ensure iurt sudoers configuration is correct
+  become: true
+  become_user: root
+  ansible.builtin.copy:
+    src: "{{ MGAANSIBLEDIR }}/templates/sudoers.d/iurt"
+    dest: /etc/sudoers.d/iurt
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+
+- name: Check ssh public keys for iurt
+  become: true
+  become_user: root
+  ansible.posix.authorized_key:
+    user: iurt
+    state: present
+    key: "{{ lookup('file', '{{ MGAREPODIR }}/skel/.ssh/iurt_pub_keys') }}"
+
+- name: Enable build services
+  become: true
+  become_user: root
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: true
+    enabled: true
+    name: "{{ item.1 }}"
+  loop: "{{ nodes | subelements('svcs', { 'skip_missing': true })}}"
+  when: item.0.role == "build"

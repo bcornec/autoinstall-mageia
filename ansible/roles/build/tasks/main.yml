@@ -1,0 +1,5 @@
+---
+- name: 'Use build playbook check_build'
+  ansible.builtin.import_role:
+    name: build
+    tasks_from: check_build
