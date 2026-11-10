@@ -57,7 +57,6 @@ nodes:
     pkgs:
       # This list of pakgs from ansible to xz should have been
       # auto_installed, but check for sure
-      # The following pkgs are used by most sysadmin
       - ansible
       - git
       - kernel-server-latest
@@ -70,6 +69,7 @@ nodes:
       - vim-minimal
       - wget
       - xz
+      # List used by most sysadmin
       - bash-completion
       - bind-utils
       - bzip2
