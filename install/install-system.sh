@@ -121,7 +121,7 @@ fi
 ansible-galaxy collection install ansible.posix
 
 # Automatic Installation script for the system 
-CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT install_$MGATYPE.yml"
+CMD="ansible-playbook -v -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT install_$MGATYPE.yml"
 echo "Executing $CMD"
 $CMD
 if [ $? -ne 0 ]; then
