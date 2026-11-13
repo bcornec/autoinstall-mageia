@@ -130,6 +130,6 @@ if [ $? -ne 0 ]; then
 fi
 
 # Runs the conformity check script
-$MGALOCAL/bin/mga-check-srv
+sudo su - $MGAUSER -c $MGALOCAL/bin/mga-check-srv
 
 date
