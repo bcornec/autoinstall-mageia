@@ -3,7 +3,7 @@
   ansible.builtin.include_vars: "{{ MGAANSIBLEDIR }}/group_vars/{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
 
 - name: Check for installed packages
-  ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
+  ansible.builtin.import_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
 
 - name: Setup sysctl params
   become: true

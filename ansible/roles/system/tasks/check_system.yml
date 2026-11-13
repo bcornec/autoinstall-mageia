@@ -11,7 +11,7 @@
 
 ### PACKAGES ###
 - name: Check for installed packages
-  ansible.builtin.include_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
+  ansible.builtin.import_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
 
 ### SYSTEM LIMITS ###
 - name: Ensure correct nproc soft limits
