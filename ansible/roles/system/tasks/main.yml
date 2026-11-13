@@ -3,6 +3,7 @@
   ansible.builtin.import_role:
     name: system
     tasks_from: check_system
+    handlers_from: "{{ MGAANSIBLEDIR }}/handlers.yml"
 
 - name: 'Use system playbook default_ssh_key'
   ansible.builtin.import_role:

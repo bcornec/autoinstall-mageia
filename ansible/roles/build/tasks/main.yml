@@ -3,3 +3,4 @@
   ansible.builtin.import_role:
     name: build
     tasks_from: check_build
+    handlers_from: "{{ MGAANSIBLEDIR }}/handlers.yml"
