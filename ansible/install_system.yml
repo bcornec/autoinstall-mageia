@@ -115,10 +115,10 @@
     dest: "{{ ansible_facts['env']['HOME'] }}/.ansible.cfg"
     mode: "0644"
 
-- name: 'Include role: system::check_system'
+- name: 'Include role: system::mga-check-srv'
   ansible.builtin.import_role:
     name: system
-    tasks_from: check_system
+    tasks_from: mga-check-srv
 
 - name: Disable autoinstall
   become: true
