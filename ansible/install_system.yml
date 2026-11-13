@@ -119,7 +119,6 @@
   ansible.builtin.import_role:
     name: system
     tasks_from: check_system
-    handlers_from: "{{ MGAANSIBLEDIR }}/handlers.yml"
 
 - name: Disable autoinstall
   become: true

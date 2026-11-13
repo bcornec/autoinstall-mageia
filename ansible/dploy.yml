@@ -1,8 +1,8 @@
 ---
 - hosts: dploy
   gather_facts: true
+  handlers:
+  - import_tasks: "{{ MGAANSIBLEDIR }}/handlers.yml"
   roles:
   - system
   - dploy
-  handlers:
-  - import_tasks: "{{ MGAANSIBLEDIR }}/handlers.yml"

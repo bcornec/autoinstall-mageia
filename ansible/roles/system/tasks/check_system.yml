@@ -335,7 +335,6 @@
   ansible.builtin.import_role:
     name: system
     tasks_from: mga-check-srv
-    handlers_from: "{{ MGAANSIBLEDIR }}/handlers.yml"
 
 - name: Setup crontab for daily conformity check
   become: true
@@ -364,7 +363,8 @@
     owner: root
     group: root
     mode: "0644"
-  notify: restart xymon-client
+  notify: 
+    - restart xymon-client
 
 ### SERVICES ###
 - name: Start base services
