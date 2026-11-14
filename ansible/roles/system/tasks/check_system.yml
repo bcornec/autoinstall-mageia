@@ -244,7 +244,7 @@
     group: "{{ MGAUSER }}"
     mode: 0644
 
-- name: "fix hostname"
+- name: "Fix hostname file"
   become: true
   become_user: root
   ansible.builtin.template:
@@ -253,6 +253,11 @@
     owner: "{{ MGAUSER }}"
     group: "{{ MGAUSER }}"
     mode: 0644
+
+- name: "Fix hostname"
+  become: true
+  become_user: root
+  ansible.builtin.command: hostname -F /etc/hostname
 
 - name: Adds real network interfaces in case of pub bonding
   become: true
