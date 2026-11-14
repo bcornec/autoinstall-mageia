@@ -5,6 +5,9 @@
 - name: Check for installed packages
   ansible.builtin.import_tasks: "{{ MGAANSIBLEDIR }}/install_pkgs.yml"
 
+- name: Generate shorewall additional rules
+  ansible.builtin.import_tasks: "{{ MGAANSIBLEDIR }}/roles/system/tasks/check-shorewall-rules.yml"
+
 - name: Ensure iurt sudoers configuration is correct
   become: true
   become_user: root

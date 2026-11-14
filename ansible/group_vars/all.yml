@@ -217,8 +217,7 @@ nodes:
     mgaarch: x86_64
     ports:
       - icmp 8
-      - tcp 22
-      - tcp 80
+      - tcp 22,80
       - udp 68,69
     svcs:
       - httpd
