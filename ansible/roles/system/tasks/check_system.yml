@@ -286,9 +286,10 @@
 - name: Configure bonding module
   become: true
   become_user: root
-  lineinfile:
-    path: /etc/modules-load.d/modules.conf
-    line: "alias {{ item }} bonding\noptions {{ item }} miimon=100 mode=4"
+  blockinfile: |
+    dest=/etc/modules-load.d/modules.conf backup=yes
+    content="alias {{ item }} bonding
+    options {{ item }} miimon=100 mode=4"
   when: item.startswith('bond')
   with_items:
     - "{{ MGAMACHINEPUBITF }}"
