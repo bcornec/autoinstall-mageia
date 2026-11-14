@@ -254,10 +254,19 @@
     group: "{{ MGAUSER }}"
     mode: 0644
 
+- name: "Check hostname"
+  become: true
+  become_user: root
+  ansible.builtin.command: hostname -f
+  register: hostname_fqdn
+  failed_when: false
+  changed_when: false
+
 - name: "Fix hostname"
   become: true
   become_user: root
   ansible.builtin.command: hostname -F /etc/hostname
+  when: hostname_fqdn.startswith('localhost')
 
 - name: Adds real network interfaces in case of pub bonding
   become: true
