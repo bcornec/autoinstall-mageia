@@ -296,11 +296,13 @@
   become: true
   become_user: root
   blockinfile: |
-    dest=/etc/modules-load.d/modules.conf backup=yes
-    content="alias {{ item }} bonding
+    path=/etc/modules-load.d/modules.conf
+    backup=yes
+    marker="# {mark} {{ item }} ANSIBLE MANAGED BLOCK"
+    block="alias {{ item }} bonding
     options {{ item }} miimon=100 mode=4"
   when: item.startswith('bond')
-  with_items:
+  loop:
     - "{{ MGAMACHINEPUBITF }}"
     - "{{ MGAMACHINEIITF }}"
 
