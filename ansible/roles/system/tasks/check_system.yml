@@ -266,7 +266,7 @@
   become: true
   become_user: root
   ansible.builtin.command: hostname -F /etc/hostname
-  when: hostname_fqdn.startswith('localhost')
+  when: hostname_fqdn.stdout.startswith('localhost')
 
 - name: Adds real network interfaces in case of pub bonding
   become: true
