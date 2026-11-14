@@ -104,6 +104,7 @@ nodes:
       - plocate
       - postfix
       - procmail
+      - python3-netaddr
       - rsync
       - screen
       - sos
@@ -228,7 +229,6 @@ nodes:
       - dhcp-server
       - pxelinux
       - tftp-server
-      - python3-netaddr
 
   - role: repo
     nodenames:
