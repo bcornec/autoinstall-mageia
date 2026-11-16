@@ -4,6 +4,9 @@ MGAMIRROR: rsync://duvel.mageia.org/mageia/distrib
 MGAKSDIR: /var/www/html/ks
 MGALDIR: /var/www/html/distrib
 MGATFTPDIR: /var/lib/tftpboot
+# Archive
+MGAARCHIVE: rsync://distrib-coffee.ipsl.jussieu.fr/pub/linux/Mageia-archive/
+MGAARCDIR: /data/archive/
 # Network
 MGADOMAIN: mageia.org
 MGAIDOMAIN: i.mageia.org

@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Mirror locally Mageia distribution versions
+# # and also a backup for archives
 
 {% set va = [] -%}
 {% for node in nodes -%}
@@ -20,4 +21,4 @@ rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGA
 mkdir -p {{ MGALDIR }}/cauldron/SRPMS
 rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAMIRROR }}/cauldron/SRPMS/ {{ MGALDIR }}/cauldron/SRPMS/
 {% endfor -%}
-
+rsync -aHz --delete --delete-after --partial --stats --log-format "%f %l" {{ MGAARCHIVE }} {{MGAARCDIR }}
