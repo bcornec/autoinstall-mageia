@@ -24,3 +24,20 @@
   #loop: "{{ nodes | subelements('pkgs', skip_missing=true)}}"
   #when: item.0.role == "system" or item.0.role == MGATYPE
 
+- name: Get hponcfg
+  become: true
+  become_user: root
+  ansible.builtin.get_url:
+    url: "http://{{ MGADPLOYIP }}/FW/hponcfg-6.1.0-0.x86_64.rpm"
+    dest: "{{ MGALOCAL}}/autoinstall/"
+    mode: '0644'
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+  register: download_result
+
+- name: Install hponcfg
+  become: true
+  become_user: root
+  ansible.builtin.command:
+    cmd: "urpmi {{ MGALOCAL}}/autoinstall/hponcfg-6.1.0-0.x86_64.rpm --force"
+  when: download_result.changed
