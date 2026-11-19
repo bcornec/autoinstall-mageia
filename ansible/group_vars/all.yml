@@ -28,10 +28,19 @@ MGALOCAL: /usr/local
 # LDAP setup
 #
 MGALDAPSRV: ldap.mageia.org
-MGALDAPDMN: mageia.org
-MGALDAPPWD: MotDePasseLDAPCompliquéAussi123!!!##
+MGALDAPDC: dc=mageia,dc=org
+# Passwd file in $HOME/.vault_passwd
+MGALDAPPWD: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          39363665316633396535663435623735323965333231643961376233336364396335323539326563
+          3365633865353166303837393530353562326535386330610a643363343862383336363365313239
+          61373135323466353164626162373035323633366333333939663639613437346631363865336236
+          3761313232363663300a373539366364353439323761663665343936346339343363386633313932
+          3934
 MGALDAPPORT: "389"
-
+MGALDAPALLOW: 
+  - mga-sysadmin
+  - mga-unrestricted_shell_access
 #
 # MGA configuration items per node role
 #
@@ -51,6 +60,7 @@ nodes:
       - network
       - crond
       - fail2ban
+      - nslcd
       - ntpd
       - postfix
       - shorewall
@@ -98,6 +108,7 @@ nodes:
       - mutt
       - netcat-traditional
       - net-tools
+      - nss-pam-ldapd
       - numlock
       - ntpsec
       - openldap-clients

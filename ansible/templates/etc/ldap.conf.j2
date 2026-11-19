@@ -1,0 +1,17 @@
+rootbinddn cn={{ MGAMACHINENAME }}.{{ MGADOMAIN }},ou=Hosts,{{ MGALDAPDC }}
+
+uri ldaps://{{ MGALDAPSRV }}
+base {{ MGALDAPDC }}
+timelimit 4
+bind_timelimit 4
+pam_lookup_policy yes
+pam_password exop
+nss_base_passwd ou=People,{{ MGALDAPDC }}?one
+nss_base_shadow ou=People,{{ MGALDAPDC }}?one
+nss_base_group  ou=Group,{{ MGALDAPDC }}?one
+
+nss_schema rfc2307bis
+nss_map_attribute uniqueMember member
+sudoers_base ou=sudoers,{{ MGALDAPDC }}
+#sudoers_debug 2
+

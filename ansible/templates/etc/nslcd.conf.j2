@@ -1,0 +1,13 @@
+uid nslcd
+gid nslcd
+uri ldaps://{{ MGALDAPSRV }}
+base {{ MGALDAPDC }}
+binddn cn={{ MGAMACHINENAME }}.{{ MGADOMAIN }},ou=Hosts,{{ MGALDAPDC }}
+bindpw {{ MGALDAPPWD }}
+base  group  ou=Group,{{ MGALDAPDC }}
+base  passwd ou=People,{{ MGALDAPDC }}
+base  shadow ou=People,{{ MGALDAPDC }}
+scope group  onelevel
+scope passwd onelevel
+scope shadow onelevel
+tls_reqcert allow

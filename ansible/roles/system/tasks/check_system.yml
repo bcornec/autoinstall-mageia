@@ -353,6 +353,11 @@
     name: system
     tasks_from: mga-check-srv
 
+- name: 'Include role: system::check-ldap-client'
+  ansible.builtin.import_role:
+    name: system
+    tasks_from: check-ldap-client
+
 - name: Setup crontab for daily conformity check
   become: true
   become_user: root

@@ -1,0 +1,50 @@
+---
+# Setup the name as an LDAP client
+- name: 'LDAP client: install /etc/ldap.conf'
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/etc/ldap.conf.j2"
+    dest: /etc/ldap.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart nslcd
+
+- name: 'LDAP client: install /etc/nslcd.conf'
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/etc/nslcd.conf.j2"
+    dest: /etc/nslcd.conf
+    owner: root
+    group: root
+    mode: '0600'
+  notify: restart nslcd
+  no_log: true
+
+- name: 'LDAP client: Configure LDAP in nsswitch.conf'
+  become: true
+  become_user: root
+  ansible.builtin.lineinfile:
+    path: /etc/nsswitch.conf
+    # force ldap on that line
+    regexp: "^{{ item.db }}:"
+    line: "{{ item.db }}:{{ item.value }}"
+  loop:
+    - { db: "passwd", value: "         files ldap [UNAVAIL=return]" }
+    - { db: "group", value: "          files ldap [UNAVAIL=return]" }
+    - { db: "shadow", value: "         files ldap [UNAVAIL=return]" }
+    - { db: "netgroup", value: "       files ldap [UNAVAIL=return]" }
+  notify: restart nslcd
+
+- name: 'LDAP client: Configure PAM for LDAP'
+  become: true
+  become_user: root
+    ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/pam.d/system-auth.j2"
+    dest: /etc/pam.d/system-auth
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart nslcd
