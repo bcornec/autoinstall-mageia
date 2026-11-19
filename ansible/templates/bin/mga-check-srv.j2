@@ -18,12 +18,16 @@ if [ _"$LAUNCHUSER" != _"{{ MGAUSER }}" ]; then
 	echo "This script should be launched as user {{ MGAUSER }}"
 	exit -1
 fi
+if [ ! -f $HOME/.mgavaultfile ]; then
+	echo "This script requires an existing and correct vault passwd file"
+	exit -1
+fi
 
 cd $MGAANSIBLEDIR
 
 #git remote update
 #git rebase 
 # Play the role (MGATYPE) of this system
-CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT $MGATYPE.yml"
+CMD="ansible-playbook -i inventory --limit $MGAPBKDIR $MGAANSPLAYOPT --vault-password-file=$HOME/.mgavaultfile $MGATYPE.yml"
 echo "Executing $CMD"
 $CMD

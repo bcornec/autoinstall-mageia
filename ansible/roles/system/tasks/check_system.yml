@@ -191,7 +191,7 @@
   notify:
     - restart fail2ban
 
-- name: Install action script
+- name: Install fail2ban action script
   become: true
   become_user: root
   ansible.builtin.template:

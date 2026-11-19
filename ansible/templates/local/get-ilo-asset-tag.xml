@@ -1,0 +1,7 @@
+<RIBCL VERSION="2.0">
+  <LOGIN USER_LOGIN="x" PASSWORD="x">
+    <SERVER_INFO MODE="read">
+      <GET_ASSET_TAG/>
+    </SERVER_INFO>
+  </LOGIN>
+</RIBCL>

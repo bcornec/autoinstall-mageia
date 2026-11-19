@@ -115,10 +115,22 @@
     dest: "{{ ansible_facts['env']['HOME'] }}/.ansible.cfg"
     mode: "0644"
 
-- name: 'Include role: system::mga-check-srv'
-  ansible.builtin.import_role:
-    name: system
-    tasks_from: mga-check-srv
+- name: Create XML file for hponcfg
+  ansible.builtin.copy:
+    src: "{{ MGAANSIBLEDIR }}/templates/local/get-ilo-asset-tag.xml"
+    dest: "{{ MGALOCAL }}/etc/get-ilo-asset-tag.xml"
+
+- name: Vaultfile creation
+  ansible.builtin.command:
+    cmd: "hponcfg -f {{ MGALOCAL }}/etc/get-ilo-asset-tag.xml | grep 'ASSET_TAG VALUE' | perl -p -e 's|<ASSET_TAG VALUE =.(.*)./>|$1|' > {{ MGAHDIR }}/.mgavaultfile"
+  no_log: true
+
+- name: Protect vaultfile
+  ansible.builtin.file:
+    path: "{{ MGAHDIR }}/.mgavaultfile"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: '0600'
 
 - name: Disable autoinstall
   become: true
