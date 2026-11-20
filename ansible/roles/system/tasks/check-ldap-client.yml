@@ -41,7 +41,7 @@
 - name: 'LDAP client: Configure PAM for LDAP'
   become: true
   become_user: root
-    ansible.builtin.template:
+  ansible.builtin.template:
     src: "{{ MGAANSIBLEDIR }}/templates/pam.d/system-auth.j2"
     dest: /etc/pam.d/system-auth
     owner: root
