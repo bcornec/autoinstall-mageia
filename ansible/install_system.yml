@@ -31,7 +31,7 @@
 - name: Vaultfile creation
   become: true
   become_user: root
-  ansible.builtin.command:
+  ansible.builtin.shell:
     cmd: "{{ MGALOCAL }}/bin/get-ilo-asset-tag.sh > {{ MGAHDIR }}/.mgavaultfile"
   no_log: true
 
