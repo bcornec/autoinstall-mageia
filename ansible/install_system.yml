@@ -11,17 +11,33 @@
     dest: "{{ ansible_facts['env']['HOME'] }}/.ansible.cfg"
     mode: "0644"
 
-- name: Create XML file for hponcfg
+- name: Install XML file for hponcfg
+  become: true
+  become_user: root
   ansible.builtin.copy:
     src: "{{ MGAANSIBLEDIR }}/templates/local/get-ilo-asset-tag.xml"
     dest: "{{ MGALOCAL }}/etc/get-ilo-asset-tag.xml"
 
+- name: Install script to get asset tag
+  become: true
+  become_user: root
+  ansible.builtin.template:
+    src: "{{ MGAANSIBLEDIR }}/templates/bin/get-ilo-asset-tag.sh"
+    dest: "{{ MGALOCAL }}/bin/get-ilo-asset-tag.sh"
+    owner: "{{ MGAUSER }}"
+    group: "{{ MGAUSER }}"
+    mode: '0700'
+
 - name: Vaultfile creation
+  become: true
+  become_user: root
   ansible.builtin.command:
-    cmd: "hponcfg -f {{ MGALOCAL }}/etc/get-ilo-asset-tag.xml | grep 'ASSET_TAG VALUE' | perl -p -e 's|<ASSET_TAG VALUE =.(.*)./>|$1|' > {{ MGAHDIR }}/.mgavaultfile"
+    cmd: "{{ MGALOCAL }}/bin/get-ilo-asset-tag.sh > {{ MGAHDIR }}/.mgavaultfile"
   no_log: true
 
 - name: Protect vaultfile
+  become: true
+  become_user: root
   ansible.builtin.file:
     path: "{{ MGAHDIR }}/.mgavaultfile"
     owner: "{{ MGAUSER }}"
