@@ -44,6 +44,11 @@
     group: "{{ MGAUSER }}"
     mode: '0600'
 
+- name: 'Include role: system::mga-check-srv'
+  ansible.builtin.import_role:
+    name: system
+    tasks_from: mga-check-srv
+
 - name: Disable autoinstall
   become: true
   become_user: root
