@@ -24,8 +24,8 @@
   ansible.builtin.template:
     src: "{{ MGAANSIBLEDIR }}/templates/bin/get-ilo-asset-tag.sh"
     dest: "{{ MGALOCAL }}/bin/get-ilo-asset-tag.sh"
-    owner: "{{ MGAUSER }}"
-    group: "{{ MGAUSER }}"
+    owner: "{{ MGAADMININS }}"
+    group: "{{ MGAADMININS }}"
     mode: '0700'
 
 - name: Vaultfile creation
